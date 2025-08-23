@@ -2,6 +2,8 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:userControls="clr-namespace:BudgetManagement.Views.UserControls"
+        xmlns:converters="clr-namespace:BudgetManagement.Converters"
         Title="Budget Management - Simple and Easy" 
         Height="900" Width="1400" 
         MinHeight="700" MinWidth="1200"
@@ -15,85 +17,229 @@
         KeyDown="Window_KeyDown">
 
     <Window.Resources>
-        <!-- Simple styles for testing -->
+        <ResourceDictionary>
+            <!-- Temporarily removed style references to fix build issues -->
+            <!-- <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Views/Styles/SeniorFriendlyStyles.xaml"/>
+                <ResourceDictionary Source="/Views/Styles/SeniorUXEnhancements.xaml"/>
+            </ResourceDictionary.MergedDictionaries> -->
+        
+        <!-- Converters -->
+        <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
+        
+        <!-- Enhanced styles for the improved UI -->
         <Style x:Key="LargeButton" TargetType="Button">
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="Padding" Value="15,10"/>
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="MinWidth" Value="120"/>
-            <Setter Property="Height" Value="45"/>
+            <Setter Property="Background" Value="#2196F3"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#1976D2"/>
         </Style>
         
         <Style x:Key="HeaderText" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="24"/>
+            <Setter Property="FontSize" Value="28"/>
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="Margin" Value="10"/>
+            <Setter Property="Foreground" Value="#333333"/>
         </Style>
         
-        <Style x:Key="SummaryCard" TargetType="Border">
+        <!-- Panel styles for the new layout -->
+        <Style x:Key="SidePanel" TargetType="Border">
             <Setter Property="Background" Value="White"/>
-            <Setter Property="BorderBrush" Value="#CCCCCC"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CornerRadius" Value="5"/>
-            <Setter Property="Padding" Value="15"/>
+            <Setter Property="BorderBrush" Value="#E0E0E0"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="CornerRadius" Value="8"/>
             <Setter Property="Margin" Value="5"/>
+            <Setter Property="Padding" Value="15"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="#E0E0E0" Direction="270" ShadowDepth="2" BlurRadius="6" Opacity="0.2"/>
+                </Setter.Value>
+            </Setter>
         </Style>
         
-        <Style x:Key="SummaryValue" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="20"/>
+        <Style x:Key="PanelHeader" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="18"/>
             <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="#333333"/>
+            <Setter Property="Margin" Value="0,0,0,12"/>
         </Style>
+        </ResourceDictionary>
     </Window.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>  <!-- Header -->
+            <RowDefinition Height="Auto"/>  <!-- Buttons -->
+            <RowDefinition Height="Auto"/>  <!-- Summary Cubes -->
+            <RowDefinition Height="*"/>     <!-- Main Content (3 panels) -->
+            <RowDefinition Height="Auto"/>  <!-- Status Bar -->
         </Grid.RowDefinitions>
 
         <!-- Header -->
-        <TextBlock Grid.Row="0" Text="💰 Budget Manager" Style="{StaticResource HeaderText}" 
-                   HorizontalAlignment="Center" Margin="0,10"/>
+        <TextBlock Grid.Row="0" Text="{StaticResource AppTitle}" Style="{StaticResource HeaderText}" 
+                   HorizontalAlignment="Center" Margin="0,15"/>
 
-        <!-- Buttons -->
+        <!-- Action Buttons -->
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
-            <Button Content="➕ Add Income" Style="{StaticResource LargeButton}" 
+            <Button Content="{StaticResource AddIncomeButton}" Style="{StaticResource LargeButton}" 
                     Command="{Binding AddIncomeCommand}"/>
-            <Button Content="💸 Add Spending" Style="{StaticResource LargeButton}" 
+            <Button Content="{StaticResource AddSpendingButton}" Style="{StaticResource LargeButton}" 
                     Command="{Binding AddSpendingCommand}"/>
-            <Button Content="🔄 Refresh" Style="{StaticResource LargeButton}" 
+            <Button Content="{StaticResource RefreshButton}" Style="{StaticResource LargeButton}" 
                     Command="{Binding RefreshCommand}"/>
         </StackPanel>
 
-        <!-- Budget Summary -->
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="20">
-            <Border Style="{StaticResource SummaryCard}">
-                <StackPanel>
-                    <TextBlock Text="Total Income" HorizontalAlignment="Center" FontWeight="Bold"/>
-                    <TextBlock Text="{Binding BudgetSummary.TotalIncome, StringFormat=C}" Style="{StaticResource SummaryValue}" Foreground="Green"/>
-                </StackPanel>
-            </Border>
+        <!-- Summary Cubes -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="15">
+            <userControls:BudgetSummaryCard 
+                Header="{StaticResource TotalIncome}"
+                Icon="💰"
+                Value="{Binding BudgetSummary.TotalIncome}"
+                Subtitle="{StaticResource ThisPeriod}"/>
             
-            <Border Style="{StaticResource SummaryCard}">
-                <StackPanel>
-                    <TextBlock Text="Total Spending" HorizontalAlignment="Center" FontWeight="Bold"/>
-                    <TextBlock Text="{Binding BudgetSummary.TotalSpending, StringFormat=C}" Style="{StaticResource SummaryValue}" Foreground="Red"/>
-                </StackPanel>
-            </Border>
+            <userControls:BudgetSummaryCard 
+                Header="{StaticResource TotalSpending}"
+                Icon="💸"
+                Value="{Binding BudgetSummary.TotalSpending}"
+                Subtitle="{StaticResource AllCategories}"/>
             
-            <Border Style="{StaticResource SummaryCard}">
-                <StackPanel>
-                    <TextBlock Text="Remaining Budget" HorizontalAlignment="Center" FontWeight="Bold"/>
-                    <TextBlock Text="{Binding BudgetSummary.RemainingBudget, StringFormat=C}" Style="{StaticResource SummaryValue}" Foreground="Blue"/>
-                </StackPanel>
-            </Border>
+            <userControls:BudgetSummaryCard 
+                Header="{StaticResource RemainingBudget}"
+                Icon="📊"
+                Value="{Binding BudgetSummary.RemainingBudget}"
+                Subtitle="{StaticResource Available}"/>
         </StackPanel>
 
+        <!-- Main Content Area - 3 Panel Layout -->
+        <Grid Grid.Row="3" Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="280"/>  <!-- Left Panel - Analytics -->
+                <ColumnDefinition Width="*"/>    <!-- Center Panel - Recent Entries -->
+                <ColumnDefinition Width="280"/>  <!-- Right Panel - Export -->
+            </Grid.ColumnDefinitions>
+
+            <!-- Left Panel - Analytics -->
+            <Border Grid.Column="0" Style="{StaticResource SidePanel}">
+                <StackPanel>
+                    <TextBlock Text="{StaticResource Analytics}" Style="{StaticResource PanelHeader}"/>
+                    
+                    <!-- Spending Category Chart -->
+                    <userControls:SpendingCategoryChartUserControl 
+                        SpendingEntries="{Binding SpendingEntries}"
+                        Margin="0,0,0,15"/>
+                    
+                    <!-- Budget Trend Chart -->
+                    <userControls:BudgetTrendChartUserControl 
+                        BudgetTrendData="{Binding BudgetTrendData}"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Center Panel - Recent Entries -->
+            <Border Grid.Column="1" Style="{StaticResource SidePanel}" Margin="10,0">
+                <StackPanel>
+                    <TextBlock Text="{StaticResource RecentActivity}" Style="{StaticResource PanelHeader}"/>
+                    
+                    <!-- Recent entries control -->
+                    <ScrollViewer Height="400" VerticalScrollBarVisibility="Auto">
+                        <userControls:RecentEntriesUserControl 
+                            RecentIncomeEntries="{Binding RecentIncomeEntries}"
+                            RecentSpendingEntries="{Binding RecentSpendingEntries}"
+                            HasNoEntries="{Binding HasNoRecentEntries}"/>
+                    </ScrollViewer>
+                </StackPanel>
+            </Border>
+
+            <!-- Right Panel - Export & Tools -->
+            <Border Grid.Column="2" Style="{StaticResource SidePanel}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" 
+                              Padding="0,0,5,0">
+                    <StackPanel>
+                        <TextBlock Text="{StaticResource ExportTools}" Style="{StaticResource PanelHeader}"/>
+                        
+                        <!-- Export Section -->
+                        <Expander x:Name="ExportExpander" Header="📤 Export Options" IsExpanded="True">
+                            <StackPanel Margin="0,8,0,0">
+                                <Button Content="{StaticResource ExportToExcel}" 
+                                        Style="{StaticResource LargeButton}"
+                                        Command="{Binding ExportDataCommand}"
+                                        Margin="0,2" Height="38" FontSize="15"/>
+                                
+                                <Button Content="{StaticResource ExportToPDF}" 
+                                        Style="{StaticResource LargeButton}"
+                                        Margin="0,2" Height="38" FontSize="15"
+                                        IsEnabled="False"
+                                        ToolTip="{StaticResource ComingSoon}"
+                                        ToolTipService.ToolTip="{StaticResource ComingSoon}"/>
+                            </StackPanel>
+                        </Expander>
+
+                        <!-- Settings Section -->
+                        <Expander x:Name="SettingsExpander" Header="🌐 Language" IsExpanded="True">
+                            <ComboBox x:Name="LanguageComboBox" Margin="0,8,0,0">
+                                <ComboBoxItem Content="{StaticResource English}" Tag="en"/>
+                                <ComboBoxItem Content="{StaticResource Albanian}" Tag="sq"/>
+                            </ComboBox>
+                        </Expander>
+
+                        <!-- Accessibility Section -->
+                        <Expander x:Name="AccessibilityExpander" Header="🔧 Accessibility" IsExpanded="True">
+                            <StackPanel Margin="0,8,0,0">
+                                <CheckBox x:Name="HighContrastCheckBox" Content="High Contrast Mode" 
+                                          Margin="0,5,0,10"
+                                          Checked="HighContrastCheckBox_Checked"
+                                          Unchecked="HighContrastCheckBox_Unchecked"
+                                          ToolTip="Improves visibility for better readability"/>
+                                
+                                <TextBlock Text="Font Size:" FontSize="14" FontWeight="SemiBold" 
+                                           Margin="0,10,0,8" Foreground="#333"/>
+                                <Grid Margin="0,0,0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Button x:Name="FontSizeSmallBtn" Content="A" Grid.Column="0"
+                                            FontSize="12" Height="36" Margin="2" 
+                                            Click="FontSizeSmall_Click" ToolTip="Small font size"
+                                            Background="#F5F5F5" BorderBrush="#DDD" BorderThickness="2"/>
+                                    <Button x:Name="FontSizeMediumBtn" Content="A" Grid.Column="1"
+                                            FontSize="16" Height="36" Margin="2" 
+                                            Click="FontSizeMedium_Click" ToolTip="Medium font size (default)"
+                                            Background="#F5F5F5" BorderBrush="#DDD" BorderThickness="2"/>
+                                    <Button x:Name="FontSizeLargeBtn" Content="A" Grid.Column="2"
+                                            FontSize="20" Height="36" Margin="2" 
+                                            Click="FontSizeLarge_Click" ToolTip="Large font size"
+                                            Background="#F5F5F5" BorderBrush="#DDD" BorderThickness="2"/>
+                                </Grid>
+                            </StackPanel>
+                        </Expander>
+                        
+                        <!-- Quick Stats Section -->
+                        <Expander x:Name="StatsExpander" Header="📊 Quick Stats" IsExpanded="False">
+                            <StackPanel Margin="0,8,0,0">
+                                <Border Background="#F8F9FA" Padding="10" CornerRadius="6" Margin="0,3"
+                                        BorderBrush="#E0E0E0" BorderThickness="1">
+                                    <StackPanel>
+                                        <TextBlock Text="{StaticResource AverageDailySpending}" FontSize="12" Foreground="#666"/>
+                                        <TextBlock Text="{Binding AverageDailySpending, StringFormat=C}" FontWeight="Bold" FontSize="15"/>
+                                    </StackPanel>
+                                </Border>
+                                
+                                <Border Background="#F8F9FA" Padding="10" CornerRadius="6" Margin="0,3"
+                                        BorderBrush="#E0E0E0" BorderThickness="1">
+                                    <StackPanel>
+                                        <TextBlock Text="{StaticResource EntriesThisPeriod}" FontSize="12" Foreground="#666"/>
+                                        <TextBlock Text="{Binding TotalEntries}" FontWeight="Bold" FontSize="15"/>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </Expander>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+        </Grid>
+
         <!-- Status Bar -->
-        <TextBlock Grid.Row="3" Text="{Binding StatusMessage}" Background="#E8E8E8" Padding="10,5" 
+        <TextBlock Grid.Row="4" Text="{Binding StatusMessage}" Background="#E8E8E8" Padding="10,5" 
                    HorizontalAlignment="Stretch"/>
     </Grid>
 </Window>

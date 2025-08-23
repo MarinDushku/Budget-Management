@@ -1,6 +1,11 @@
+using System;
+using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using BudgetManagement.ViewModels;
+using BudgetManagement.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BudgetManagement.Views
 {
@@ -51,6 +56,49 @@ namespace BudgetManagement.Views
             {
                 await viewModel.InitializeAsync();
             }
+
+            // Set up language combobox
+            SetupLanguageSelector();
+        }
+
+        private void SetupLanguageSelector()
+        {
+            try
+            {
+                var app = Application.Current as App;
+                var localizationService = app?.GetService<ILocalizationService>();
+                var settingsService = app?.GetService<ISettingsService>();
+
+                if (localizationService != null && settingsService != null)
+                {
+                    // Set current selection based on current language
+                    var currentLanguage = localizationService.CurrentLanguage;
+                    foreach (ComboBoxItem item in LanguageComboBox.Items)
+                    {
+                        if (item.Tag?.ToString() == currentLanguage)
+                        {
+                            LanguageComboBox.SelectedItem = item;
+                            break;
+                        }
+                    }
+
+                    // Handle language changes
+                    LanguageComboBox.SelectionChanged += async (s, e) =>
+                    {
+                        if (LanguageComboBox.SelectedItem is ComboBoxItem selectedItem &&
+                            selectedItem.Tag?.ToString() is string languageCode)
+                        {
+                            localizationService.SetLanguage(languageCode);
+                            settingsService.Language = languageCode;
+                            await settingsService.SaveSettingsAsync();
+                        }
+                    };
+                }
+            }
+            catch
+            {
+                // Ignore errors in language setup
+            }
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -90,5 +138,432 @@ namespace BudgetManagement.Views
                 e.Handled = true;
             }
         }
+
+        #region Accessibility Event Handlers
+
+        private void HighContrastCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            ApplyHighContrastTheme(true);
+        }
+
+        private void HighContrastCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            ApplyHighContrastTheme(false);
+        }
+
+        private void FontSizeSmall_Click(object sender, RoutedEventArgs e)
+        {
+            SetApplicationFontSize(14);
+            UpdateFontSizeButtons("small");
+        }
+
+        private void FontSizeMedium_Click(object sender, RoutedEventArgs e)
+        {
+            SetApplicationFontSize(16);
+            UpdateFontSizeButtons("medium");
+        }
+
+        private void FontSizeLarge_Click(object sender, RoutedEventArgs e)
+        {
+            SetApplicationFontSize(20);
+            UpdateFontSizeButtons("large");
+        }
+
+        private void ApplyHighContrastTheme(bool highContrast)
+        {
+            var resources = Application.Current.Resources;
+            
+            if (highContrast)
+            {
+                // Load high contrast theme resource dictionary
+                var highContrastDict = new ResourceDictionary();
+                highContrastDict.Source = new Uri("/Views/Styles/HighContrastTheme.xaml", UriKind.Relative);
+                
+                // Add high contrast dictionary to application resources
+                if (!resources.MergedDictionaries.Any(d => d.Source?.OriginalString?.Contains("HighContrastTheme") == true))
+                {
+                    resources.MergedDictionaries.Add(highContrastDict);
+                }
+                
+                // Apply high contrast window styling
+                this.Background = highContrastDict["HighContrast_MainBackgroundBrush"] as SolidColorBrush;
+                this.Foreground = highContrastDict["HighContrast_PrimaryTextBrush"] as SolidColorBrush;
+                
+                // Update dynamic styles for better contrast
+                UpdateControlStyles(highContrastDict, true);
+            }
+            else
+            {
+                // Remove high contrast theme
+                var highContrastDict = resources.MergedDictionaries
+                    .FirstOrDefault(d => d.Source?.OriginalString?.Contains("HighContrastTheme") == true);
+                
+                if (highContrastDict != null)
+                {
+                    resources.MergedDictionaries.Remove(highContrastDict);
+                }
+                
+                // Restore normal window styling
+                this.Background = new SolidColorBrush(Color.FromRgb(248, 249, 250));
+                this.Foreground = new SolidColorBrush(Color.FromRgb(33, 37, 41));
+                
+                // Update control styles back to normal
+                UpdateControlStyles(null, false);
+            }
+        }
+        
+        private void UpdateControlStyles(ResourceDictionary? highContrastDict, bool isHighContrast)
+        {
+            // Update all buttons in the window
+            UpdateButtonStyles(this, isHighContrast, highContrastDict);
+            
+            // Update all text controls
+            UpdateTextControlStyles(this, isHighContrast, highContrastDict);
+            
+            // Update all input controls
+            UpdateInputControlStyles(this, isHighContrast, highContrastDict);
+            
+            // Update all panels and borders
+            UpdatePanelStyles(this, isHighContrast, highContrastDict);
+        }
+        
+        private void UpdateButtonStyles(DependencyObject parent, bool isHighContrast, ResourceDictionary? highContrastDict)
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+            {
+                var child = VisualTreeHelper.GetChild(parent, i);
+                
+                if (child is Button button)
+                {
+                    if (isHighContrast && highContrastDict != null)
+                    {
+                        // Determine button type and apply appropriate high contrast style
+                        if (button.Name?.Contains("Success") == true || button.Content?.ToString()?.Contains("Save") == true)
+                        {
+                            button.Style = highContrastDict["HighContrastSuccessButton"] as Style;
+                        }
+                        else if (button.Name?.Contains("Danger") == true || button.Content?.ToString()?.Contains("Cancel") == true)
+                        {
+                            button.Style = highContrastDict["HighContrastDangerButton"] as Style;
+                        }
+                        else if (button.Name?.Contains("Secondary") == true)
+                        {
+                            button.Style = highContrastDict["HighContrastSecondaryButton"] as Style;
+                        }
+                        else
+                        {
+                            button.Style = highContrastDict["HighContrastPrimaryButton"] as Style;
+                        }
+                    }
+                    else
+                    {
+                        // Reset to normal style (you may want to store original styles)
+                        button.ClearValue(Button.StyleProperty);
+                    }
+                }
+                else
+                {
+                    UpdateButtonStyles(child, isHighContrast, highContrastDict);
+                }
+            }
+        }
+        
+        private void UpdateTextControlStyles(DependencyObject parent, bool isHighContrast, ResourceDictionary? highContrastDict)
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+            {
+                var child = VisualTreeHelper.GetChild(parent, i);
+                
+                if (child is TextBlock textBlock)
+                {
+                    if (isHighContrast && highContrastDict != null)
+                    {
+                        // Apply high contrast text styling based on context
+                        if (textBlock.FontWeight == FontWeights.Bold || textBlock.FontSize > 20)
+                        {
+                            textBlock.Style = highContrastDict["HighContrastHeaderText"] as Style;
+                        }
+                        else if (textBlock.FontSize > 14)
+                        {
+                            textBlock.Style = highContrastDict["HighContrastPrimaryText"] as Style;
+                        }
+                        else
+                        {
+                            textBlock.Style = highContrastDict["HighContrastSecondaryText"] as Style;
+                        }
+                    }
+                    else
+                    {
+                        textBlock.ClearValue(TextBlock.StyleProperty);
+                    }
+                }
+                else
+                {
+                    UpdateTextControlStyles(child, isHighContrast, highContrastDict);
+                }
+            }
+        }
+        
+        private void UpdateInputControlStyles(DependencyObject parent, bool isHighContrast, ResourceDictionary? highContrastDict)
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+            {
+                var child = VisualTreeHelper.GetChild(parent, i);
+                
+                if (child is TextBox textBox)
+                {
+                    if (isHighContrast && highContrastDict != null)
+                    {
+                        textBox.Style = highContrastDict["HighContrastTextBoxStyle"] as Style;
+                    }
+                    else
+                    {
+                        textBox.ClearValue(TextBox.StyleProperty);
+                    }
+                }
+                else if (child is ComboBox comboBox)
+                {
+                    if (isHighContrast && highContrastDict != null)
+                    {
+                        comboBox.Style = highContrastDict["HighContrastComboBoxStyle"] as Style;
+                    }
+                    else
+                    {
+                        comboBox.ClearValue(ComboBox.StyleProperty);
+                    }
+                }
+                else if (child is CheckBox checkBox)
+                {
+                    if (isHighContrast && highContrastDict != null)
+                    {
+                        checkBox.Style = highContrastDict["HighContrastCheckBoxStyle"] as Style;
+                    }
+                    else
+                    {
+                        checkBox.ClearValue(CheckBox.StyleProperty);
+                    }
+                }
+                else
+                {
+                    UpdateInputControlStyles(child, isHighContrast, highContrastDict);
+                }
+            }
+        }
+        
+        private void UpdatePanelStyles(DependencyObject parent, bool isHighContrast, ResourceDictionary? highContrastDict)
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+            {
+                var child = VisualTreeHelper.GetChild(parent, i);
+                
+                if (child is Border border && border.Name?.Contains("Panel") == true)
+                {
+                    if (isHighContrast && highContrastDict != null)
+                    {
+                        border.Style = highContrastDict["HighContrastSidePanel"] as Style;
+                    }
+                    else
+                    {
+                        border.ClearValue(Border.StyleProperty);
+                    }
+                }
+                else if (child is ScrollViewer scrollViewer)
+                {
+                    if (isHighContrast && highContrastDict != null)
+                    {
+                        scrollViewer.Style = highContrastDict["HighContrastScrollViewer"] as Style;
+                    }
+                    else
+                    {
+                        scrollViewer.ClearValue(ScrollViewer.StyleProperty);
+                    }
+                }
+                else
+                {
+                    UpdatePanelStyles(child, isHighContrast, highContrastDict);
+                }
+            }
+        }
+
+        private void SetApplicationFontSize(double fontSize)
+        {
+            var resources = Application.Current.Resources;
+            
+            // Update global font size resource
+            if (resources.Contains("GlobalFontSize"))
+                resources["GlobalFontSize"] = fontSize;
+            else
+                resources.Add("GlobalFontSize", fontSize);
+            
+            // Calculate relative font sizes based on the base font size
+            var headerFontSize = fontSize * 1.75;     // 28px when base is 16px
+            var largeFontSize = fontSize * 1.25;      // 20px when base is 16px
+            var mediumFontSize = fontSize;            // 16px base
+            var smallFontSize = fontSize * 0.875;     // 14px when base is 16px
+            var tinyFontSize = fontSize * 0.75;       // 12px when base is 16px
+            
+            // Update all global font size resources
+            UpdateOrAddResource(resources, "HeaderFontSize", headerFontSize);
+            UpdateOrAddResource(resources, "LargeFontSize", largeFontSize);
+            UpdateOrAddResource(resources, "MediumFontSize", mediumFontSize);
+            UpdateOrAddResource(resources, "SmallFontSize", smallFontSize);
+            UpdateOrAddResource(resources, "TinyFontSize", tinyFontSize);
+            
+            // Update main window font size
+            this.FontSize = fontSize;
+            
+            // Recursively update all controls in the application
+            UpdateAllControlFontSizes(this, fontSize);
+            
+            // Update all open dialogs if any
+            foreach (Window window in Application.Current.Windows)
+            {
+                if (window != this && window.IsLoaded)
+                {
+                    UpdateAllControlFontSizes(window, fontSize);
+                }
+            }
+            
+            // Save font size preference
+            try
+            {
+                var app = Application.Current as App;
+                var settingsService = app?.GetService<ISettingsService>();
+                if (settingsService != null)
+                {
+                    settingsService.FontSize = (int)fontSize;
+                    _ = settingsService.SaveSettingsAsync(); // Fire and forget
+                }
+            }
+            catch
+            {
+                // Ignore errors in settings save
+            }
+        }
+        
+        private void UpdateOrAddResource(ResourceDictionary resources, string key, object value)
+        {
+            if (resources.Contains(key))
+                resources[key] = value;
+            else
+                resources.Add(key, value);
+        }
+        
+        private void UpdateAllControlFontSizes(DependencyObject parent, double baseFontSize)
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+            {
+                var child = VisualTreeHelper.GetChild(parent, i);
+                
+                if (child is FrameworkElement element)
+                {
+                    UpdateControlFontSize(element, baseFontSize);
+                }
+                
+                // Recursively update child controls
+                UpdateAllControlFontSizes(child, baseFontSize);
+            }
+        }
+        
+        private void UpdateControlFontSize(FrameworkElement control, double baseFontSize)
+        {
+            
+            if (control is Button button)
+            {
+                // Buttons get slightly larger font for better readability
+                if (button.Name?.Contains("FontSize") == true)
+                {
+                    // Font size buttons keep their relative sizes
+                    if (button.Name.Contains("Small"))
+                        button.FontSize = baseFontSize * 0.75;
+                    else if (button.Name.Contains("Medium"))
+                        button.FontSize = baseFontSize;
+                    else if (button.Name.Contains("Large"))
+                        button.FontSize = baseFontSize * 1.25;
+                }
+                else
+                {
+                    // Regular buttons
+                    button.FontSize = baseFontSize * 1.0;
+                }
+            }
+            else if (control is TextBlock textBlock)
+            {
+                // Headers and important text get larger fonts
+                if (textBlock.FontWeight == FontWeights.Bold && textBlock.FontSize > baseFontSize * 1.5)
+                {
+                    textBlock.FontSize = baseFontSize * 1.75; // Headers
+                }
+                else if (textBlock.FontWeight == FontWeights.Bold)
+                {
+                    textBlock.FontSize = baseFontSize * 1.125; // Bold text slightly larger
+                }
+                else if (textBlock.FontSize < baseFontSize * 0.9)
+                {
+                    textBlock.FontSize = baseFontSize * 0.875; // Small text
+                }
+                else
+                {
+                    textBlock.FontSize = baseFontSize; // Normal text
+                }
+            }
+            else if (control is TextBox textBox)
+            {
+                textBox.FontSize = baseFontSize;
+            }
+            else if (control is ComboBox comboBox)
+            {
+                comboBox.FontSize = baseFontSize;
+            }
+            else if (control is CheckBox checkBox)
+            {
+                checkBox.FontSize = baseFontSize;
+            }
+            else if (control is Label label)
+            {
+                label.FontSize = baseFontSize;
+            }
+            else if (control is DatePicker datePicker)
+            {
+                datePicker.FontSize = baseFontSize;
+            }
+            else if (control is DataGrid dataGrid)
+            {
+                dataGrid.FontSize = baseFontSize * 0.9375; // Slightly smaller for data
+            }
+            else if (control is Control otherControl)
+            {
+                // Default case for other controls that derive from Control
+                otherControl.FontSize = baseFontSize;
+            }
+            // If it's not a control with FontSize property, just skip it
+        }
+
+        private void UpdateFontSizeButtons(string activeSize)
+        {
+            // Reset all button backgrounds
+            FontSizeSmallBtn.Background = SystemColors.ControlBrush;
+            FontSizeMediumBtn.Background = SystemColors.ControlBrush;
+            FontSizeLargeBtn.Background = SystemColors.ControlBrush;
+            
+            // Highlight the active button
+            switch (activeSize)
+            {
+                case "small":
+                    FontSizeSmallBtn.Background = new SolidColorBrush(Color.FromRgb(33, 150, 243));
+                    FontSizeSmallBtn.Foreground = new SolidColorBrush(Colors.White);
+                    break;
+                case "medium":
+                    FontSizeMediumBtn.Background = new SolidColorBrush(Color.FromRgb(33, 150, 243));
+                    FontSizeMediumBtn.Foreground = new SolidColorBrush(Colors.White);
+                    break;
+                case "large":
+                    FontSizeLargeBtn.Background = new SolidColorBrush(Color.FromRgb(33, 150, 243));
+                    FontSizeLargeBtn.Foreground = new SolidColorBrush(Colors.White);
+                    break;
+            }
+        }
+
+        #endregion
     }
 }

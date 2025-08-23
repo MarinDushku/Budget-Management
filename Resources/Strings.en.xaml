@@ -1,0 +1,111 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <!-- Main Window -->
+    <sys:String x:Key="AppTitle">💰 Budget Manager</sys:String>
+    <sys:String x:Key="AddIncomeButton">➕ Add Income</sys:String>
+    <sys:String x:Key="AddSpendingButton">💸 Add Spending</sys:String>
+    <sys:String x:Key="RefreshButton">🔄 Refresh</sys:String>
+    
+    <!-- Summary Cards -->
+    <sys:String x:Key="TotalIncome">Total Income</sys:String>
+    <sys:String x:Key="TotalSpending">Total Spending</sys:String>
+    <sys:String x:Key="RemainingBudget">Remaining Budget</sys:String>
+    <sys:String x:Key="ThisPeriod">This period</sys:String>
+    <sys:String x:Key="AllCategories">All categories</sys:String>
+    <sys:String x:Key="Available">Available</sys:String>
+    
+    <!-- Panel Headers -->
+    <sys:String x:Key="Analytics">📈 Analytics</sys:String>
+    <sys:String x:Key="RecentActivity">📝 Recent Activity</sys:String>
+    <sys:String x:Key="ExportTools">💾 Export &amp; Tools</sys:String>
+    
+    <!-- Analytics Panel -->
+    <sys:String x:Key="SpendingByCategory">Spending by Category</sys:String>
+    <sys:String x:Key="BudgetTrends">Budget Trends (10 weeks)</sys:String>
+    <sys:String x:Key="TopCategories">Top Categories</sys:String>
+    <sys:String x:Key="BestWeek">Best Week</sys:String>
+    <sys:String x:Key="WorstWeek">Worst Week</sys:String>
+    <sys:String x:Key="WeekTrend">10-Week Trend</sys:String>
+    
+    <!-- Recent Activity -->
+    <sys:String x:Key="RecentIncome">💰 Recent Income</sys:String>
+    <sys:String x:Key="RecentSpending">💸 Recent Spending</sys:String>
+    <sys:String x:Key="NoRecentEntries">No recent entries to display</sys:String>
+    
+    <!-- Export Panel -->
+    <sys:String x:Key="ExportOptions">Export Options</sys:String>
+    <sys:String x:Key="ExportToExcel">📊 Export to Excel</sys:String>
+    <sys:String x:Key="ExportToPDF">📄 Export to PDF</sys:String>
+    <sys:String x:Key="ComingSoon">Coming soon</sys:String>
+    <sys:String x:Key="QuickStats">Quick Stats</sys:String>
+    <sys:String x:Key="AverageDailySpending">Average Daily Spending</sys:String>
+    <sys:String x:Key="EntriesThisPeriod">Entries This Period</sys:String>
+    
+    <!-- Dialogs -->
+    <sys:String x:Key="AddIncomeTitle">Add Income Entry</sys:String>
+    <sys:String x:Key="EditIncomeTitle">Edit Income Entry</sys:String>
+    <sys:String x:Key="AddSpendingTitle">Add Spending Entry</sys:String>
+    <sys:String x:Key="EditSpendingTitle">Edit Spending Entry</sys:String>
+    <sys:String x:Key="Date">Date:</sys:String>
+    <sys:String x:Key="Description">Description:</sys:String>
+    <sys:String x:Key="Amount">Amount:</sys:String>
+    <sys:String x:Key="Category">Category:</sys:String>
+    <sys:String x:Key="Save">Save</sys:String>
+    <sys:String x:Key="Cancel">Cancel</sys:String>
+    
+    <!-- Validation Messages -->
+    <sys:String x:Key="ValidationError">Validation Error</sys:String>
+    <sys:String x:Key="EnterDescription">Please enter a description.</sys:String>
+    <sys:String x:Key="EnterValidAmount">Please enter a valid amount greater than 0.</sys:String>
+    <sys:String x:Key="SelectDate">Please select a date.</sys:String>
+    <sys:String x:Key="SelectCategory">Please select a category.</sys:String>
+    
+    <!-- Confirmation Messages -->
+    <sys:String x:Key="DeleteIncomeTitle">Delete Income Entry</sys:String>
+    <sys:String x:Key="DeleteSpendingTitle">Delete Spending Entry</sys:String>
+    <sys:String x:Key="DeleteIncomeConfirm">Are you sure you want to delete the income entry '{0}' for {1}?</sys:String>
+    <sys:String x:Key="DeleteSpendingConfirm">Are you sure you want to delete the spending entry '{0}' for {1}?</sys:String>
+    
+    <!-- Status Messages -->
+    <sys:String x:Key="AppLoading">Initializing application...</sys:String>
+    <sys:String x:Key="LoadingData">Loading data...</sys:String>
+    <sys:String x:Key="Ready">Ready</sys:String>
+    <sys:String x:Key="IncomeAddedSuccess">Income entry added successfully</sys:String>
+    <sys:String x:Key="SpendingAddedSuccess">Spending entry added successfully</sys:String>
+    <sys:String x:Key="IncomeUpdatedSuccess">Income entry updated successfully</sys:String>
+    <sys:String x:Key="SpendingUpdatedSuccess">Spending entry updated successfully</sys:String>
+    <sys:String x:Key="IncomeDeletedSuccess">Income entry deleted successfully</sys:String>
+    <sys:String x:Key="SpendingDeletedSuccess">Spending entry deleted successfully</sys:String>
+    <sys:String x:Key="ExportingData">Exporting data...</sys:String>
+    <sys:String x:Key="DataExportedSuccess">Data exported successfully</sys:String>
+    <sys:String x:Key="LoadedEntries">Loaded {0} income and {1} spending entries</sys:String>
+    
+    <!-- Error Messages -->
+    <sys:String x:Key="InitializationError">Initialization Error</sys:String>
+    <sys:String x:Key="DataLoadingError">Data Loading Error</sys:String>
+    <sys:String x:Key="AddIncomeError">Add Income Error</sys:String>
+    <sys:String x:Key="AddSpendingError">Add Spending Error</sys:String>
+    <sys:String x:Key="EditIncomeError">Edit Income Error</sys:String>
+    <sys:String x:Key="EditSpendingError">Edit Spending Error</sys:String>
+    <sys:String x:Key="DeleteError">Delete Error</sys:String>
+    <sys:String x:Key="ExportError">Export Error</sys:String>
+    <sys:String x:Key="ExportComplete">Export Complete</sys:String>
+    <sys:String x:Key="DataExportedMessage">Data has been exported successfully</sys:String>
+    
+    <!-- Settings -->
+    <sys:String x:Key="Language">Language</sys:String>
+    <sys:String x:Key="English">English</sys:String>
+    <sys:String x:Key="Albanian">Albanian</sys:String>
+    
+    <!-- Accessibility -->
+    <sys:String x:Key="Accessibility">🔧 Accessibility</sys:String>
+    <sys:String x:Key="HighContrastMode">High Contrast Mode</sys:String>
+    <sys:String x:Key="FontSize">Font Size:</sys:String>
+    <sys:String x:Key="SmallFont">Small font size</sys:String>
+    <sys:String x:Key="MediumFont">Medium font size (default)</sys:String>
+    <sys:String x:Key="LargeFont">Large font size</sys:String>
+    <sys:String x:Key="QuickAmounts">💡 Quick amounts:</sys:String>
+    
+</ResourceDictionary>

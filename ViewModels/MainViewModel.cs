@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using BudgetManagement.Models;
@@ -32,6 +33,13 @@ namespace BudgetManagement.ViewModels
         public ObservableCollection<Income> IncomeEntries { get; } = new();
         public ObservableCollection<SpendingWithCategory> SpendingEntries { get; } = new();
         public ObservableCollection<Category> Categories { get; } = new();
+
+        // Recent entries collections (for the activity feed)
+        public ObservableCollection<Income> RecentIncomeEntries { get; } = new();
+        public ObservableCollection<SpendingWithCategory> RecentSpendingEntries { get; } = new();
+
+        // Budget trend data for analytics
+        public ObservableCollection<BudgetManagement.Views.UserControls.WeeklyBudgetData> BudgetTrendData { get; } = new();
 
         // Collection views for filtering and sorting
         public ICollectionView IncomeView { get; }
@@ -68,6 +76,21 @@ namespace BudgetManagement.ViewModels
             set => SetProperty(ref _statusMessage, value);
         }
 
+        public bool HasNoRecentEntries => RecentIncomeEntries.Count == 0 && RecentSpendingEntries.Count == 0;
+
+        public int TotalEntries => IncomeEntries.Count + SpendingEntries.Count;
+
+        public decimal AverageDailySpending
+        {
+            get
+            {
+                if (SpendingEntries.Count == 0) return 0m;
+
+                var daysDiff = Math.Max(1, (SelectedPeriodEnd - SelectedPeriodStart).Days + 1);
+                return SpendingEntries.Sum(s => s.Amount) / daysDiff;
+            }
+        }
+
         // Commands
         public ICommand AddIncomeCommand { get; }
         public ICommand AddSpendingCommand { get; }
@@ -85,6 +108,9 @@ namespace BudgetManagement.ViewModels
             _budgetService = budgetService ?? throw new ArgumentNullException(nameof(budgetService));
             _dialogService = dialogService ?? throw new ArgumentNullException(nameof(dialogService));
 
+            // DEBUG: Log constructor call
+            System.Diagnostics.Debug.WriteLine("MainViewModel constructor called - initializing...");
+
             // Initialize collection views
             IncomeView = CollectionViewSource.GetDefaultView(IncomeEntries);
             SpendingView = CollectionViewSource.GetDefaultView(SpendingEntries);
@@ -93,17 +119,20 @@ namespace BudgetManagement.ViewModels
             IncomeView.SortDescriptions.Add(new SortDescription(nameof(Income.Date), ListSortDirection.Descending));
             SpendingView.SortDescriptions.Add(new SortDescription(nameof(SpendingWithCategory.Date), ListSortDirection.Descending));
 
-            // Initialize commands
-            AddIncomeCommand = new RelayCommand(async () => await AddIncomeAsync());
-            AddSpendingCommand = new RelayCommand(async () => await AddSpendingAsync());
-            EditIncomeCommand = new RelayCommand<Income>(async income => await EditIncomeAsync(income), income => income != null);
-            EditSpendingCommand = new RelayCommand<SpendingWithCategory>(async spending => await EditSpendingAsync(spending), spending => spending != null);
-            DeleteIncomeCommand = new RelayCommand<Income>(async income => await DeleteIncomeAsync(income), income => income != null);
-            DeleteSpendingCommand = new RelayCommand<SpendingWithCategory>(async spending => await DeleteSpendingAsync(spending), spending => spending != null);
-            RefreshCommand = new RelayCommand(async () => await RefreshDataAsync());
+            // Initialize commands - using fire-and-forget pattern for async methods
+            AddIncomeCommand = new RelayCommand(() => _ = AddIncomeAsync());
+            AddSpendingCommand = new RelayCommand(() => _ = AddSpendingAsync());
+            EditIncomeCommand = new RelayCommand<Income>(income => _ = EditIncomeAsync(income), income => income != null);
+            EditSpendingCommand = new RelayCommand<SpendingWithCategory>(spending => _ = EditSpendingAsync(spending), spending => spending != null);
+            DeleteIncomeCommand = new RelayCommand<Income>(income => _ = DeleteIncomeAsync(income), income => income != null);
+            DeleteSpendingCommand = new RelayCommand<SpendingWithCategory>(spending => _ = DeleteSpendingAsync(spending), spending => spending != null);
+            RefreshCommand = new RelayCommand(() => _ = RefreshDataAsync());
             SetCurrentMonthCommand = new RelayCommand(SetCurrentMonth);
             SetCurrentYearCommand = new RelayCommand(SetCurrentYear);
-            ExportDataCommand = new RelayCommand(async () => await ExportDataAsync());
+            ExportDataCommand = new RelayCommand(() => _ = ExportDataAsync());
+            
+            // DEBUG: Confirm commands were created
+            System.Diagnostics.Debug.WriteLine($"MainViewModel commands created - AddIncomeCommand: {AddIncomeCommand != null}, AddSpendingCommand: {AddSpendingCommand != null}");
         }
 
         /// <summary>
@@ -169,6 +198,12 @@ namespace BudgetManagement.ViewModels
                 // Calculate budget summary
                 BudgetSummary = await _budgetService.GetBudgetSummaryAsync(SelectedPeriodStart, SelectedPeriodEnd);
 
+                // Update recent entries (last 5 of each type)
+                UpdateRecentEntries();
+
+                // Update budget trend data (last 10 weeks)
+                await UpdateBudgetTrendDataAsync();
+
                 StatusMessage = $"Loaded {IncomeEntries.Count} income and {SpendingEntries.Count} spending entries";
             }
             catch (Exception ex)
@@ -182,32 +217,129 @@ namespace BudgetManagement.ViewModels
             }
         }
 
+        /// <summary>
+        /// Updates the recent entries collections for the activity feed
+        /// </summary>
+        private void UpdateRecentEntries()
+        {
+            // Clear existing recent entries
+            RecentIncomeEntries.Clear();
+            RecentSpendingEntries.Clear();
+
+            // Get the 5 most recent income entries
+            var recentIncome = IncomeEntries
+                .OrderByDescending(i => i.Date)
+                .ThenByDescending(i => i.CreatedAt)
+                .Take(5);
+
+            foreach (var income in recentIncome)
+            {
+                RecentIncomeEntries.Add(income);
+            }
+
+            // Get the 5 most recent spending entries
+            var recentSpending = SpendingEntries
+                .OrderByDescending(s => s.Date)
+                .ThenByDescending(s => s.CreatedAt)
+                .Take(5);
+
+            foreach (var spending in recentSpending)
+            {
+                RecentSpendingEntries.Add(spending);
+            }
+
+            // Notify property changes for computed properties
+            OnPropertyChanged(nameof(HasNoRecentEntries));
+            OnPropertyChanged(nameof(TotalEntries));
+            OnPropertyChanged(nameof(AverageDailySpending));
+        }
+
+        /// <summary>
+        /// Updates the budget trend data for the last 10 weeks
+        /// </summary>
+        private async Task UpdateBudgetTrendDataAsync()
+        {
+            try
+            {
+                BudgetTrendData.Clear();
+
+                // Calculate 10 weeks back from today
+                var endDate = DateTime.Now.Date;
+                var startDate = endDate.AddDays(-70); // 10 weeks
+
+                // Get data for the entire 10-week period
+                var allIncome = await _budgetService.GetIncomeAsync(startDate, endDate);
+                var allSpending = await _budgetService.GetSpendingWithCategoryAsync(startDate, endDate);
+
+                // Group by week and calculate weekly totals
+                for (int weekOffset = 0; weekOffset < 10; weekOffset++)
+                {
+                    var weekStart = endDate.AddDays(-(9 - weekOffset) * 7);
+                    var weekEnd = weekStart.AddDays(6);
+
+                    var weeklyIncome = allIncome
+                        .Where(i => i.Date >= weekStart && i.Date <= weekEnd)
+                        .Sum(i => i.Amount);
+
+                    var weeklySpending = allSpending
+                        .Where(s => s.Date >= weekStart && s.Date <= weekEnd)
+                        .Sum(s => s.Amount);
+
+                    BudgetTrendData.Add(new BudgetManagement.Views.UserControls.WeeklyBudgetData
+                    {
+                        WeekStartDate = weekStart,
+                        TotalIncome = weeklyIncome,
+                        TotalSpending = weeklySpending
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                StatusMessage = $"Error updating trend data: {ex.Message}";
+            }
+        }
+
         // Command implementations
         private async Task AddIncomeAsync()
         {
             try
             {
+                // DEBUG: Show that command is being executed
+                StatusMessage = "🔄 Add Income command triggered...";
+                
                 // Ensure app is fully loaded before showing dialog
                 if (IsLoading)
                 {
                     StatusMessage = "Please wait for the application to finish loading...";
                     return;
                 }
-
-                // Give UI a moment to settle if just started
-                await Task.Delay(100);
                 
+                StatusMessage = "🔄 Opening Add Income dialog...";
                 var income = await _dialogService.ShowIncomeDialogAsync(new Income { Date = DateTime.Today });
                 if (income != null)
                 {
+                    StatusMessage = "🔄 Saving income entry...";
                     await _budgetService.AddIncomeAsync(income);
-                    await RefreshDataAsync();
-                    StatusMessage = "Income entry added successfully";
+                    
+                    // Optimize: Add the new entry directly instead of full refresh
+                    IncomeEntries.Insert(0, income); // Add at top (most recent first)
+                    UpdateRecentEntries();
+                    
+                    // Update summary only
+                    BudgetSummary = await _budgetService.GetBudgetSummaryAsync(SelectedPeriodStart, SelectedPeriodEnd);
+                    OnPropertyChanged(nameof(AverageDailySpending));
+                    OnPropertyChanged(nameof(TotalEntries));
+                    
+                    StatusMessage = "✅ " + (Application.Current.Resources["IncomeAddedSuccess"]?.ToString() ?? "Income entry added successfully");
+                }
+                else
+                {
+                    StatusMessage = "❌ Add Income dialog was canceled or returned null";
                 }
             }
             catch (Exception ex)
             {
-                StatusMessage = $"Error adding income: {ex.Message}";
+                StatusMessage = $"❌ Error adding income: {ex.Message}";
                 await _dialogService.ShowErrorAsync("Add Income Error", ex.Message);
             }
         }
@@ -216,27 +348,55 @@ namespace BudgetManagement.ViewModels
         {
             try
             {
+                // DEBUG: Show that command is being executed
+                StatusMessage = "🔄 Add Spending command triggered...";
+                
                 // Ensure app is fully loaded before showing dialog
                 if (IsLoading)
                 {
                     StatusMessage = "Please wait for the application to finish loading...";
                     return;
                 }
-
-                // Give UI a moment to settle if just started
-                await Task.Delay(100);
                 
+                StatusMessage = "🔄 Opening Add Spending dialog...";
                 var spending = await _dialogService.ShowSpendingDialogAsync(new Spending { Date = DateTime.Today }, Categories.ToList());
                 if (spending != null)
                 {
+                    StatusMessage = "🔄 Saving spending entry...";
                     await _budgetService.AddSpendingAsync(spending);
-                    await RefreshDataAsync();
-                    StatusMessage = "Spending entry added successfully";
+                    
+                    // Optimize: Convert to SpendingWithCategory and add directly
+                    var category = Categories.FirstOrDefault(c => c.Id == spending.CategoryId);
+                    var spendingWithCategory = new SpendingWithCategory
+                    {
+                        Id = spending.Id,
+                        Date = spending.Date,
+                        Amount = spending.Amount,
+                        Description = spending.Description,
+                        CategoryId = spending.CategoryId,
+                        CategoryName = category?.Name ?? "Unknown",
+                        CreatedAt = spending.CreatedAt,
+                        UpdatedAt = spending.UpdatedAt
+                    };
+                    
+                    SpendingEntries.Insert(0, spendingWithCategory); // Add at top
+                    UpdateRecentEntries();
+                    
+                    // Update summary and trends
+                    BudgetSummary = await _budgetService.GetBudgetSummaryAsync(SelectedPeriodStart, SelectedPeriodEnd);
+                    OnPropertyChanged(nameof(AverageDailySpending));
+                    OnPropertyChanged(nameof(TotalEntries));
+                    
+                    StatusMessage = "✅ " + (Application.Current.Resources["SpendingAddedSuccess"]?.ToString() ?? "Spending entry added successfully");
+                }
+                else
+                {
+                    StatusMessage = "❌ Add Spending dialog was canceled or returned null";
                 }
             }
             catch (Exception ex)
             {
-                StatusMessage = $"Error adding spending: {ex.Message}";
+                StatusMessage = $"❌ Error adding spending: {ex.Message}";
                 await _dialogService.ShowErrorAsync("Add Spending Error", ex.Message);
             }
         }

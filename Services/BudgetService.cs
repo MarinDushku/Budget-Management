@@ -10,6 +10,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
 using BudgetManagement.Models;
+using OfficeOpenXml;
+using OfficeOpenXml.Style;
 
 namespace BudgetManagement.Services
 {
@@ -547,15 +549,43 @@ namespace BudgetManagement.Services
 
         public async Task ExportDataAsync(DateTime startDate, DateTime endDate, string? filePath = null)
         {
-            var csvContent = await ExportToCsvAsync(startDate, endDate);
+            // Set EPPlus license context
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             
             if (string.IsNullOrEmpty(filePath))
             {
-                var fileName = $"budget_export_{startDate:yyyyMMdd}_{endDate:yyyyMMdd}.csv";
+                var fileName = $"budget_export_{startDate:yyyyMMdd}_{endDate:yyyyMMdd}.xlsx";
                 filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), fileName);
             }
 
-            await File.WriteAllTextAsync(filePath, csvContent, Encoding.UTF8);
+            await ExportToExcelAsync(startDate, endDate, filePath);
+        }
+
+        public async Task ExportToExcelAsync(DateTime startDate, DateTime endDate, string filePath)
+        {
+            using var package = new ExcelPackage();
+
+            // Get data
+            var income = await GetIncomeAsync(startDate, endDate);
+            var spending = await GetSpendingWithCategoryAsync(startDate, endDate);
+            var summary = await GetBudgetSummaryAsync(startDate, endDate);
+            var categories = await GetCategoriesAsync();
+
+            // Create Summary sheet
+            CreateSummarySheet(package, summary, startDate, endDate);
+
+            // Create Income sheet
+            CreateIncomeSheet(package, income.OrderBy(i => i.Date));
+
+            // Create Spending sheet
+            CreateSpendingSheet(package, spending.OrderBy(s => s.Date));
+
+            // Create Category Analysis sheet
+            CreateCategoryAnalysisSheet(package, spending, categories);
+
+            // Save file
+            var file = new FileInfo(filePath);
+            await package.SaveAsAsync(file);
         }
 
         public async Task<string> ExportToCsvAsync(DateTime startDate, DateTime endDate)
@@ -578,6 +608,157 @@ namespace BudgetManagement.Services
             }
 
             return csv.ToString();
+        }
+
+        private void CreateSummarySheet(ExcelPackage package, BudgetSummary summary, DateTime startDate, DateTime endDate)
+        {
+            var worksheet = package.Workbook.Worksheets.Add("Summary");
+
+            // Header
+            worksheet.Cells["A1"].Value = "Budget Summary Report";
+            worksheet.Cells["A1"].Style.Font.Size = 16;
+            worksheet.Cells["A1"].Style.Font.Bold = true;
+
+            worksheet.Cells["A2"].Value = $"Period: {startDate:yyyy-MM-dd} to {endDate:yyyy-MM-dd}";
+            worksheet.Cells["A2"].Style.Font.Size = 12;
+
+            // Summary data
+            worksheet.Cells["A4"].Value = "Total Income:";
+            worksheet.Cells["B4"].Value = summary.TotalIncome;
+            worksheet.Cells["B4"].Style.Numberformat.Format = "$#,##0.00";
+            worksheet.Cells["B4"].Style.Font.Bold = true;
+            worksheet.Cells["B4"].Style.Font.Color.SetColor(System.Drawing.Color.Green);
+
+            worksheet.Cells["A5"].Value = "Total Spending:";
+            worksheet.Cells["B5"].Value = summary.TotalSpending;
+            worksheet.Cells["B5"].Style.Numberformat.Format = "$#,##0.00";
+            worksheet.Cells["B5"].Style.Font.Bold = true;
+            worksheet.Cells["B5"].Style.Font.Color.SetColor(System.Drawing.Color.Red);
+
+            worksheet.Cells["A6"].Value = "Remaining Budget:";
+            worksheet.Cells["B6"].Value = summary.RemainingBudget;
+            worksheet.Cells["B6"].Style.Numberformat.Format = "$#,##0.00";
+            worksheet.Cells["B6"].Style.Font.Bold = true;
+            worksheet.Cells["B6"].Style.Font.Color.SetColor(summary.RemainingBudget >= 0 ? System.Drawing.Color.Green : System.Drawing.Color.Red);
+
+            // Auto-fit columns
+            worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
+        }
+
+        private void CreateIncomeSheet(ExcelPackage package, IOrderedEnumerable<Income> income)
+        {
+            var worksheet = package.Workbook.Worksheets.Add("Income");
+
+            // Headers
+            worksheet.Cells["A1"].Value = "Date";
+            worksheet.Cells["B1"].Value = "Description";
+            worksheet.Cells["C1"].Value = "Amount";
+
+            // Header styling
+            using (var range = worksheet.Cells["A1:C1"])
+            {
+                range.Style.Font.Bold = true;
+                range.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                range.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGray);
+            }
+
+            // Data
+            int row = 2;
+            foreach (var item in income)
+            {
+                worksheet.Cells[row, 1].Value = item.Date;
+                worksheet.Cells[row, 1].Style.Numberformat.Format = "yyyy-mm-dd";
+                worksheet.Cells[row, 2].Value = item.Description;
+                worksheet.Cells[row, 3].Value = item.Amount;
+                worksheet.Cells[row, 3].Style.Numberformat.Format = "$#,##0.00";
+                row++;
+            }
+
+            // Auto-fit columns
+            worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
+        }
+
+        private void CreateSpendingSheet(ExcelPackage package, IOrderedEnumerable<SpendingWithCategory> spending)
+        {
+            var worksheet = package.Workbook.Worksheets.Add("Spending");
+
+            // Headers
+            worksheet.Cells["A1"].Value = "Date";
+            worksheet.Cells["B1"].Value = "Category";
+            worksheet.Cells["C1"].Value = "Description";
+            worksheet.Cells["D1"].Value = "Amount";
+
+            // Header styling
+            using (var range = worksheet.Cells["A1:D1"])
+            {
+                range.Style.Font.Bold = true;
+                range.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                range.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGray);
+            }
+
+            // Data
+            int row = 2;
+            foreach (var item in spending)
+            {
+                worksheet.Cells[row, 1].Value = item.Date;
+                worksheet.Cells[row, 1].Style.Numberformat.Format = "yyyy-mm-dd";
+                worksheet.Cells[row, 2].Value = item.CategoryName;
+                worksheet.Cells[row, 3].Value = item.Description;
+                worksheet.Cells[row, 4].Value = item.Amount;
+                worksheet.Cells[row, 4].Style.Numberformat.Format = "$#,##0.00";
+                row++;
+            }
+
+            // Auto-fit columns
+            worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
+        }
+
+        private void CreateCategoryAnalysisSheet(ExcelPackage package, IEnumerable<SpendingWithCategory> spending, IEnumerable<Category> categories)
+        {
+            var worksheet = package.Workbook.Worksheets.Add("Category Analysis");
+
+            // Group spending by category
+            var categoryTotals = spending
+                .GroupBy(s => new { s.CategoryId, s.CategoryName })
+                .Select(g => new
+                {
+                    CategoryName = g.Key.CategoryName,
+                    Amount = g.Sum(s => s.Amount),
+                    Count = g.Count(),
+                    Average = g.Average(s => s.Amount)
+                })
+                .OrderByDescending(c => c.Amount)
+                .ToList();
+
+            // Headers
+            worksheet.Cells["A1"].Value = "Category";
+            worksheet.Cells["B1"].Value = "Total Amount";
+            worksheet.Cells["C1"].Value = "Number of Entries";
+            worksheet.Cells["D1"].Value = "Average per Entry";
+
+            // Header styling
+            using (var range = worksheet.Cells["A1:D1"])
+            {
+                range.Style.Font.Bold = true;
+                range.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                range.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGray);
+            }
+
+            // Data
+            int row = 2;
+            foreach (var category in categoryTotals)
+            {
+                worksheet.Cells[row, 1].Value = category.CategoryName;
+                worksheet.Cells[row, 2].Value = category.Amount;
+                worksheet.Cells[row, 2].Style.Numberformat.Format = "$#,##0.00";
+                worksheet.Cells[row, 3].Value = category.Count;
+                worksheet.Cells[row, 4].Value = category.Average;
+                worksheet.Cells[row, 4].Style.Numberformat.Format = "$#,##0.00";
+                row++;
+            }
+
+            // Auto-fit columns
+            worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
         }
 
         #endregion

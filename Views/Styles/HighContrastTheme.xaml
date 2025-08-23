@@ -1,0 +1,292 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- ===========================================
+         HIGH CONTRAST THEME FOR SENIOR ACCESSIBILITY
+         Black backgrounds with white/yellow text
+         High contrast ratios for better readability
+         =========================================== -->
+
+    <!-- Background Colors for High Contrast -->
+    <SolidColorBrush x:Key="HighContrast_MainBackgroundBrush" Color="#000000"/>
+    <SolidColorBrush x:Key="HighContrast_SecondaryBackgroundBrush" Color="#1A1A1A"/>
+    <SolidColorBrush x:Key="HighContrast_ToolbarBackgroundBrush" Color="#000000"/>
+    <SolidColorBrush x:Key="HighContrast_SummaryBackgroundBrush" Color="#0A0A0A"/>
+    <SolidColorBrush x:Key="HighContrast_DialogBackgroundBrush" Color="#000000"/>
+    <SolidColorBrush x:Key="HighContrast_DialogHeaderBrush" Color="#0000FF"/>
+    <SolidColorBrush x:Key="HighContrast_StatusBarBackgroundBrush" Color="#1A1A1A"/>
+
+    <!-- Border Colors for High Contrast -->
+    <SolidColorBrush x:Key="HighContrast_BorderBrush" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="HighContrast_FocusBorderBrush" Color="#FFFF00"/>
+    <SolidColorBrush x:Key="HighContrast_ErrorBorderBrush" Color="#FF0000"/>
+    <SolidColorBrush x:Key="HighContrast_InfoBorderBrush" Color="#00FFFF"/>
+    <SolidColorBrush x:Key="HighContrast_SuccessBorderBrush" Color="#00FF00"/>
+
+    <!-- Text Colors for High Contrast -->
+    <SolidColorBrush x:Key="HighContrast_PrimaryTextBrush" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="HighContrast_SecondaryTextBrush" Color="#FFFF00"/>
+    <SolidColorBrush x:Key="HighContrast_BlackTextBrush" Color="#000000"/>
+    <SolidColorBrush x:Key="HighContrast_ErrorTextBrush" Color="#FF0000"/>
+    <SolidColorBrush x:Key="HighContrast_InfoTextBrush" Color="#00FFFF"/>
+    <SolidColorBrush x:Key="HighContrast_SuccessTextBrush" Color="#00FF00"/>
+
+    <!-- Button Colors for High Contrast -->
+    <SolidColorBrush x:Key="HighContrast_PrimaryButtonBrush" Color="#0000FF"/>
+    <SolidColorBrush x:Key="HighContrast_PrimaryButtonHoverBrush" Color="#4444FF"/>
+    <SolidColorBrush x:Key="HighContrast_SecondaryButtonBrush" Color="#800080"/>
+    <SolidColorBrush x:Key="HighContrast_SecondaryButtonHoverBrush" Color="#AA44AA"/>
+    <SolidColorBrush x:Key="HighContrast_DangerButtonBrush" Color="#FF0000"/>
+    <SolidColorBrush x:Key="HighContrast_DangerButtonHoverBrush" Color="#FF4444"/>
+    <SolidColorBrush x:Key="HighContrast_SuccessButtonBrush" Color="#00FF00"/>
+    <SolidColorBrush x:Key="HighContrast_SuccessButtonHoverBrush" Color="#44FF44"/>
+
+    <!-- Summary Card Colors for High Contrast -->
+    <SolidColorBrush x:Key="HighContrast_SummaryCardBrush" Color="#1A1A1A"/>
+    <SolidColorBrush x:Key="HighContrast_PositiveValueBrush" Color="#00FF00"/>
+    <SolidColorBrush x:Key="HighContrast_NegativeValueBrush" Color="#FF0000"/>
+    <SolidColorBrush x:Key="HighContrast_NeutralValueBrush" Color="#FFFFFF"/>
+
+    <!-- Input Control Colors for High Contrast -->
+    <SolidColorBrush x:Key="HighContrast_InputBackgroundBrush" Color="#000000"/>
+    <SolidColorBrush x:Key="HighContrast_InputTextBrush" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="HighContrast_InputBorderBrush" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="HighContrast_InputFocusBorderBrush" Color="#FFFF00"/>
+
+    <!-- DataGrid Colors for High Contrast -->
+    <SolidColorBrush x:Key="HighContrast_DataGridHeaderBrush" Color="#333333"/>
+    <SolidColorBrush x:Key="HighContrast_DataGridAlternatingRowBrush" Color="#0A0A0A"/>
+    <SolidColorBrush x:Key="HighContrast_DataGridSelectedRowBrush" Color="#0000FF"/>
+    <SolidColorBrush x:Key="HighContrast_DataGridGridLinesBrush" Color="#FFFFFF"/>
+
+    <!-- ===========================================
+         HIGH CONTRAST BUTTON STYLES
+         =========================================== -->
+
+    <!-- High Contrast Primary Button -->
+    <Style x:Key="HighContrastPrimaryButton" TargetType="Button">
+        <Setter Property="Background" Value="{StaticResource HighContrast_PrimaryButtonBrush}"/>
+        <Setter Property="Foreground" Value="{StaticResource HighContrast_PrimaryTextBrush}"/>
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Height" Value="50"/>
+        <Setter Property="MinWidth" Value="140"/>
+        <Setter Property="Padding" Value="20,12"/>
+        <Setter Property="BorderThickness" Value="2"/>
+        <Setter Property="BorderBrush" Value="{StaticResource HighContrast_BorderBrush}"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}"
+                            CornerRadius="2"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            BorderBrush="{TemplateBinding BorderBrush}">
+                        <ContentPresenter HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"
+                                          Margin="{TemplateBinding Padding}"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="{StaticResource HighContrast_PrimaryButtonHoverBrush}"/>
+                            <Setter Property="BorderBrush" Value="{StaticResource HighContrast_FocusBorderBrush}"/>
+                            <Setter Property="BorderThickness" Value="3"/>
+                        </Trigger>
+                        <Trigger Property="IsFocused" Value="True">
+                            <Setter Property="BorderBrush" Value="{StaticResource HighContrast_FocusBorderBrush}"/>
+                            <Setter Property="BorderThickness" Value="3"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Background" Value="{StaticResource HighContrast_PrimaryButtonHoverBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Background" Value="#333333"/>
+                            <Setter Property="Foreground" Value="#888888"/>
+                            <Setter Property="BorderBrush" Value="#666666"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- High Contrast Secondary Button -->
+    <Style x:Key="HighContrastSecondaryButton" TargetType="Button" BasedOn="{StaticResource HighContrastPrimaryButton}">
+        <Setter Property="Background" Value="{StaticResource HighContrast_SecondaryButtonBrush}"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{StaticResource HighContrast_SecondaryButtonHoverBrush}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- High Contrast Success Button -->
+    <Style x:Key="HighContrastSuccessButton" TargetType="Button" BasedOn="{StaticResource HighContrastPrimaryButton}">
+        <Setter Property="Background" Value="{StaticResource HighContrast_SuccessButtonBrush}"/>
+        <Setter Property="Foreground" Value="{StaticResource HighContrast_BlackTextBrush}"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{StaticResource HighContrast_SuccessButtonHoverBrush}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- High Contrast Danger Button -->
+    <Style x:Key="HighContrastDangerButton" TargetType="Button" BasedOn="{StaticResource HighContrastPrimaryButton}">
+        <Setter Property="Background" Value="{StaticResource HighContrast_DangerButtonBrush}"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{StaticResource HighContrast_DangerButtonHoverBrush}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- ===========================================
+         HIGH CONTRAST INPUT STYLES
+         =========================================== -->
+
+    <!-- High Contrast TextBox Style -->
+    <Style x:Key="HighContrastTextBoxStyle" TargetType="TextBox">
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Padding" Value="12,10"/>
+        <Setter Property="Height" Value="45"/>
+        <Setter Property="BorderThickness" Value="2"/>
+        <Setter Property="BorderBrush" Value="{StaticResource HighContrast_InputBorderBrush}"/>
+        <Setter Property="Background" Value="{StaticResource HighContrast_InputBackgroundBrush}"/>
+        <Setter Property="Foreground" Value="{StaticResource HighContrast_InputTextBrush}"/>
+        <Setter Property="CaretBrush" Value="{StaticResource HighContrast_FocusBorderBrush}"/>
+        <Setter Property="SelectionBrush" Value="{StaticResource HighContrast_PrimaryButtonBrush}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TextBox">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="2">
+                        <ScrollViewer x:Name="PART_ContentHost"
+                                      Margin="{TemplateBinding Padding}"
+                                      VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsFocused" Value="True">
+                            <Setter Property="BorderBrush" Value="{StaticResource HighContrast_InputFocusBorderBrush}"/>
+                            <Setter Property="BorderThickness" Value="3"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Background" Value="#333333"/>
+                            <Setter Property="Foreground" Value="#888888"/>
+                            <Setter Property="BorderBrush" Value="#666666"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- High Contrast ComboBox Style -->
+    <Style x:Key="HighContrastComboBoxStyle" TargetType="ComboBox">
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Padding" Value="12,10"/>
+        <Setter Property="Height" Value="45"/>
+        <Setter Property="BorderThickness" Value="2"/>
+        <Setter Property="BorderBrush" Value="{StaticResource HighContrast_InputBorderBrush}"/>
+        <Setter Property="Background" Value="{StaticResource HighContrast_InputBackgroundBrush}"/>
+        <Setter Property="Foreground" Value="{StaticResource HighContrast_InputTextBrush}"/>
+        <Style.Triggers>
+            <Trigger Property="IsFocused" Value="True">
+                <Setter Property="BorderBrush" Value="{StaticResource HighContrast_InputFocusBorderBrush}"/>
+                <Setter Property="BorderThickness" Value="3"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- High Contrast CheckBox Style -->
+    <Style x:Key="HighContrastCheckBoxStyle" TargetType="CheckBox">
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="{StaticResource HighContrast_PrimaryTextBrush}"/>
+        <Setter Property="Background" Value="{StaticResource HighContrast_InputBackgroundBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource HighContrast_InputBorderBrush}"/>
+        <Setter Property="BorderThickness" Value="2"/>
+        <Style.Triggers>
+            <Trigger Property="IsFocused" Value="True">
+                <Setter Property="BorderBrush" Value="{StaticResource HighContrast_InputFocusBorderBrush}"/>
+                <Setter Property="BorderThickness" Value="3"/>
+            </Trigger>
+            <Trigger Property="IsChecked" Value="True">
+                <Setter Property="Background" Value="{StaticResource HighContrast_SuccessButtonBrush}"/>
+                <Setter Property="Foreground" Value="{StaticResource HighContrast_BlackTextBrush}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- ===========================================
+         HIGH CONTRAST PANEL STYLES
+         =========================================== -->
+
+    <!-- High Contrast Side Panel -->
+    <Style x:Key="HighContrastSidePanel" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource HighContrast_SecondaryBackgroundBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource HighContrast_BorderBrush}"/>
+        <Setter Property="BorderThickness" Value="2"/>
+        <Setter Property="CornerRadius" Value="2"/>
+        <Setter Property="Margin" Value="5"/>
+        <Setter Property="Padding" Value="15"/>
+    </Style>
+
+    <!-- High Contrast Panel Header -->
+    <Style x:Key="HighContrastPanelHeader" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="18"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Foreground" Value="{StaticResource HighContrast_SecondaryTextBrush}"/>
+        <Setter Property="Margin" Value="0,0,0,10"/>
+    </Style>
+
+    <!-- High Contrast Summary Card -->
+    <Style x:Key="HighContrastSummaryCard" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource HighContrast_SummaryCardBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource HighContrast_BorderBrush}"/>
+        <Setter Property="BorderThickness" Value="2"/>
+        <Setter Property="CornerRadius" Value="2"/>
+        <Setter Property="Padding" Value="20,15"/>
+    </Style>
+
+    <!-- ===========================================
+         HIGH CONTRAST TEXT STYLES
+         =========================================== -->
+
+    <!-- High Contrast Header Text -->
+    <Style x:Key="HighContrastHeaderText" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="28"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Margin" Value="10"/>
+        <Setter Property="Foreground" Value="{StaticResource HighContrast_SecondaryTextBrush}"/>
+    </Style>
+
+    <!-- High Contrast Primary Text -->
+    <Style x:Key="HighContrastPrimaryText" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="{StaticResource HighContrast_PrimaryTextBrush}"/>
+    </Style>
+
+    <!-- High Contrast Secondary Text -->
+    <Style x:Key="HighContrastSecondaryText" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontWeight" Value="Normal"/>
+        <Setter Property="Foreground" Value="{StaticResource HighContrast_SecondaryTextBrush}"/>
+    </Style>
+
+    <!-- ===========================================
+         HIGH CONTRAST SCROLLVIEWER STYLE
+         =========================================== -->
+
+    <!-- High Contrast ScrollViewer -->
+    <Style x:Key="HighContrastScrollViewer" TargetType="ScrollViewer">
+        <Setter Property="Background" Value="{StaticResource HighContrast_MainBackgroundBrush}"/>
+        <Setter Property="Foreground" Value="{StaticResource HighContrast_PrimaryTextBrush}"/>
+    </Style>
+
+</ResourceDictionary>

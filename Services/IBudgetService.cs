@@ -76,6 +76,7 @@ namespace BudgetManagement.Services
         // UI Settings
         int FontSize { get; set; }
         string Theme { get; set; }
+        string Language { get; set; }
         string CurrencySymbol { get; set; }
         string DateFormat { get; set; }
 

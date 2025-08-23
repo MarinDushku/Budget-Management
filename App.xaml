@@ -5,6 +5,8 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <!-- Load localization resources (default to English) -->
+                <ResourceDictionary Source="Resources/Strings.en.xaml"/>
                 <!-- Senior-friendly styles - comment out for now to test -->
                 <!-- <ResourceDictionary Source="Views/Styles/SeniorFriendlyStyles.xaml"/> -->
             </ResourceDictionary.MergedDictionaries>
@@ -26,7 +28,7 @@
             <Style TargetType="Window">
                 <Setter Property="FontFamily" Value="Segoe UI"/>
                 <Setter Property="FontSize" Value="16"/>
-                <Setter Property="Background" Value="{StaticResource MainBackgroundBrush}"/>
+                <Setter Property="Background" Value="#F5F5F5"/>
                 <Setter Property="UseLayoutRounding" Value="True"/>
                 <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
                 <Setter Property="TextOptions.TextRenderingMode" Value="ClearType"/>
@@ -34,19 +36,73 @@
             </Style>
 
             <!-- Default button style -->
-            <Style TargetType="Button" BasedOn="{StaticResource LargePrimaryButton}"/>
+            <Style TargetType="Button">
+                <Setter Property="FontSize" Value="16"/>
+                <Setter Property="Padding" Value="12,8"/>
+                <Setter Property="Margin" Value="4"/>
+                <Setter Property="Background" Value="#2196F3"/>
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="BorderBrush" Value="#1976D2"/>
+                <Setter Property="BorderThickness" Value="1"/>
+            </Style>
 
             <!-- Default TextBox style -->
-            <Style TargetType="TextBox" BasedOn="{StaticResource LargeTextBoxStyle}"/>
+            <Style TargetType="TextBox">
+                <Setter Property="FontSize" Value="16"/>
+                <Setter Property="Padding" Value="8"/>
+                <Setter Property="Margin" Value="4"/>
+                <Setter Property="BorderBrush" Value="#CCCCCC"/>
+                <Setter Property="BorderThickness" Value="2"/>
+            </Style>
 
             <!-- Default ComboBox style -->
-            <Style TargetType="ComboBox" BasedOn="{StaticResource LargeComboBoxStyle}"/>
+            <Style TargetType="ComboBox">
+                <Setter Property="FontSize" Value="16"/>
+                <Setter Property="Padding" Value="8"/>
+                <Setter Property="Margin" Value="4"/>
+                <Setter Property="BorderBrush" Value="#CCCCCC"/>
+                <Setter Property="BorderThickness" Value="2"/>
+            </Style>
 
             <!-- Default DatePicker style -->
-            <Style TargetType="DatePicker" BasedOn="{StaticResource LargeDatePickerStyle}"/>
+            <Style TargetType="DatePicker">
+                <Setter Property="FontSize" Value="16"/>
+                <Setter Property="Padding" Value="8"/>
+                <Setter Property="Margin" Value="4"/>
+                <Setter Property="BorderBrush" Value="#CCCCCC"/>
+                <Setter Property="BorderThickness" Value="2"/>
+            </Style>
 
             <!-- Default DataGrid style -->
-            <Style TargetType="DataGrid" BasedOn="{StaticResource SeniorFriendlyDataGridStyle}"/>
+            <Style TargetType="DataGrid">
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="RowHeight" Value="32"/>
+                <Setter Property="HeadersVisibility" Value="Column"/>
+                <Setter Property="GridLinesVisibility" Value="Horizontal"/>
+                <Setter Property="AlternatingRowBackground" Value="#F9F9F9"/>
+            </Style>
+
+            <!-- Additional button styles referenced in XAML -->
+            <Style x:Key="LargeButton" TargetType="Button">
+                <Setter Property="FontSize" Value="18"/>
+                <Setter Property="Padding" Value="16,12"/>
+                <Setter Property="Margin" Value="8"/>
+                <Setter Property="Background" Value="#2196F3"/>
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="BorderBrush" Value="#1976D2"/>
+                <Setter Property="BorderThickness" Value="2"/>
+                <Setter Property="FontWeight" Value="SemiBold"/>
+            </Style>
+
+            <Style x:Key="ButtonStyle" TargetType="Button">
+                <Setter Property="FontSize" Value="16"/>
+                <Setter Property="Padding" Value="12,8"/>
+                <Setter Property="Margin" Value="4"/>
+                <Setter Property="Background" Value="#2196F3"/>
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="BorderBrush" Value="#1976D2"/>
+                <Setter Property="BorderThickness" Value="1"/>
+            </Style>
 
             <!-- Senior-friendly ToolTip style -->
             <Style TargetType="ToolTip">

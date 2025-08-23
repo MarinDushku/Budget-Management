@@ -1,0 +1,111 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <!-- Main Window -->
+    <sys:String x:Key="AppTitle">💰 Menaxhuesi i Buxhetit</sys:String>
+    <sys:String x:Key="AddIncomeButton">➕ Shto të Ardhura</sys:String>
+    <sys:String x:Key="AddSpendingButton">💸 Shto Shpenzim</sys:String>
+    <sys:String x:Key="RefreshButton">🔄 Rifresko</sys:String>
+    
+    <!-- Summary Cards -->
+    <sys:String x:Key="TotalIncome">Të Ardhurat Totale</sys:String>
+    <sys:String x:Key="TotalSpending">Shpenzimet Totale</sys:String>
+    <sys:String x:Key="RemainingBudget">Buxheti i Mbetur</sys:String>
+    <sys:String x:Key="ThisPeriod">Kjo periudhë</sys:String>
+    <sys:String x:Key="AllCategories">Të gjitha kategoritë</sys:String>
+    <sys:String x:Key="Available">Në dispozicion</sys:String>
+    
+    <!-- Panel Headers -->
+    <sys:String x:Key="Analytics">📈 Analitika</sys:String>
+    <sys:String x:Key="RecentActivity">📝 Aktiviteti i Fundit</sys:String>
+    <sys:String x:Key="ExportTools">💾 Eksporti &amp; Mjete</sys:String>
+    
+    <!-- Analytics Panel -->
+    <sys:String x:Key="SpendingByCategory">Shpenzimet sipas Kategorive</sys:String>
+    <sys:String x:Key="BudgetTrends">Tendencat e Buxhetit (10 javë)</sys:String>
+    <sys:String x:Key="TopCategories">Kategoritë Kryesore</sys:String>
+    <sys:String x:Key="BestWeek">Java më e Mirë</sys:String>
+    <sys:String x:Key="WorstWeek">Java më e Keqe</sys:String>
+    <sys:String x:Key="WeekTrend">Tendenca 10-Javore</sys:String>
+    
+    <!-- Recent Activity -->
+    <sys:String x:Key="RecentIncome">💰 Të Ardhurat e Fundit</sys:String>
+    <sys:String x:Key="RecentSpending">💸 Shpenzimet e Fundit</sys:String>
+    <sys:String x:Key="NoRecentEntries">Nuk ka të dhëna të fundit për të shfaqur</sys:String>
+    
+    <!-- Export Panel -->
+    <sys:String x:Key="ExportOptions">Opsionet e Eksportit</sys:String>
+    <sys:String x:Key="ExportToExcel">📊 Eksporto në Excel</sys:String>
+    <sys:String x:Key="ExportToPDF">📄 Eksporto në PDF</sys:String>
+    <sys:String x:Key="ComingSoon">Së shpejti</sys:String>
+    <sys:String x:Key="QuickStats">Statistika të Shpejta</sys:String>
+    <sys:String x:Key="AverageDailySpending">Shpenzimi Mesatar Ditor</sys:String>
+    <sys:String x:Key="EntriesThisPeriod">Regjistrime këtë Periudhë</sys:String>
+    
+    <!-- Dialogs -->
+    <sys:String x:Key="AddIncomeTitle">Shto të Ardhura</sys:String>
+    <sys:String x:Key="EditIncomeTitle">Ndrysho të Ardhurat</sys:String>
+    <sys:String x:Key="AddSpendingTitle">Shto Shpenzim</sys:String>
+    <sys:String x:Key="EditSpendingTitle">Ndrysho Shpenzimin</sys:String>
+    <sys:String x:Key="Date">Data:</sys:String>
+    <sys:String x:Key="Description">Përshkrimi:</sys:String>
+    <sys:String x:Key="Amount">Shuma:</sys:String>
+    <sys:String x:Key="Category">Kategoria:</sys:String>
+    <sys:String x:Key="Save">Ruaj</sys:String>
+    <sys:String x:Key="Cancel">Anulo</sys:String>
+    
+    <!-- Validation Messages -->
+    <sys:String x:Key="ValidationError">Gabim Validimi</sys:String>
+    <sys:String x:Key="EnterDescription">Ju lutemi shkruani një përshkrim.</sys:String>
+    <sys:String x:Key="EnterValidAmount">Ju lutemi shkruani një shumë të vlefshme më të madhe se 0.</sys:String>
+    <sys:String x:Key="SelectDate">Ju lutemi zgjidhni një datë.</sys:String>
+    <sys:String x:Key="SelectCategory">Ju lutemi zgjidhni një kategori.</sys:String>
+    
+    <!-- Confirmation Messages -->
+    <sys:String x:Key="DeleteIncomeTitle">Fshij të Ardhurat</sys:String>
+    <sys:String x:Key="DeleteSpendingTitle">Fshij Shpenzimin</sys:String>
+    <sys:String x:Key="DeleteIncomeConfirm">A jeni i sigurt që doni të fshini të ardhurat '{0}' për {1}?</sys:String>
+    <sys:String x:Key="DeleteSpendingConfirm">A jeni i sigurt që doni të fshini shpenzimin '{0}' për {1}?</sys:String>
+    
+    <!-- Status Messages -->
+    <sys:String x:Key="AppLoading">Duke nisur aplikacionin...</sys:String>
+    <sys:String x:Key="LoadingData">Duke ngarkuar të dhënat...</sys:String>
+    <sys:String x:Key="Ready">Gati</sys:String>
+    <sys:String x:Key="IncomeAddedSuccess">Të ardhurat u shtuan me sukses</sys:String>
+    <sys:String x:Key="SpendingAddedSuccess">Shpenzimi u shtua me sukses</sys:String>
+    <sys:String x:Key="IncomeUpdatedSuccess">Të ardhurat u ndryshuan me sukses</sys:String>
+    <sys:String x:Key="SpendingUpdatedSuccess">Shpenzimi u ndryshua me sukses</sys:String>
+    <sys:String x:Key="IncomeDeletedSuccess">Të ardhurat u fshinë me sukses</sys:String>
+    <sys:String x:Key="SpendingDeletedSuccess">Shpenzimi u fshi me sukses</sys:String>
+    <sys:String x:Key="ExportingData">Duke eksportuar të dhënat...</sys:String>
+    <sys:String x:Key="DataExportedSuccess">Të dhënat u eksportuan me sukses</sys:String>
+    <sys:String x:Key="LoadedEntries">U ngarkuan {0} të ardhura dhe {1} shpenzime</sys:String>
+    
+    <!-- Error Messages -->
+    <sys:String x:Key="InitializationError">Gabim Nisje</sys:String>
+    <sys:String x:Key="DataLoadingError">Gabim Ngarkimi të Dhënash</sys:String>
+    <sys:String x:Key="AddIncomeError">Gabim Shtimi të Ardhurave</sys:String>
+    <sys:String x:Key="AddSpendingError">Gabim Shtimi Shpenzimi</sys:String>
+    <sys:String x:Key="EditIncomeError">Gabim Ndryshimi të Ardhurave</sys:String>
+    <sys:String x:Key="EditSpendingError">Gabim Ndryshimi Shpenzimi</sys:String>
+    <sys:String x:Key="DeleteError">Gabim Fshirje</sys:String>
+    <sys:String x:Key="ExportError">Gabim Eksporti</sys:String>
+    <sys:String x:Key="ExportComplete">Eksporti u Përfundua</sys:String>
+    <sys:String x:Key="DataExportedMessage">Të dhënat u eksportuan me sukses</sys:String>
+    
+    <!-- Settings -->
+    <sys:String x:Key="Language">Gjuha</sys:String>
+    <sys:String x:Key="English">Anglisht</sys:String>
+    <sys:String x:Key="Albanian">Shqip</sys:String>
+    
+    <!-- Accessibility -->
+    <sys:String x:Key="Accessibility">🔧 Qasueshmëria</sys:String>
+    <sys:String x:Key="HighContrastMode">Modaliteti me Kontrast të Lartë</sys:String>
+    <sys:String x:Key="FontSize">Madhësia e Shkrimit:</sys:String>
+    <sys:String x:Key="SmallFont">Shkrim i vogël</sys:String>
+    <sys:String x:Key="MediumFont">Shkrim mesatar (default)</sys:String>
+    <sys:String x:Key="LargeFont">Shkrim i madh</sys:String>
+    <sys:String x:Key="QuickAmounts">💡 Shuma të shpejta:</sys:String>
+    
+</ResourceDictionary>

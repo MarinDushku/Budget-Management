@@ -82,6 +82,7 @@ namespace BudgetManagement
                 {
                     // Register application services
                     services.AddSingleton<ISettingsService, SettingsService>();
+                    services.AddSingleton<ILocalizationService, LocalizationService>();
                     services.AddSingleton<IBudgetService>(provider =>
                     {
                         var settings = provider.GetRequiredService<ISettingsService>();
@@ -124,6 +125,10 @@ namespace BudgetManagement
                 // Initialize settings service
                 var settingsService = _host.Services.GetRequiredService<ISettingsService>();
                 await settingsService.LoadSettingsAsync();
+
+                // Initialize localization service with saved language
+                var localizationService = _host.Services.GetRequiredService<ILocalizationService>();
+                localizationService.SetLanguage(settingsService.Language);
 
                 // CRITICAL: Always ensure database is properly initialized
                 var budgetService = _host.Services.GetRequiredService<IBudgetService>();

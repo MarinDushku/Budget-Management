@@ -12,26 +12,64 @@
         ShowInTaskbar="False">
 
     <Window.Resources>
+        <ResourceDictionary>
+            <!-- Temporarily removed style references to fix build issues -->
+            <!-- <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Views/Styles/SeniorFriendlyStyles.xaml"/>
+                <ResourceDictionary Source="/Views/Styles/SeniorUXEnhancements.xaml"/>
+            </ResourceDictionary.MergedDictionaries> -->
+        
         <Style x:Key="LabelStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="16"/>
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="Margin" Value="0,10,0,5"/>
+            <Setter Property="Foreground" Value="#333333"/>
         </Style>
         
         <Style x:Key="InputStyle" TargetType="Control">
             <Setter Property="FontSize" Value="16"/>
-            <Setter Property="Padding" Value="10"/>
+            <Setter Property="Padding" Value="12,10"/>
             <Setter Property="Margin" Value="0,0,0,15"/>
-            <Setter Property="Height" Value="40"/>
+            <Setter Property="MinHeight" Value="45"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
         </Style>
         
         <Style x:Key="ButtonStyle" TargetType="Button">
             <Setter Property="FontSize" Value="16"/>
-            <Setter Property="Padding" Value="15,10"/>
             <Setter Property="Margin" Value="5"/>
-            <Setter Property="MinWidth" Value="100"/>
-            <Setter Property="Height" Value="40"/>
+            <Setter Property="MinWidth" Value="120"/>
+            <Setter Property="Height" Value="45"/>
+            <Setter Property="Background" Value="#2196F3"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#1976D2"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="12,8"/>
         </Style>
+        
+        <Style x:Key="LargeDangerButton" TargetType="Button">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="MinWidth" Value="120"/>
+            <Setter Property="Height" Value="45"/>
+            <Setter Property="Background" Value="#F44336"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#D32F2F"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="12,8"/>
+        </Style>
+        
+        <Style x:Key="LargeSuccessButton" TargetType="Button">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="MinWidth" Value="120"/>
+            <Setter Property="Height" Value="45"/>
+            <Setter Property="Background" Value="#4CAF50"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#388E3C"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="12,8"/>
+        </Style>
+        </ResourceDictionary>
     </Window.Resources>
 
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
@@ -62,15 +100,14 @@
             </Border>
 
             <!-- Date Field -->
-            <TextBlock Grid.Row="1" Text="📅 Date:" Style="{StaticResource LabelStyle}" Foreground="#333"/>
+            <TextBlock Grid.Row="1" Text="📅 Date:" Style="{StaticResource LabelStyle}"/>
             <DatePicker x:Name="DatePicker" Grid.Row="2" Margin="0,5,0,20" 
-                        Style="{StaticResource InputStyle}" FontSize="16"/>
+                        FontSize="16" Padding="12,10" MinHeight="45"/>
 
             <!-- Category Field -->
-            <TextBlock Grid.Row="3" Text="🏷️ Category:" Style="{StaticResource LabelStyle}" Foreground="#333"/>
+            <TextBlock Grid.Row="3" Text="🏷️ Category:" Style="{StaticResource LabelStyle}"/>
             <ComboBox x:Name="CategoryComboBox" Grid.Row="4" Margin="0,5,0,15"
-                      Style="{StaticResource InputStyle}" DisplayMemberPath="Name" SelectedValuePath="Id"
-                      Background="White" BorderBrush="#CCC" BorderThickness="2"/>
+                      FontSize="16" Padding="12,10" MinHeight="45" DisplayMemberPath="Name" SelectedValuePath="Id"/>
 
             <!-- Category Help -->
             <Border Grid.Row="5" Background="#E3F2FD" BorderBrush="#2196F3" BorderThickness="1" 
@@ -86,30 +123,55 @@
             </Border>
 
             <!-- Description Field -->
-            <TextBlock Grid.Row="6" Text="📝 Description:" Style="{StaticResource LabelStyle}" Foreground="#333"/>
+            <TextBlock Grid.Row="6" Text="📝 Description:" Style="{StaticResource LabelStyle}"/>
             <TextBox x:Name="DescriptionTextBox" Grid.Row="7" Margin="0,5,0,20"
-                     Style="{StaticResource InputStyle}" MaxLength="200"
-                     ToolTip="What did you spend money on? (e.g., 'Grocery shopping', 'Electric bill')"
-                     Background="White" BorderBrush="#CCC" BorderThickness="2"/>
+                     FontSize="16" Padding="12,10" MinHeight="45" MaxLength="200"
+                     ToolTip="What did you spend money on? (e.g., 'Grocery shopping', 'Electric bill')"/>
 
             <!-- Amount Field -->
-            <TextBlock Grid.Row="8" Text="💵 Amount:" Style="{StaticResource LabelStyle}" Foreground="#333"/>
-            <StackPanel Grid.Row="9" Orientation="Horizontal" Margin="0,5,0,30">
-                <TextBlock Text="$" FontSize="24" FontWeight="Bold" VerticalAlignment="Center" 
-                           Margin="10,0,5,0" Foreground="#D32F2F"/>
-                <TextBox x:Name="AmountTextBox" Width="200" Height="45" FontSize="18"
-                         Padding="10" Background="White" BorderBrush="#CCC" BorderThickness="2"
-                         ToolTip="Enter the dollar amount (e.g., 125.50)"/>
+            <TextBlock Grid.Row="8" Text="💵 Amount:" Style="{StaticResource LabelStyle}"/>
+            <StackPanel Grid.Row="9" Orientation="Vertical" Margin="0,5,0,30">
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
+                    <TextBlock Text="$" FontSize="24" FontWeight="Bold" VerticalAlignment="Center" 
+                               Margin="10,0,8,0" Foreground="#D32F2F"/>
+                    <TextBox x:Name="AmountTextBox" Width="220" Height="50" FontSize="18"
+                             Padding="12,10" TextAlignment="Right"
+                             PreviewTextInput="AmountTextBox_PreviewTextInput"
+                             GotFocus="AmountTextBox_GotFocus"
+                             LostFocus="AmountTextBox_LostFocus"
+                             KeyDown="AmountTextBox_KeyDown"
+                             ToolTip="Enter the dollar amount (e.g., 125.50)"/>
+                </StackPanel>
+                
+                <!-- Quick Amount Buttons -->
+                <TextBlock Text="{StaticResource QuickAmounts}" FontSize="12" Foreground="#666" Margin="0,0,0,8"/>
+                <WrapPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                    <Button Content="$10" Click="QuickAmount_Click" Tag="10" 
+                            MinWidth="50" Height="35" Margin="3" FontSize="13" Padding="8,6"
+                            Background="#FFEBEE" BorderBrush="#F44336" BorderThickness="1"/>
+                    <Button Content="$25" Click="QuickAmount_Click" Tag="25" 
+                            MinWidth="50" Height="35" Margin="3" FontSize="13" Padding="8,6"
+                            Background="#FFEBEE" BorderBrush="#F44336" BorderThickness="1"/>
+                    <Button Content="$50" Click="QuickAmount_Click" Tag="50" 
+                            MinWidth="50" Height="35" Margin="3" FontSize="13" Padding="8,6"
+                            Background="#FFEBEE" BorderBrush="#F44336" BorderThickness="1"/>
+                    <Button Content="$100" Click="QuickAmount_Click" Tag="100" 
+                            MinWidth="55" Height="35" Margin="3" FontSize="13" Padding="8,6"
+                            Background="#FFEBEE" BorderBrush="#F44336" BorderThickness="1"/>
+                    <Button Content="$200" Click="QuickAmount_Click" Tag="200" 
+                            MinWidth="55" Height="35" Margin="3" FontSize="13" Padding="8,6"
+                            Background="#FFEBEE" BorderBrush="#F44336" BorderThickness="1"/>
+                </WrapPanel>
             </StackPanel>
 
             <!-- Buttons -->
             <Border Grid.Row="10" Background="#F5F5F5" BorderBrush="#DDD" BorderThickness="1" 
-                    CornerRadius="5" Padding="15" Margin="0,10,0,0">
+                    CornerRadius="5" Padding="15" Margin="0,15,0,0">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Button Content="❌ Cancel" Click="CancelButton_Click" Style="{StaticResource ButtonStyle}"
-                            Background="#E0E0E0" BorderBrush="#BBB" Margin="0,0,10,0"/>
-                    <Button Content="💰 Save Spending" Click="SaveButton_Click" Style="{StaticResource ButtonStyle}"
-                            Background="#F44336" Foreground="White" BorderBrush="#F44336" MinWidth="140"/>
+                    <Button Content="❌ Cancel" Click="CancelButton_Click" 
+                            Style="{StaticResource LargeDangerButton}" Margin="0,0,15,0"/>
+                    <Button Content="💰 Save Spending" Click="SaveButton_Click" 
+                            Style="{StaticResource LargeSuccessButton}" MinWidth="150"/>
                 </StackPanel>
             </Border>
         </Grid>

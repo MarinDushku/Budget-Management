@@ -21,13 +21,11 @@ namespace BudgetManagement.Services
 
         public async Task<Income?> ShowIncomeDialogAsync(Income income)
         {
-            // Ensure we're on the UI thread and app is ready
-            await Task.Delay(50); // Small delay to let UI settle
-            
             return await Application.Current.Dispatcher.InvokeAsync(() =>
             {
                 try
                 {
+                    System.Diagnostics.Debug.WriteLine("DialogService: Creating IncomeDialog...");
                     var dialog = new IncomeDialog(income)
                     {
                         Owner = GetActiveWindow()
@@ -38,12 +36,14 @@ namespace BudgetManagement.Services
                     dialog.ShowInTaskbar = false;
                     dialog.Topmost = false;
 
+                    System.Diagnostics.Debug.WriteLine("DialogService: Showing IncomeDialog...");
                     var result = dialog.ShowDialog();
+                    System.Diagnostics.Debug.WriteLine($"DialogService: IncomeDialog result: {result}, Income: {dialog.Income != null}");
                     return result == true ? dialog.Income : null;
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    // If there's a resource loading issue, return null gracefully
+                    System.Diagnostics.Debug.WriteLine($"DialogService: Exception creating/showing IncomeDialog: {ex}");
                     return null;
                 }
             });
@@ -51,13 +51,11 @@ namespace BudgetManagement.Services
 
         public async Task<Spending?> ShowSpendingDialogAsync(Spending spending, List<Category> categories)
         {
-            // Ensure we're on the UI thread and app is ready
-            await Task.Delay(50); // Small delay to let UI settle
-            
             return await Application.Current.Dispatcher.InvokeAsync(() =>
             {
                 try
                 {
+                    System.Diagnostics.Debug.WriteLine("DialogService: Creating SpendingDialog...");
                     var dialog = new SpendingDialog(spending, categories)
                     {
                         Owner = GetActiveWindow()
@@ -68,12 +66,14 @@ namespace BudgetManagement.Services
                     dialog.ShowInTaskbar = false;
                     dialog.Topmost = false;
 
+                    System.Diagnostics.Debug.WriteLine("DialogService: Showing SpendingDialog...");
                     var result = dialog.ShowDialog();
+                    System.Diagnostics.Debug.WriteLine($"DialogService: SpendingDialog result: {result}, Spending: {dialog.Spending != null}");
                     return result == true ? dialog.Spending : null;
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    // If there's a resource loading issue, return null gracefully
+                    System.Diagnostics.Debug.WriteLine($"DialogService: Exception creating/showing SpendingDialog: {ex}");
                     return null;
                 }
             });
