@@ -1,0 +1,117 @@
+<Window x:Class="BudgetManagement.Views.Dialogs.SpendingDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Add Spending Entry" 
+        Height="520" Width="580"
+        MinHeight="500" MinWidth="550"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="CanResize"
+        FontFamily="Segoe UI"
+        FontSize="16"
+        Background="#F8F9FA"
+        ShowInTaskbar="False">
+
+    <Window.Resources>
+        <Style x:Key="LabelStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Margin" Value="0,10,0,5"/>
+        </Style>
+        
+        <Style x:Key="InputStyle" TargetType="Control">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="Margin" Value="0,0,0,15"/>
+            <Setter Property="Height" Value="40"/>
+        </Style>
+        
+        <Style x:Key="ButtonStyle" TargetType="Button">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Padding" Value="15,10"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="MinWidth" Value="100"/>
+            <Setter Property="Height" Value="40"/>
+        </Style>
+    </Window.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <Grid Margin="25">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Header -->
+            <Border Grid.Row="0" Background="White" BorderBrush="#DDD" BorderThickness="1" 
+                    CornerRadius="5" Padding="15" Margin="0,0,0,20">
+                <StackPanel>
+                    <TextBlock Text="💳 Add Spending Entry" FontSize="22" FontWeight="Bold" 
+                               HorizontalAlignment="Center" Foreground="#D32F2F"/>
+                    <TextBlock Text="Track your expenses easily" FontSize="14" 
+                               HorizontalAlignment="Center" Foreground="#666" Margin="0,5,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Date Field -->
+            <TextBlock Grid.Row="1" Text="📅 Date:" Style="{StaticResource LabelStyle}" Foreground="#333"/>
+            <DatePicker x:Name="DatePicker" Grid.Row="2" Margin="0,5,0,20" 
+                        Style="{StaticResource InputStyle}" FontSize="16"/>
+
+            <!-- Category Field -->
+            <TextBlock Grid.Row="3" Text="🏷️ Category:" Style="{StaticResource LabelStyle}" Foreground="#333"/>
+            <ComboBox x:Name="CategoryComboBox" Grid.Row="4" Margin="0,5,0,15"
+                      Style="{StaticResource InputStyle}" DisplayMemberPath="Name" SelectedValuePath="Id"
+                      Background="White" BorderBrush="#CCC" BorderThickness="2"/>
+
+            <!-- Category Help -->
+            <Border Grid.Row="5" Background="#E3F2FD" BorderBrush="#2196F3" BorderThickness="1" 
+                    CornerRadius="5" Padding="10" Margin="0,0,0,20">
+                <StackPanel>
+                    <TextBlock Text="💡 Category Guide:" FontWeight="Bold" FontSize="14" Foreground="#1976D2"/>
+                    <TextBlock FontSize="13" Foreground="#1976D2" TextWrapping="Wrap" Margin="0,5,0,0">
+                        • Family: Groceries, utilities, house expenses
+                        • Personal: Clothing, hobbies, entertainment  
+                        • Marini: Special Marini-related expenses
+                    </TextBlock>
+                </StackPanel>
+            </Border>
+
+            <!-- Description Field -->
+            <TextBlock Grid.Row="6" Text="📝 Description:" Style="{StaticResource LabelStyle}" Foreground="#333"/>
+            <TextBox x:Name="DescriptionTextBox" Grid.Row="7" Margin="0,5,0,20"
+                     Style="{StaticResource InputStyle}" MaxLength="200"
+                     ToolTip="What did you spend money on? (e.g., 'Grocery shopping', 'Electric bill')"
+                     Background="White" BorderBrush="#CCC" BorderThickness="2"/>
+
+            <!-- Amount Field -->
+            <TextBlock Grid.Row="8" Text="💵 Amount:" Style="{StaticResource LabelStyle}" Foreground="#333"/>
+            <StackPanel Grid.Row="9" Orientation="Horizontal" Margin="0,5,0,30">
+                <TextBlock Text="$" FontSize="24" FontWeight="Bold" VerticalAlignment="Center" 
+                           Margin="10,0,5,0" Foreground="#D32F2F"/>
+                <TextBox x:Name="AmountTextBox" Width="200" Height="45" FontSize="18"
+                         Padding="10" Background="White" BorderBrush="#CCC" BorderThickness="2"
+                         ToolTip="Enter the dollar amount (e.g., 125.50)"/>
+            </StackPanel>
+
+            <!-- Buttons -->
+            <Border Grid.Row="10" Background="#F5F5F5" BorderBrush="#DDD" BorderThickness="1" 
+                    CornerRadius="5" Padding="15" Margin="0,10,0,0">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="❌ Cancel" Click="CancelButton_Click" Style="{StaticResource ButtonStyle}"
+                            Background="#E0E0E0" BorderBrush="#BBB" Margin="0,0,10,0"/>
+                    <Button Content="💰 Save Spending" Click="SaveButton_Click" Style="{StaticResource ButtonStyle}"
+                            Background="#F44336" Foreground="White" BorderBrush="#F44336" MinWidth="140"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </ScrollViewer>
+</Window>

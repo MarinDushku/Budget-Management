@@ -1,0 +1,118 @@
+<Application x:Class="BudgetManagement.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:converters="clr-namespace:BudgetManagement.Converters">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!-- Senior-friendly styles - comment out for now to test -->
+                <!-- <ResourceDictionary Source="Views/Styles/SeniorFriendlyStyles.xaml"/> -->
+            </ResourceDictionary.MergedDictionaries>
+
+            <!-- Global Value Converters -->
+            <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+            <converters:CurrencyConverter x:Key="CurrencyConverter"/>
+            <converters:DateConverter x:Key="DateConverter"/>
+            <converters:NumberToSignConverter x:Key="NumberToSignConverter"/>
+            <converters:NumberToPlusMinusConverter x:Key="NumberToPlusMinusConverter"/>
+            <converters:CountToTextConverter x:Key="CountToTextConverter"/>
+            <converters:TextTruncateConverter x:Key="TextTruncateConverter"/>
+            <converters:BudgetStatusToColorConverter x:Key="BudgetStatusToColorConverter"/>
+            <converters:PercentageConverter x:Key="PercentageConverter"/>
+            <converters:MultiBooleanToEnabledConverter x:Key="MultiBooleanToEnabledConverter"/>
+            <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
+
+            <!-- Senior-friendly application-wide settings -->
+            <Style TargetType="Window">
+                <Setter Property="FontFamily" Value="Segoe UI"/>
+                <Setter Property="FontSize" Value="16"/>
+                <Setter Property="Background" Value="{StaticResource MainBackgroundBrush}"/>
+                <Setter Property="UseLayoutRounding" Value="True"/>
+                <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
+                <Setter Property="TextOptions.TextRenderingMode" Value="ClearType"/>
+                <Setter Property="SnapsToDevicePixels" Value="True"/>
+            </Style>
+
+            <!-- Default button style -->
+            <Style TargetType="Button" BasedOn="{StaticResource LargePrimaryButton}"/>
+
+            <!-- Default TextBox style -->
+            <Style TargetType="TextBox" BasedOn="{StaticResource LargeTextBoxStyle}"/>
+
+            <!-- Default ComboBox style -->
+            <Style TargetType="ComboBox" BasedOn="{StaticResource LargeComboBoxStyle}"/>
+
+            <!-- Default DatePicker style -->
+            <Style TargetType="DatePicker" BasedOn="{StaticResource LargeDatePickerStyle}"/>
+
+            <!-- Default DataGrid style -->
+            <Style TargetType="DataGrid" BasedOn="{StaticResource SeniorFriendlyDataGridStyle}"/>
+
+            <!-- Senior-friendly ToolTip style -->
+            <Style TargetType="ToolTip">
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="Background" Value="#FFFFFE"/>
+                <Setter Property="Foreground" Value="#333333"/>
+                <Setter Property="BorderBrush" Value="#CCCCCC"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="Padding" Value="8,6"/>
+                <Setter Property="HasDropShadow" Value="True"/>
+                <Setter Property="MaxWidth" Value="300"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ToolTip">
+                            <Border Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="4"
+                                    Padding="{TemplateBinding Padding}">
+                                <ContentPresenter/>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Senior-friendly MessageBox styles (applied globally) -->
+            <Style x:Key="MessageBoxStyle" TargetType="Window">
+                <Setter Property="FontSize" Value="16"/>
+                <Setter Property="FontFamily" Value="Segoe UI"/>
+                <Setter Property="MinWidth" Value="400"/>
+                <Setter Property="MinHeight" Value="200"/>
+            </Style>
+
+            <!-- Global focus visual style for better visibility -->
+            <Style x:Key="SeniorFocusVisual">
+                <Setter Property="Control.Template">
+                    <Setter.Value>
+                        <ControlTemplate>
+                            <Rectangle Stroke="#2196F3" 
+                                       StrokeThickness="3" 
+                                       StrokeDashArray="2 2" 
+                                       SnapsToDevicePixels="True"/>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Apply focus visual to all focusable controls -->
+            <Style TargetType="Control">
+                <Setter Property="FocusVisualStyle" Value="{StaticResource SeniorFocusVisual}"/>
+            </Style>
+
+            <!-- High contrast mode support -->
+            <Style x:Key="HighContrastStyle" TargetType="FrameworkElement">
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True">
+                        <Setter Property="Effect">
+                            <Setter.Value>
+                                <DropShadowEffect Color="Black" Direction="270" ShadowDepth="2" BlurRadius="4"/>
+                            </Setter.Value>
+                        </Setter>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
