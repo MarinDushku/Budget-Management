@@ -7,6 +7,8 @@
             <ResourceDictionary.MergedDictionaries>
                 <!-- Load localization resources (default to English) -->
                 <ResourceDictionary Source="Resources/Strings.en.xaml"/>
+                <!-- Modern Design System -->
+                <ResourceDictionary Source="Views/Styles/ModernDesign.xaml"/>
                 <!-- Senior-friendly styles - comment out for now to test -->
                 <!-- <ResourceDictionary Source="Views/Styles/SeniorFriendlyStyles.xaml"/> -->
             </ResourceDictionary.MergedDictionaries>
@@ -24,53 +26,35 @@
             <converters:MultiBooleanToEnabledConverter x:Key="MultiBooleanToEnabledConverter"/>
             <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
 
-            <!-- Senior-friendly application-wide settings -->
+            <!-- Modern application-wide settings -->
             <Style TargetType="Window">
-                <Setter Property="FontFamily" Value="Segoe UI"/>
+                <Setter Property="FontFamily" Value="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"/>
                 <Setter Property="FontSize" Value="16"/>
-                <Setter Property="Background" Value="#F5F5F5"/>
+                <Setter Property="Background" Value="{StaticResource BackgroundBrush}"/>
                 <Setter Property="UseLayoutRounding" Value="True"/>
                 <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
                 <Setter Property="TextOptions.TextRenderingMode" Value="ClearType"/>
                 <Setter Property="SnapsToDevicePixels" Value="True"/>
             </Style>
 
-            <!-- Default button style -->
-            <Style TargetType="Button">
-                <Setter Property="FontSize" Value="16"/>
-                <Setter Property="Padding" Value="12,8"/>
+            <!-- Default button style - use modern primary -->
+            <Style TargetType="Button" BasedOn="{StaticResource ModernPrimaryButtonStyle}">
                 <Setter Property="Margin" Value="4"/>
-                <Setter Property="Background" Value="#2196F3"/>
-                <Setter Property="Foreground" Value="White"/>
-                <Setter Property="BorderBrush" Value="#1976D2"/>
-                <Setter Property="BorderThickness" Value="1"/>
             </Style>
 
-            <!-- Default TextBox style -->
-            <Style TargetType="TextBox">
-                <Setter Property="FontSize" Value="16"/>
-                <Setter Property="Padding" Value="8"/>
+            <!-- Default TextBox style - use modern -->
+            <Style TargetType="TextBox" BasedOn="{StaticResource ModernTextBoxStyle}">
                 <Setter Property="Margin" Value="4"/>
-                <Setter Property="BorderBrush" Value="#CCCCCC"/>
-                <Setter Property="BorderThickness" Value="2"/>
             </Style>
 
-            <!-- Default ComboBox style -->
-            <Style TargetType="ComboBox">
-                <Setter Property="FontSize" Value="16"/>
-                <Setter Property="Padding" Value="8"/>
+            <!-- Default ComboBox style - use modern -->
+            <Style TargetType="ComboBox" BasedOn="{StaticResource ModernComboBoxStyle}">
                 <Setter Property="Margin" Value="4"/>
-                <Setter Property="BorderBrush" Value="#CCCCCC"/>
-                <Setter Property="BorderThickness" Value="2"/>
             </Style>
 
-            <!-- Default DatePicker style -->
-            <Style TargetType="DatePicker">
-                <Setter Property="FontSize" Value="16"/>
-                <Setter Property="Padding" Value="8"/>
+            <!-- Default DatePicker style - use modern -->
+            <Style TargetType="DatePicker" BasedOn="{StaticResource ModernDatePickerStyle}">
                 <Setter Property="Margin" Value="4"/>
-                <Setter Property="BorderBrush" Value="#CCCCCC"/>
-                <Setter Property="BorderThickness" Value="2"/>
             </Style>
 
             <!-- Default DataGrid style -->
@@ -82,26 +66,32 @@
                 <Setter Property="AlternatingRowBackground" Value="#F9F9F9"/>
             </Style>
 
-            <!-- Additional button styles referenced in XAML -->
-            <Style x:Key="LargeButton" TargetType="Button">
+            <!-- Additional modern button styles -->
+            <Style x:Key="LargeButton" TargetType="Button" BasedOn="{StaticResource ModernPrimaryButtonStyle}">
                 <Setter Property="FontSize" Value="18"/>
-                <Setter Property="Padding" Value="16,12"/>
+                <Setter Property="Padding" Value="20,14"/>
                 <Setter Property="Margin" Value="8"/>
-                <Setter Property="Background" Value="#2196F3"/>
-                <Setter Property="Foreground" Value="White"/>
-                <Setter Property="BorderBrush" Value="#1976D2"/>
-                <Setter Property="BorderThickness" Value="2"/>
                 <Setter Property="FontWeight" Value="SemiBold"/>
+                <Setter Property="MinHeight" Value="50"/>
             </Style>
 
-            <Style x:Key="ButtonStyle" TargetType="Button">
-                <Setter Property="FontSize" Value="16"/>
-                <Setter Property="Padding" Value="12,8"/>
+            <Style x:Key="ButtonStyle" TargetType="Button" BasedOn="{StaticResource ModernPrimaryButtonStyle}">
                 <Setter Property="Margin" Value="4"/>
-                <Setter Property="Background" Value="#2196F3"/>
-                <Setter Property="Foreground" Value="White"/>
-                <Setter Property="BorderBrush" Value="#1976D2"/>
-                <Setter Property="BorderThickness" Value="1"/>
+            </Style>
+            
+            <!-- Success Button Style -->
+            <Style x:Key="SuccessButton" TargetType="Button" BasedOn="{StaticResource ModernSuccessButtonStyle}">
+                <Setter Property="Margin" Value="4"/>
+            </Style>
+            
+            <!-- Secondary Button Style -->
+            <Style x:Key="SecondaryButton" TargetType="Button" BasedOn="{StaticResource ModernSecondaryButtonStyle}">
+                <Setter Property="Margin" Value="4"/>
+            </Style>
+            
+            <!-- Danger Button Style -->
+            <Style x:Key="DangerButton" TargetType="Button" BasedOn="{StaticResource ModernDangerButtonStyle}">
+                <Setter Property="Margin" Value="4"/>
             </Style>
 
             <!-- Senior-friendly ToolTip style -->

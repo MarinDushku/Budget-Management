@@ -3,10 +3,10 @@
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
     <!-- Main Window -->
-    <sys:String x:Key="AppTitle">💰 Menaxhuesi i Buxhetit</sys:String>
-    <sys:String x:Key="AddIncomeButton">➕ Shto të Ardhura</sys:String>
-    <sys:String x:Key="AddSpendingButton">💸 Shto Shpenzim</sys:String>
-    <sys:String x:Key="RefreshButton">🔄 Rifresko</sys:String>
+    <sys:String x:Key="AppTitle">Menaxhuesi i Buxhetit</sys:String>
+    <sys:String x:Key="AddIncomeButton">Shto të Ardhura</sys:String>
+    <sys:String x:Key="AddSpendingButton">Shto Shpenzim</sys:String>
+    <sys:String x:Key="RefreshButton">Rifresko</sys:String>
     
     <!-- Summary Cards -->
     <sys:String x:Key="TotalIncome">Të Ardhurat Totale</sys:String>
@@ -17,9 +17,9 @@
     <sys:String x:Key="Available">Në dispozicion</sys:String>
     
     <!-- Panel Headers -->
-    <sys:String x:Key="Analytics">📈 Analitika</sys:String>
-    <sys:String x:Key="RecentActivity">📝 Aktiviteti i Fundit</sys:String>
-    <sys:String x:Key="ExportTools">💾 Eksporti &amp; Mjete</sys:String>
+    <sys:String x:Key="Analytics">Analitika</sys:String>
+    <sys:String x:Key="RecentActivity">Aktiviteti i Fundit</sys:String>
+    <sys:String x:Key="ExportTools">Eksporti &amp; Mjete</sys:String>
     
     <!-- Analytics Panel -->
     <sys:String x:Key="SpendingByCategory">Shpenzimet sipas Kategorive</sys:String>
@@ -30,14 +30,14 @@
     <sys:String x:Key="WeekTrend">Tendenca 10-Javore</sys:String>
     
     <!-- Recent Activity -->
-    <sys:String x:Key="RecentIncome">💰 Të Ardhurat e Fundit</sys:String>
-    <sys:String x:Key="RecentSpending">💸 Shpenzimet e Fundit</sys:String>
+    <sys:String x:Key="RecentIncome">Të Ardhurat e Fundit</sys:String>
+    <sys:String x:Key="RecentSpending">Shpenzimet e Fundit</sys:String>
     <sys:String x:Key="NoRecentEntries">Nuk ka të dhëna të fundit për të shfaqur</sys:String>
     
     <!-- Export Panel -->
     <sys:String x:Key="ExportOptions">Opsionet e Eksportit</sys:String>
-    <sys:String x:Key="ExportToExcel">📊 Eksporto në Excel</sys:String>
-    <sys:String x:Key="ExportToPDF">📄 Eksporto në PDF</sys:String>
+    <sys:String x:Key="ExportToExcel">Eksporto në Excel</sys:String>
+    <sys:String x:Key="ExportToPDF">Eksporto në PDF</sys:String>
     <sys:String x:Key="ComingSoon">Së shpejti</sys:String>
     <sys:String x:Key="QuickStats">Statistika të Shpejta</sys:String>
     <sys:String x:Key="AverageDailySpending">Shpenzimi Mesatar Ditor</sys:String>
@@ -99,13 +99,39 @@
     <sys:String x:Key="English">Anglisht</sys:String>
     <sys:String x:Key="Albanian">Shqip</sys:String>
     
+    <!-- Category Management -->
+    <sys:String x:Key="Categories">Kategoritë</sys:String>
+    <sys:String x:Key="ManageCategories">Menaxho Kategoritë</sys:String>
+    <sys:String x:Key="ManageCategoriesTitle">Menaxho Kategoritë e Shpenzimeve</sys:String>
+    <sys:String x:Key="ManageCategoriesDescription">Shto, redakto ose hiq kategoritë për të organizuar shpenzimet tuaja</sys:String>
+    <sys:String x:Key="AddNewCategory">Shto Kategori të Re</sys:String>
+    <sys:String x:Key="AddCategory">Shto Kategori</sys:String>
+    <sys:String x:Key="CurrentCategories">Kategoritë Aktuale</sys:String>
+    <sys:String x:Key="CategoryOrderDescription">Kategoritë tregohen në rendin që shfaqen në dialogë</sys:String>
+    <sys:String x:Key="EditCategory">Redakto Kategori</sys:String>
+    <sys:String x:Key="DeleteCategory">Fshi Kategori</sys:String>
+    <sys:String x:Key="MoveUp">Lëviz Lart</sys:String>
+    <sys:String x:Key="MoveDown">Lëviz Poshtë</sys:String>
+    <sys:String x:Key="ResetToDefault">Rikthe në Standard</sys:String>
+    <sys:String x:Key="ResetCategoriesConfirm">Kjo do të rikthejë kategoritë standarde (Familja, Personale, Marini) dhe mund të ndikojë në shënimet ekzistuese. Jeni të sigurt që doni të vazhdoni?</sys:String>
+    <sys:String x:Key="CategoryInUse">Kategoria '{0}' po përdoret nga shënimet ekzistuese të shpenzimeve. Fshirja e saj do të ndikojë në ato shënime. Jeni të sigurt që doni ta fshini këtë kategori?</sys:String>
+    <sys:String x:Key="DeleteCategoryConfirm">Jeni të sigurt që doni ta fshini kategorinë '{0}'?</sys:String>
+    <sys:String x:Key="DuplicateCategory">Një kategori me këtë emër ekziston tashmë.</sys:String>
+    <sys:String x:Key="CategoryNameTooLong">Emri i kategorisë nuk mund të kalojë 50 karaktere.</sys:String>
+    <sys:String x:Key="CategoryAddedSuccess">Kategoria '{0}' u shtua me sukses.</sys:String>
+    <sys:String x:Key="EnterCategoryName">Ju lutemi shkruani një emër kategorie.</sys:String>
+    <sys:String x:Key="EnterNewCategoryName">Shkruani emrin e ri të kategorisë:</sys:String>
+    <sys:String x:Key="CategoryManagementError">Gabim në Menaxhimin e Kategorive</sys:String>
+    <sys:String x:Key="CategoriesUpdatedSuccess">Kategoritë u përditësuan me sukses</sys:String>
+    <sys:String x:Key="CategoryManagementCanceled">Menaxhimi i kategorive u anulua</sys:String>
+    
     <!-- Accessibility -->
-    <sys:String x:Key="Accessibility">🔧 Qasueshmëria</sys:String>
+    <sys:String x:Key="Accessibility">Qasueshmëria</sys:String>
     <sys:String x:Key="HighContrastMode">Modaliteti me Kontrast të Lartë</sys:String>
     <sys:String x:Key="FontSize">Madhësia e Shkrimit:</sys:String>
     <sys:String x:Key="SmallFont">Shkrim i vogël</sys:String>
     <sys:String x:Key="MediumFont">Shkrim mesatar (default)</sys:String>
     <sys:String x:Key="LargeFont">Shkrim i madh</sys:String>
-    <sys:String x:Key="QuickAmounts">💡 Shuma të shpejta:</sys:String>
+    <sys:String x:Key="QuickAmounts">Shuma të shpejta:</sys:String>
     
 </ResourceDictionary>

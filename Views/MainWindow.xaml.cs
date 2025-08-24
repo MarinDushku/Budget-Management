@@ -3,6 +3,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using BudgetManagement.ViewModels;
 using BudgetManagement.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -59,6 +60,17 @@ namespace BudgetManagement.Views
 
             // Set up language combobox
             SetupLanguageSelector();
+            
+            // Initialize theme controls and service
+            InitializeThemeControls();
+            
+            // Initialize theme service if available
+            var app = Application.Current as App;
+            var themeService = app?.GetService<IThemeService>();
+            if (themeService != null)
+            {
+                await themeService.InitializeAsync();
+            }
         }
 
         private void SetupLanguageSelector()
@@ -561,6 +573,297 @@ namespace BudgetManagement.Views
                     FontSizeLargeBtn.Background = new SolidColorBrush(Color.FromRgb(33, 150, 243));
                     FontSizeLargeBtn.Foreground = new SolidColorBrush(Colors.White);
                     break;
+            }
+        }
+
+        #endregion
+
+        #region Theme Management
+
+        private async void DarkModeToggle_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                // Add button press animation feedback
+                if (sender is FrameworkElement element)
+                    AnimateButtonPress(element);
+
+                var app = Application.Current as App;
+                var themeService = app?.GetService<IThemeService>();
+                
+                if (themeService != null)
+                {
+                    var newTheme = DarkModeToggle.IsChecked == true ? "Dark" : "Light";
+                    await themeService.SetThemeAsync(newTheme);
+                    
+                    // Update the theme combobox to match
+                    UpdateThemeComboBoxSelection(newTheme);
+                }
+            }
+            catch
+            {
+                // Reset toggle if theme change fails
+                DarkModeToggle.IsChecked = !DarkModeToggle.IsChecked;
+            }
+        }
+
+        private async void ThemeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                if (ThemeComboBox.SelectedItem is ComboBoxItem selectedItem &&
+                    selectedItem.Tag?.ToString() is string themeName)
+                {
+                    var app = Application.Current as App;
+                    var themeService = app?.GetService<IThemeService>();
+                    
+                    if (themeService != null)
+                    {
+                        await themeService.SetThemeAsync(themeName);
+                        
+                        // Update the toggle to match
+                        UpdateDarkModeToggle(themeService.IsDarkTheme);
+                    }
+                }
+            }
+            catch
+            {
+                // Ignore errors in theme selection
+            }
+        }
+
+        private void UpdateThemeComboBoxSelection(string themeName)
+        {
+            foreach (ComboBoxItem item in ThemeComboBox.Items)
+            {
+                if (item.Tag?.ToString()?.Equals(themeName, StringComparison.OrdinalIgnoreCase) == true)
+                {
+                    ThemeComboBox.SelectedItem = item;
+                    break;
+                }
+            }
+        }
+
+        private void UpdateDarkModeToggle(bool isDarkTheme)
+        {
+            DarkModeToggle.IsChecked = isDarkTheme;
+        }
+
+        private void InitializeThemeControls()
+        {
+            try
+            {
+                var app = Application.Current as App;
+                var themeService = app?.GetService<IThemeService>();
+                
+                if (themeService != null)
+                {
+                    // Set initial theme combobox selection
+                    UpdateThemeComboBoxSelection(themeService.CurrentTheme);
+                    
+                    // Set initial toggle state
+                    UpdateDarkModeToggle(themeService.IsDarkTheme);
+                    
+                    // Listen for theme changes
+                    themeService.ThemeChanged += OnThemeChanged;
+                }
+            }
+            catch
+            {
+                // Use default theme settings if initialization fails
+            }
+        }
+
+        private void OnThemeChanged(object? sender, ThemeChangedEventArgs e)
+        {
+            // Update UI controls when theme changes
+            Application.Current.Dispatcher.InvokeAsync(() =>
+            {
+                UpdateThemeComboBoxSelection(e.NewTheme);
+                UpdateDarkModeToggle(e.IsDarkTheme);
+            });
+        }
+
+        #endregion
+
+        #region Modern Navigation
+
+        private void NavigationButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is not Button button) return;
+
+            // Add button press animation feedback
+            AnimateButtonPress(button);
+
+            // Update navigation selection
+            UpdateNavigationSelection(button.Name);
+
+            // Switch content based on button name
+            switch (button.Name)
+            {
+                case "DashboardButton":
+                    ShowDashboardContent();
+                    break;
+                case "AnalyticsButton":
+                    ShowAnalyticsContent();
+                    break;
+                case "ExportButton":
+                    ShowExportContent();
+                    break;
+                case "SettingsButton":
+                    ShowSettingsContent();
+                    break;
+            }
+        }
+
+        private void UpdateNavigationSelection(string? selectedButtonName)
+        {
+            // Reset all navigation buttons to normal style
+            var navigationButtons = new[] 
+            { 
+                DashboardButton, 
+                AnalyticsButton, 
+                ExportButton, 
+                SettingsButton 
+            };
+
+            foreach (var navButton in navigationButtons)
+            {
+                navButton.Style = (Style)FindResource("NavigationItemStyle");
+            }
+
+            // Apply selected style to active button
+            var selectedButton = selectedButtonName switch
+            {
+                "DashboardButton" => DashboardButton,
+                "AnalyticsButton" => AnalyticsButton,
+                "ExportButton" => ExportButton,
+                "SettingsButton" => SettingsButton,
+                _ => DashboardButton
+            };
+
+            selectedButton.Style = (Style)FindResource("SelectedNavigationItemStyle");
+        }
+
+        private void ShowDashboardContent()
+        {
+            PageTitle.Text = "Dashboard";
+            PageSubtitle.Text = "Overview of your budget and recent activity";
+
+            // Show dashboard content, hide others
+            DashboardContent.Visibility = Visibility.Visible;
+            AnalyticsContent.Visibility = Visibility.Collapsed;
+            ExportContent.Visibility = Visibility.Collapsed;
+            SettingsContent.Visibility = Visibility.Collapsed;
+
+            // Animate content appearance
+            AnimateContentTransition(DashboardContent);
+        }
+
+        private void ShowAnalyticsContent()
+        {
+            PageTitle.Text = "Analytics";
+            PageSubtitle.Text = "Detailed insights into your spending patterns";
+
+            // Show analytics content, hide others
+            DashboardContent.Visibility = Visibility.Collapsed;
+            AnalyticsContent.Visibility = Visibility.Visible;
+            ExportContent.Visibility = Visibility.Collapsed;
+            SettingsContent.Visibility = Visibility.Collapsed;
+
+            // Animate content appearance
+            AnimateContentTransition(AnalyticsContent);
+        }
+
+        private void ShowExportContent()
+        {
+            PageTitle.Text = "Export & Tools";
+            PageSubtitle.Text = "Export your data and manage categories";
+
+            // Show export content, hide others
+            DashboardContent.Visibility = Visibility.Collapsed;
+            AnalyticsContent.Visibility = Visibility.Collapsed;
+            ExportContent.Visibility = Visibility.Visible;
+            SettingsContent.Visibility = Visibility.Collapsed;
+
+            // Animate content appearance
+            AnimateContentTransition(ExportContent);
+        }
+
+        private void ShowSettingsContent()
+        {
+            PageTitle.Text = "Settings";
+            PageSubtitle.Text = "Customize your application preferences";
+
+            // Show settings content, hide others
+            DashboardContent.Visibility = Visibility.Collapsed;
+            AnalyticsContent.Visibility = Visibility.Collapsed;
+            ExportContent.Visibility = Visibility.Collapsed;
+            SettingsContent.Visibility = Visibility.Visible;
+
+            // Animate content appearance
+            AnimateContentTransition(SettingsContent);
+        }
+
+        private void AnimateContentTransition(FrameworkElement content)
+        {
+            try
+            {
+                // Enhanced page transition animation with scale and easing
+                var storyboard = (Storyboard)FindResource("EnhancedPageTransitionAnimation");
+                if (storyboard != null)
+                {
+                    // Ensure content has proper render transform
+                    if (content.RenderTransform == null || content.RenderTransform is not ScaleTransform)
+                    {
+                        content.RenderTransform = new System.Windows.Media.ScaleTransform(1, 1);
+                        content.RenderTransformOrigin = new Point(0.5, 0.5);
+                    }
+                    
+                    Storyboard.SetTarget(storyboard, content);
+                    storyboard.Begin();
+                }
+            }
+            catch
+            {
+                // Fallback to basic animation if enhanced fails
+                try
+                {
+                    var basicStoryboard = (Storyboard)FindResource("PageTransitionAnimation");
+                    if (basicStoryboard != null)
+                    {
+                        Storyboard.SetTarget(basicStoryboard, content);
+                        basicStoryboard.Begin();
+                    }
+                }
+                catch
+                {
+                    // If all animations fail, continue without animation
+                }
+            }
+        }
+
+        private void AnimateButtonPress(FrameworkElement button)
+        {
+            try
+            {
+                var storyboard = (Storyboard)FindResource("ButtonPressAnimation");
+                if (storyboard != null)
+                {
+                    // Ensure button has proper render transform
+                    if (button.RenderTransform == null || button.RenderTransform is not System.Windows.Media.ScaleTransform)
+                    {
+                        button.RenderTransform = new System.Windows.Media.ScaleTransform(1, 1);
+                        button.RenderTransformOrigin = new Point(0.5, 0.5);
+                    }
+                    
+                    Storyboard.SetTarget(storyboard, button);
+                    storyboard.Begin();
+                }
+            }
+            catch
+            {
+                // If animation fails, continue without animation
             }
         }
 

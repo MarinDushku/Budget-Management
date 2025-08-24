@@ -350,6 +350,61 @@ namespace BudgetManagement.Services
             return categories;
         }
 
+        public async Task<IEnumerable<Category>> GetAllCategoriesAsync()
+        {
+            System.Diagnostics.Debug.WriteLine("BudgetService: GetAllCategoriesAsync called");
+            
+            const string sql = @"
+                SELECT Id, Name, DisplayOrder, IsActive, CreatedAt, UpdatedAt 
+                FROM Categories 
+                ORDER BY DisplayOrder, Name";
+
+            try
+            {
+                using var connection = new SqliteConnection(_connectionString);
+                System.Diagnostics.Debug.WriteLine($"BudgetService: Opening connection with string: {_connectionString}");
+                await connection.OpenAsync();
+                System.Diagnostics.Debug.WriteLine("BudgetService: Connection opened successfully");
+                
+                using var command = new SqliteCommand(sql, connection);
+
+                var categories = new List<Category>();
+                using var reader = await command.ExecuteReaderAsync();
+                
+                System.Diagnostics.Debug.WriteLine("BudgetService: Starting to read categories...");
+                
+                while (await reader.ReadAsync())
+                {
+                    var category = new Category
+                    {
+                        Id = reader.GetInt32("Id"),
+                        Name = reader.GetString("Name"),
+                        DisplayOrder = reader.GetInt32("DisplayOrder"),
+                        IsActive = reader.GetBoolean("IsActive"),
+                        CreatedAt = reader.GetDateTime("CreatedAt"),
+                        UpdatedAt = reader.GetDateTime("UpdatedAt")
+                    };
+                    
+                    categories.Add(category);
+                    System.Diagnostics.Debug.WriteLine($"BudgetService: Read category - Id: {category.Id}, Name: {category.Name}, Active: {category.IsActive}");
+                }
+
+                System.Diagnostics.Debug.WriteLine($"BudgetService: GetAllCategoriesAsync returning {categories.Count} categories");
+                
+                // Quick test - also check if table exists and has any rows at all
+                var testCommand = new SqliteCommand("SELECT COUNT(*) FROM Categories", connection);
+                var totalCount = Convert.ToInt32(await testCommand.ExecuteScalarAsync());
+                System.Diagnostics.Debug.WriteLine($"BudgetService: Total categories in database (including inactive): {totalCount}");
+                
+                return categories;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"BudgetService: GetAllCategoriesAsync exception: {ex}");
+                throw;
+            }
+        }
+
         public async Task<Category> GetCategoryByIdAsync(int id)
         {
             const string sql = @"

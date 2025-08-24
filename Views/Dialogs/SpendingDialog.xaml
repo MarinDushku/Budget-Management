@@ -13,11 +13,9 @@
 
     <Window.Resources>
         <ResourceDictionary>
-            <!-- Temporarily removed style references to fix build issues -->
-            <!-- <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/Views/Styles/SeniorFriendlyStyles.xaml"/>
-                <ResourceDictionary Source="/Views/Styles/SeniorUXEnhancements.xaml"/>
-            </ResourceDictionary.MergedDictionaries> -->
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Views/Styles/ModernDesign.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
         
         <Style x:Key="LabelStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="16"/>
@@ -102,12 +100,12 @@
             <!-- Date Field -->
             <TextBlock Grid.Row="1" Text="📅 Date:" Style="{StaticResource LabelStyle}"/>
             <DatePicker x:Name="DatePicker" Grid.Row="2" Margin="0,5,0,20" 
-                        FontSize="16" Padding="12,10" MinHeight="45"/>
+                        Style="{StaticResource ModernDatePickerStyle}"/>
 
             <!-- Category Field -->
             <TextBlock Grid.Row="3" Text="🏷️ Category:" Style="{StaticResource LabelStyle}"/>
             <ComboBox x:Name="CategoryComboBox" Grid.Row="4" Margin="0,5,0,15"
-                      FontSize="16" Padding="12,10" MinHeight="45" DisplayMemberPath="Name" SelectedValuePath="Id"/>
+                      Style="{StaticResource ModernComboBoxStyle}" DisplayMemberPath="Name" SelectedValuePath="Id"/>
 
             <!-- Category Help -->
             <Border Grid.Row="5" Background="#E3F2FD" BorderBrush="#2196F3" BorderThickness="1" 
@@ -125,7 +123,7 @@
             <!-- Description Field -->
             <TextBlock Grid.Row="6" Text="📝 Description:" Style="{StaticResource LabelStyle}"/>
             <TextBox x:Name="DescriptionTextBox" Grid.Row="7" Margin="0,5,0,20"
-                     FontSize="16" Padding="12,10" MinHeight="45" MaxLength="200"
+                     Style="{StaticResource ModernTextBoxStyle}" MaxLength="200"
                      ToolTip="What did you spend money on? (e.g., 'Grocery shopping', 'Electric bill')"/>
 
             <!-- Amount Field -->
@@ -134,8 +132,9 @@
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
                     <TextBlock Text="$" FontSize="24" FontWeight="Bold" VerticalAlignment="Center" 
                                Margin="10,0,8,0" Foreground="#D32F2F"/>
-                    <TextBox x:Name="AmountTextBox" Width="220" Height="50" FontSize="18"
-                             Padding="12,10" TextAlignment="Right"
+                    <TextBox x:Name="AmountTextBox" Width="240" MinHeight="44" 
+                             Style="{StaticResource ModernTextBoxStyle}"
+                             FontSize="18" TextAlignment="Right"
                              PreviewTextInput="AmountTextBox_PreviewTextInput"
                              GotFocus="AmountTextBox_GotFocus"
                              LostFocus="AmountTextBox_LostFocus"
@@ -169,9 +168,9 @@
                     CornerRadius="5" Padding="15" Margin="0,15,0,0">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                     <Button Content="❌ Cancel" Click="CancelButton_Click" 
-                            Style="{StaticResource LargeDangerButton}" Margin="0,0,15,0"/>
+                            Style="{StaticResource ModernSecondaryButtonStyle}" Margin="0,0,15,0"/>
                     <Button Content="💰 Save Spending" Click="SaveButton_Click" 
-                            Style="{StaticResource LargeSuccessButton}" MinWidth="150"/>
+                            Style="{StaticResource ModernSuccessButtonStyle}" MinWidth="150"/>
                 </StackPanel>
             </Border>
         </Grid>

@@ -9,9 +9,9 @@
         MinHeight="700" MinWidth="1200"
         WindowStartupLocation="CenterScreen"
         WindowState="Maximized"
-        FontFamily="Segoe UI"
+        FontFamily="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"
         FontSize="16"
-        Background="#F8F9FA"
+        Background="{StaticResource BackgroundBrush}"
         Loaded="Window_Loaded"
         Closing="Window_Closing"
         KeyDown="Window_KeyDown">
@@ -27,219 +27,378 @@
         <!-- Converters -->
         <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
         
-        <!-- Enhanced styles for the improved UI -->
-        <Style x:Key="LargeButton" TargetType="Button">
-            <Setter Property="Background" Value="#2196F3"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderBrush" Value="#1976D2"/>
-        </Style>
-        
-        <Style x:Key="HeaderText" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="28"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Margin" Value="10"/>
-            <Setter Property="Foreground" Value="#333333"/>
-        </Style>
-        
-        <!-- Panel styles for the new layout -->
-        <Style x:Key="SidePanel" TargetType="Border">
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="BorderBrush" Value="#E0E0E0"/>
-            <Setter Property="BorderThickness" Value="2"/>
-            <Setter Property="CornerRadius" Value="8"/>
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="Padding" Value="15"/>
-            <Setter Property="Effect">
-                <Setter.Value>
-                    <DropShadowEffect Color="#E0E0E0" Direction="270" ShadowDepth="2" BlurRadius="6" Opacity="0.2"/>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        
-        <Style x:Key="PanelHeader" TargetType="TextBlock">
+        <!-- Modern styles using the design system -->
+        <Style x:Key="LargeButton" TargetType="Button" BasedOn="{StaticResource ModernPrimaryButtonStyle}">
             <Setter Property="FontSize" Value="18"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Foreground" Value="#333333"/>
-            <Setter Property="Margin" Value="0,0,0,12"/>
+            <Setter Property="Padding" Value="20,14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="MinHeight" Value="50"/>
+        </Style>
+        
+        <Style x:Key="HeaderText" TargetType="TextBlock" BasedOn="{StaticResource ModernHeaderTextStyle}">
+            <Setter Property="FontSize" Value="28"/>
+            <Setter Property="Margin" Value="0,15,0,15"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+        </Style>
+        
+        <!-- Panel styles using modern design -->
+        <Style x:Key="SidePanel" TargetType="Border" BasedOn="{StaticResource ModernSidePanelStyle}">
+            <Setter Property="Margin" Value="8"/>
+        </Style>
+        
+        <Style x:Key="PanelHeader" TargetType="TextBlock" BasedOn="{StaticResource SectionHeaderTextStyle}">
+            <Setter Property="Margin" Value="0,0,0,16"/>
         </Style>
         </ResourceDictionary>
     </Window.Resources>
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>  <!-- Header -->
-            <RowDefinition Height="Auto"/>  <!-- Buttons -->
-            <RowDefinition Height="Auto"/>  <!-- Summary Cubes -->
-            <RowDefinition Height="*"/>     <!-- Main Content (3 panels) -->
-            <RowDefinition Height="Auto"/>  <!-- Status Bar -->
-        </Grid.RowDefinitions>
+    <Grid Style="{StaticResource MainContentContainerStyle}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>  <!-- Navigation Sidebar -->
+            <ColumnDefinition Width="*"/>     <!-- Main Content -->
+        </Grid.ColumnDefinitions>
 
-        <!-- Header -->
-        <TextBlock Grid.Row="0" Text="{StaticResource AppTitle}" Style="{StaticResource HeaderText}" 
-                   HorizontalAlignment="Center" Margin="0,15"/>
-
-        <!-- Action Buttons -->
-        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
-            <Button Content="{StaticResource AddIncomeButton}" Style="{StaticResource LargeButton}" 
-                    Command="{Binding AddIncomeCommand}"/>
-            <Button Content="{StaticResource AddSpendingButton}" Style="{StaticResource LargeButton}" 
-                    Command="{Binding AddSpendingCommand}"/>
-            <Button Content="{StaticResource RefreshButton}" Style="{StaticResource LargeButton}" 
-                    Command="{Binding RefreshCommand}"/>
-        </StackPanel>
-
-        <!-- Summary Cubes -->
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="15">
-            <userControls:BudgetSummaryCard 
-                Header="{StaticResource TotalIncome}"
-                Icon="💰"
-                Value="{Binding BudgetSummary.TotalIncome}"
-                Subtitle="{StaticResource ThisPeriod}"/>
-            
-            <userControls:BudgetSummaryCard 
-                Header="{StaticResource TotalSpending}"
-                Icon="💸"
-                Value="{Binding BudgetSummary.TotalSpending}"
-                Subtitle="{StaticResource AllCategories}"/>
-            
-            <userControls:BudgetSummaryCard 
-                Header="{StaticResource RemainingBudget}"
-                Icon="📊"
-                Value="{Binding BudgetSummary.RemainingBudget}"
-                Subtitle="{StaticResource Available}"/>
-        </StackPanel>
-
-        <!-- Main Content Area - 3 Panel Layout -->
-        <Grid Grid.Row="3" Margin="10">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="280"/>  <!-- Left Panel - Analytics -->
-                <ColumnDefinition Width="*"/>    <!-- Center Panel - Recent Entries -->
-                <ColumnDefinition Width="280"/>  <!-- Right Panel - Export -->
-            </Grid.ColumnDefinitions>
-
-            <!-- Left Panel - Analytics -->
-            <Border Grid.Column="0" Style="{StaticResource SidePanel}">
+        <!-- Navigation Sidebar -->
+        <Border Grid.Column="0" Style="{StaticResource NavigationRailStyle}">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                 <StackPanel>
-                    <TextBlock Text="{StaticResource Analytics}" Style="{StaticResource PanelHeader}"/>
+                    <!-- App Header in Navigation -->
+                    <Border Background="{StaticResource HeaderGradientBrush}" Padding="16,20" Margin="0,0,0,8">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            
+                            <!-- Logo -->
+                            <Image Grid.Row="0" Source="../Resources/MD Logo.ico" Width="40" Height="40" 
+                                   HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                            
+                            <!-- App Title -->
+                            <TextBlock Grid.Row="1" Text="{StaticResource AppTitle}" 
+                                       FontFamily="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"
+                                       FontSize="16" FontWeight="SemiBold" Foreground="White"
+                                       HorizontalAlignment="Center" TextAlignment="Center"
+                                       TextWrapping="Wrap" TextOptions.TextRenderingMode="ClearType"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- Main Navigation -->
+                    <TextBlock Text="MAIN" Style="{StaticResource NavigationSectionHeaderStyle}"/>
                     
-                    <!-- Spending Category Chart -->
-                    <userControls:SpendingCategoryChartUserControl 
-                        SpendingEntries="{Binding SpendingEntries}"
-                        Margin="0,0,0,15"/>
+                    <Button x:Name="DashboardButton" Content="Dashboard" Tag="&#xE80F;" 
+                            Style="{StaticResource SelectedNavigationItemStyle}"
+                            Click="NavigationButton_Click"/>
                     
-                    <!-- Budget Trend Chart -->
-                    <userControls:BudgetTrendChartUserControl 
-                        BudgetTrendData="{Binding BudgetTrendData}"/>
+                    <Button x:Name="AnalyticsButton" Content="Analytics" Tag="&#xE9D2;" 
+                            Style="{StaticResource NavigationItemStyle}"
+                            Click="NavigationButton_Click"/>
+
+                    <!-- Quick Actions -->
+                    <TextBlock Text="ACTIONS" Style="{StaticResource NavigationSectionHeaderStyle}"/>
+                    
+                    <Button Content="Add Income" Tag="&#xE8D4;" 
+                            Style="{StaticResource NavigationItemStyle}"
+                            Command="{Binding AddIncomeCommand}"/>
+                    
+                    <Button Content="Add Spending" Tag="&#xE7BF;" 
+                            Style="{StaticResource NavigationItemStyle}"
+                            Command="{Binding AddSpendingCommand}"/>
+
+                    <!-- Tools & Settings -->
+                    <TextBlock Text="TOOLS" Style="{StaticResource NavigationSectionHeaderStyle}"/>
+                    
+                    <Button x:Name="ExportButton" Content="Export &amp; Tools" Tag="&#xE898;" 
+                            Style="{StaticResource NavigationItemStyle}"
+                            Click="NavigationButton_Click"/>
+                    
+                    <Button x:Name="SettingsButton" Content="Settings" Tag="&#xE713;" 
+                            Style="{StaticResource NavigationItemStyle}"
+                            Click="NavigationButton_Click"/>
+                    
+                    <Button Content="Refresh Data" Tag="&#xE72C;" 
+                            Style="{StaticResource NavigationItemStyle}"
+                            Command="{Binding RefreshCommand}"/>
                 </StackPanel>
+            </ScrollViewer>
+        </Border>
+
+        <!-- Main Content Area -->
+        <Grid Grid.Column="1" Margin="24,0,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>  <!-- Page Header -->
+                <RowDefinition Height="*"/>     <!-- Page Content -->
+                <RowDefinition Height="Auto"/>  <!-- Status Bar -->
+            </Grid.RowDefinitions>
+
+            <!-- Page Header -->
+            <Border Grid.Row="0" Background="{StaticResource SurfaceBrush}" 
+                    BorderBrush="{StaticResource BorderLightBrush}" BorderThickness="0,0,0,1"
+                    Padding="24,20" Margin="0,0,0,24">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <StackPanel Grid.Column="0">
+                        <TextBlock x:Name="PageTitle" Text="Dashboard" 
+                                   FontFamily="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"
+                                   FontSize="32" FontWeight="SemiBold" 
+                                   Foreground="{StaticResource PrimaryTextBrush}"/>
+                        <TextBlock x:Name="PageSubtitle" Text="Overview of your budget and recent activity" 
+                                   FontSize="16" Foreground="{StaticResource SecondaryTextBrush}"
+                                   Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Grid>
             </Border>
 
-            <!-- Center Panel - Recent Entries -->
-            <Border Grid.Column="1" Style="{StaticResource SidePanel}" Margin="10,0">
-                <StackPanel>
-                    <TextBlock Text="{StaticResource RecentActivity}" Style="{StaticResource PanelHeader}"/>
-                    
-                    <!-- Recent entries control -->
-                    <ScrollViewer Height="400" VerticalScrollBarVisibility="Auto">
-                        <userControls:RecentEntriesUserControl 
-                            RecentIncomeEntries="{Binding RecentIncomeEntries}"
-                            RecentSpendingEntries="{Binding RecentSpendingEntries}"
-                            HasNoEntries="{Binding HasNoRecentEntries}"/>
-                    </ScrollViewer>
-                </StackPanel>
-            </Border>
-
-            <!-- Right Panel - Export & Tools -->
-            <Border Grid.Column="2" Style="{StaticResource SidePanel}">
-                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" 
-                              Padding="0,0,5,0">
-                    <StackPanel>
-                        <TextBlock Text="{StaticResource ExportTools}" Style="{StaticResource PanelHeader}"/>
+            <!-- Page Content -->
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="24,0,24,24">
+                <Grid>
+                    <!-- Dashboard Content (Default View) -->
+                    <StackPanel x:Name="DashboardContent">
+                        <!-- Quick Stats Cards -->
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,32">
+                        <userControls:BudgetSummaryCard 
+                            Header="{StaticResource TotalIncome}"
+                            Icon="&#xE8D4;"
+                            Value="{Binding BudgetSummary.TotalIncome}"
+                            Subtitle="{StaticResource ThisPeriod}"/>
                         
-                        <!-- Export Section -->
-                        <Expander x:Name="ExportExpander" Header="📤 Export Options" IsExpanded="True">
-                            <StackPanel Margin="0,8,0,0">
-                                <Button Content="{StaticResource ExportToExcel}" 
-                                        Style="{StaticResource LargeButton}"
-                                        Command="{Binding ExportDataCommand}"
-                                        Margin="0,2" Height="38" FontSize="15"/>
-                                
-                                <Button Content="{StaticResource ExportToPDF}" 
-                                        Style="{StaticResource LargeButton}"
-                                        Margin="0,2" Height="38" FontSize="15"
-                                        IsEnabled="False"
-                                        ToolTip="{StaticResource ComingSoon}"
-                                        ToolTipService.ToolTip="{StaticResource ComingSoon}"/>
+                        <userControls:BudgetSummaryCard 
+                            Header="{StaticResource TotalSpending}"
+                            Icon="&#xE7BF;"
+                            Value="{Binding BudgetSummary.TotalSpending}"
+                            Subtitle="{StaticResource AllCategories}"/>
+                        
+                        <userControls:BudgetSummaryCard 
+                            Header="{StaticResource RemainingBudget}"
+                            Icon="&#xE9D2;"
+                            Value="{Binding BudgetSummary.RemainingBudget}"
+                            Subtitle="{StaticResource Available}"/>
+                    </StackPanel>
+
+                    <!-- Recent Activity Card -->
+                    <Border Style="{StaticResource ModernCardStyle}" Margin="0,0,0,24">
+                        <StackPanel>
+                            <TextBlock Text="Recent Activity" Style="{StaticResource SectionHeaderTextStyle}"/>
+                            <userControls:RecentEntriesUserControl 
+                                RecentIncomeEntries="{Binding RecentIncomeEntries}"
+                                RecentSpendingEntries="{Binding RecentSpendingEntries}"
+                                HasNoEntries="{Binding HasNoRecentEntries}"/>
+                        </StackPanel>
+                    </Border>
+                    </StackPanel>
+
+                    <!-- Analytics Content (Hidden by default) -->
+                    <StackPanel x:Name="AnalyticsContent" Visibility="Collapsed">
+                    <!-- Analytics Charts -->
+                    <UniformGrid Columns="2" Margin="0,0,0,24">
+                        <!-- Spending Category Chart Card -->
+                        <Border Style="{StaticResource ModernCardStyle}" Margin="0,0,12,0">
+                            <StackPanel>
+                                <TextBlock Text="Spending by Category" Style="{StaticResource SectionHeaderTextStyle}"/>
+                                <userControls:SpendingCategoryChartUserControl 
+                                    SpendingEntries="{Binding SpendingEntries}"/>
                             </StackPanel>
-                        </Expander>
+                        </Border>
 
-                        <!-- Settings Section -->
-                        <Expander x:Name="SettingsExpander" Header="🌐 Language" IsExpanded="True">
-                            <ComboBox x:Name="LanguageComboBox" Margin="0,8,0,0">
-                                <ComboBoxItem Content="{StaticResource English}" Tag="en"/>
-                                <ComboBoxItem Content="{StaticResource Albanian}" Tag="sq"/>
-                            </ComboBox>
-                        </Expander>
+                        <!-- Budget Trend Chart Card -->
+                        <Border Style="{StaticResource ModernCardStyle}" Margin="12,0,0,0">
+                            <StackPanel>
+                                <TextBlock Text="Budget Trends" Style="{StaticResource SectionHeaderTextStyle}"/>
+                                <userControls:BudgetTrendChartUserControl 
+                                    BudgetTrendData="{Binding BudgetTrendData}"/>
+                            </StackPanel>
+                        </Border>
+                    </UniformGrid>
+                    </StackPanel>
 
-                        <!-- Accessibility Section -->
-                        <Expander x:Name="AccessibilityExpander" Header="🔧 Accessibility" IsExpanded="True">
-                            <StackPanel Margin="0,8,0,0">
-                                <CheckBox x:Name="HighContrastCheckBox" Content="High Contrast Mode" 
-                                          Margin="0,5,0,10"
-                                          Checked="HighContrastCheckBox_Checked"
-                                          Unchecked="HighContrastCheckBox_Unchecked"
-                                          ToolTip="Improves visibility for better readability"/>
+                    <!-- Export & Tools Content (Hidden by default) -->
+                    <StackPanel x:Name="ExportContent" Visibility="Collapsed">
+                    <UniformGrid Columns="2">
+                        <!-- Export Options Card -->
+                        <Border Style="{StaticResource ModernCardStyle}" Margin="0,0,12,0">
+                            <StackPanel>
+                                <TextBlock Text="Export Options" Style="{StaticResource SectionHeaderTextStyle}"/>
+                                <Button Content="{StaticResource ExportToExcel}" 
+                                        Style="{StaticResource ModernPrimaryButtonStyle}"
+                                        Command="{Binding ExportDataCommand}"
+                                        Margin="0,8,0,8"/>
+                                <Button Content="{StaticResource ExportToPDF}" 
+                                        Style="{StaticResource ModernSecondaryButtonStyle}"
+                                        IsEnabled="False" Margin="0,0,0,8"
+                                        ToolTip="{StaticResource ComingSoon}"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Category Management Card -->
+                        <Border Style="{StaticResource ModernCardStyle}" Margin="12,0,0,0">
+                            <StackPanel>
+                                <TextBlock Text="Category Management" Style="{StaticResource SectionHeaderTextStyle}"/>
+                                <TextBlock Text="Organize your spending categories" 
+                                           FontSize="14" Foreground="{StaticResource SecondaryTextBrush}" 
+                                           Margin="0,0,0,16"/>
+                                <Button Command="{Binding ManageCategoriesCommand}"
+                                        Style="{StaticResource ModernSuccessButtonStyle}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="&#xE713;" FontFamily="Segoe Fluent Icons" FontSize="16" Margin="0,0,8,0"/>
+                                        <TextBlock Text="Manage Categories"/>
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                        </Border>
+                    </UniformGrid>
+                    </StackPanel>
+
+                    <!-- Settings Content (Hidden by default) -->
+                    <StackPanel x:Name="SettingsContent" Visibility="Collapsed">
+                    <!-- First Row: Theme and Language -->
+                    <UniformGrid Columns="2" Margin="0,0,0,16">
+                        <!-- Theme Settings Card -->
+                        <Border Style="{StaticResource ModernCardStyle}" Margin="0,0,12,0">
+                            <StackPanel>
+                                <TextBlock Text="Appearance" Style="{StaticResource SectionHeaderTextStyle}"/>
                                 
-                                <TextBlock Text="Font Size:" FontSize="14" FontWeight="SemiBold" 
-                                           Margin="0,10,0,8" Foreground="#333"/>
-                                <Grid Margin="0,0,0,8">
+                                <!-- Dark Mode Toggle -->
+                                <Grid Margin="0,0,0,16">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-                                    <Button x:Name="FontSizeSmallBtn" Content="A" Grid.Column="0"
-                                            FontSize="12" Height="36" Margin="2" 
-                                            Click="FontSizeSmall_Click" ToolTip="Small font size"
-                                            Background="#F5F5F5" BorderBrush="#DDD" BorderThickness="2"/>
-                                    <Button x:Name="FontSizeMediumBtn" Content="A" Grid.Column="1"
-                                            FontSize="16" Height="36" Margin="2" 
-                                            Click="FontSizeMedium_Click" ToolTip="Medium font size (default)"
-                                            Background="#F5F5F5" BorderBrush="#DDD" BorderThickness="2"/>
-                                    <Button x:Name="FontSizeLargeBtn" Content="A" Grid.Column="2"
-                                            FontSize="20" Height="36" Margin="2" 
-                                            Click="FontSizeLarge_Click" ToolTip="Large font size"
-                                            Background="#F5F5F5" BorderBrush="#DDD" BorderThickness="2"/>
+                                    
+                                    <StackPanel Grid.Column="0">
+                                        <TextBlock Text="Dark Mode" 
+                                                   FontFamily="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"
+                                                   FontSize="14" FontWeight="Medium"
+                                                   Foreground="{StaticResource PrimaryTextBrush}"
+                                                   TextOptions.TextRenderingMode="ClearType"/>
+                                        <TextBlock Text="Switch between light and dark themes" 
+                                                   FontSize="12" 
+                                                   Foreground="{StaticResource SecondaryTextBrush}"
+                                                   TextOptions.TextRenderingMode="ClearType"
+                                                   Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                    
+                                    <!-- Modern Toggle Switch -->
+                                    <ToggleButton x:Name="DarkModeToggle" Grid.Column="1" 
+                                                  Click="DarkModeToggle_Click"
+                                                  Width="48" Height="28" 
+                                                  Background="{StaticResource BorderMediumBrush}"
+                                                  BorderThickness="0" 
+                                                  VerticalAlignment="Center">
+                                        <ToggleButton.Template>
+                                            <ControlTemplate TargetType="ToggleButton">
+                                                <Border x:Name="ToggleBackground" 
+                                                        Background="{TemplateBinding Background}"
+                                                        CornerRadius="14" 
+                                                        Width="48" Height="28">
+                                                    <Border x:Name="ToggleThumb"
+                                                            Width="20" Height="20"
+                                                            Background="White"
+                                                            CornerRadius="10"
+                                                            HorizontalAlignment="Left"
+                                                            VerticalAlignment="Center"
+                                                            Margin="4,0">
+                                                        <Border.RenderTransform>
+                                                            <TranslateTransform x:Name="ThumbTransform"/>
+                                                        </Border.RenderTransform>
+                                                    </Border>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsChecked" Value="True">
+                                                        <Trigger.EnterActions>
+                                                            <BeginStoryboard>
+                                                                <Storyboard>
+                                                                    <DoubleAnimation Storyboard.TargetName="ThumbTransform"
+                                                                                   Storyboard.TargetProperty="X"
+                                                                                   To="20" Duration="0:0:0.2"/>
+                                                                    <ColorAnimation Storyboard.TargetName="ToggleBackground"
+                                                                                  Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                                                                  To="#0078D4" Duration="0:0:0.2"/>
+                                                                </Storyboard>
+                                                            </BeginStoryboard>
+                                                        </Trigger.EnterActions>
+                                                        <Trigger.ExitActions>
+                                                            <BeginStoryboard>
+                                                                <Storyboard>
+                                                                    <DoubleAnimation Storyboard.TargetName="ThumbTransform"
+                                                                                   Storyboard.TargetProperty="X"
+                                                                                   To="0" Duration="0:0:0.2"/>
+                                                                    <ColorAnimation Storyboard.TargetName="ToggleBackground"
+                                                                                  Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                                                                  To="#C4C4C4" Duration="0:0:0.2"/>
+                                                                </Storyboard>
+                                                            </BeginStoryboard>
+                                                        </Trigger.ExitActions>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </ToggleButton.Template>
+                                    </ToggleButton>
                                 </Grid>
-                            </StackPanel>
-                        </Expander>
-                        
-                        <!-- Quick Stats Section -->
-                        <Expander x:Name="StatsExpander" Header="📊 Quick Stats" IsExpanded="False">
-                            <StackPanel Margin="0,8,0,0">
-                                <Border Background="#F8F9FA" Padding="10" CornerRadius="6" Margin="0,3"
-                                        BorderBrush="#E0E0E0" BorderThickness="1">
-                                    <StackPanel>
-                                        <TextBlock Text="{StaticResource AverageDailySpending}" FontSize="12" Foreground="#666"/>
-                                        <TextBlock Text="{Binding AverageDailySpending, StringFormat=C}" FontWeight="Bold" FontSize="15"/>
-                                    </StackPanel>
-                                </Border>
                                 
-                                <Border Background="#F8F9FA" Padding="10" CornerRadius="6" Margin="0,3"
-                                        BorderBrush="#E0E0E0" BorderThickness="1">
-                                    <StackPanel>
-                                        <TextBlock Text="{StaticResource EntriesThisPeriod}" FontSize="12" Foreground="#666"/>
-                                        <TextBlock Text="{Binding TotalEntries}" FontWeight="Bold" FontSize="15"/>
-                                    </StackPanel>
-                                </Border>
+                                <!-- Theme Selection -->
+                                <TextBlock Text="Theme:" FontWeight="Medium" Margin="0,0,0,8"/>
+                                <ComboBox x:Name="ThemeComboBox" Style="{StaticResource ModernComboBoxStyle}"
+                                          SelectionChanged="ThemeComboBox_SelectionChanged">
+                                    <ComboBoxItem Content="Light" Tag="Light"/>
+                                    <ComboBoxItem Content="Dark" Tag="Dark"/>
+                                    <ComboBoxItem Content="Auto (System)" Tag="Auto"/>
+                                </ComboBox>
                             </StackPanel>
-                        </Expander>
+                        </Border>
+                        
+                        <!-- Language Settings Card -->
+                        <Border Style="{StaticResource ModernCardStyle}" Margin="12,0,0,0">
+                            <StackPanel>
+                                <TextBlock Text="Language" Style="{StaticResource SectionHeaderTextStyle}"/>
+                                <ComboBox x:Name="LanguageComboBox" Style="{StaticResource ModernComboBoxStyle}">
+                                    <ComboBoxItem Content="{StaticResource English}" Tag="en"/>
+                                    <ComboBoxItem Content="{StaticResource Albanian}" Tag="sq"/>
+                                </ComboBox>
+                            </StackPanel>
+                        </Border>
+                    </UniformGrid>
+
+                    <!-- Second Row: Accessibility -->
+                    <UniformGrid Columns="1">
+                        <!-- Accessibility Settings Card -->
+                        <Border Style="{StaticResource ModernCardStyle}">
+                            <StackPanel>
+                                <TextBlock Text="Accessibility" Style="{StaticResource SectionHeaderTextStyle}"/>
+                                <CheckBox x:Name="HighContrastCheckBox" Content="High Contrast Mode" 
+                                          Margin="0,0,0,16"
+                                          Checked="HighContrastCheckBox_Checked"
+                                          Unchecked="HighContrastCheckBox_Unchecked"/>
+                                
+                                <TextBlock Text="Font Size:" FontWeight="Medium" Margin="0,0,0,8"/>
+                                <UniformGrid Columns="3">
+                                    <Button x:Name="FontSizeSmallBtn" Content="A" FontSize="12"
+                                            Click="FontSizeSmall_Click" Style="{StaticResource ModernSecondaryButtonStyle}"
+                                            ToolTip="Small font size" Margin="0,0,4,0"/>
+                                    <Button x:Name="FontSizeMediumBtn" Content="A" FontSize="16"
+                                            Click="FontSizeMedium_Click" Style="{StaticResource ModernSecondaryButtonStyle}"
+                                            ToolTip="Medium font size" Margin="2,0"/>
+                                    <Button x:Name="FontSizeLargeBtn" Content="A" FontSize="20"
+                                            Click="FontSizeLarge_Click" Style="{StaticResource ModernSecondaryButtonStyle}"
+                                            ToolTip="Large font size" Margin="4,0,0,0"/>
+                                </UniformGrid>
+                            </StackPanel>
+                        </Border>
+                    </UniformGrid>
                     </StackPanel>
-                </ScrollViewer>
+                </Grid>
+            </ScrollViewer>
+
+            <!-- Status Bar -->
+            <Border Grid.Row="2" Background="{StaticResource SurfaceElevatedBrush}" 
+                    BorderBrush="{StaticResource BorderLightBrush}" BorderThickness="0,1,0,0"
+                    Padding="24,12">
+                <TextBlock Text="{Binding StatusMessage}" 
+                           FontSize="12" Foreground="{StaticResource SecondaryTextBrush}"/>
             </Border>
         </Grid>
-
-        <!-- Status Bar -->
-        <TextBlock Grid.Row="4" Text="{Binding StatusMessage}" Background="#E8E8E8" Padding="10,5" 
-                   HorizontalAlignment="Stretch"/>
     </Grid>
 </Window>

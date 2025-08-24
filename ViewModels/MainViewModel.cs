@@ -102,6 +102,7 @@ namespace BudgetManagement.ViewModels
         public ICommand SetCurrentMonthCommand { get; }
         public ICommand SetCurrentYearCommand { get; }
         public ICommand ExportDataCommand { get; }
+        public ICommand ManageCategoriesCommand { get; }
 
         public MainViewModel(IBudgetService budgetService, IDialogService dialogService)
         {
@@ -130,6 +131,7 @@ namespace BudgetManagement.ViewModels
             SetCurrentMonthCommand = new RelayCommand(SetCurrentMonth);
             SetCurrentYearCommand = new RelayCommand(SetCurrentYear);
             ExportDataCommand = new RelayCommand(() => _ = ExportDataAsync());
+            ManageCategoriesCommand = new RelayCommand(() => _ = ManageCategoriesAsync());
             
             // DEBUG: Confirm commands were created
             System.Diagnostics.Debug.WriteLine($"MainViewModel commands created - AddIncomeCommand: {AddIncomeCommand != null}, AddSpendingCommand: {AddSpendingCommand != null}");
@@ -176,11 +178,14 @@ namespace BudgetManagement.ViewModels
         {
             try
             {
+                System.Diagnostics.Debug.WriteLine($"RefreshDataAsync: Starting for period {SelectedPeriodStart:yyyy-MM-dd} to {SelectedPeriodEnd:yyyy-MM-dd}");
+                
                 IsLoading = true;
                 StatusMessage = "Loading data...";
 
                 // Load income entries
                 var incomeEntries = await _budgetService.GetIncomeAsync(SelectedPeriodStart, SelectedPeriodEnd);
+                System.Diagnostics.Debug.WriteLine($"RefreshDataAsync: Retrieved {incomeEntries?.Count() ?? 0} income entries");
                 IncomeEntries.Clear();
                 foreach (var income in incomeEntries)
                 {
@@ -189,6 +194,7 @@ namespace BudgetManagement.ViewModels
 
                 // Load spending entries
                 var spendingEntries = await _budgetService.GetSpendingWithCategoryAsync(SelectedPeriodStart, SelectedPeriodEnd);
+                System.Diagnostics.Debug.WriteLine($"RefreshDataAsync: Retrieved {spendingEntries?.Count() ?? 0} spending entries");
                 SpendingEntries.Clear();
                 foreach (var spending in spendingEntries)
                 {
@@ -197,11 +203,13 @@ namespace BudgetManagement.ViewModels
 
                 // Calculate budget summary
                 BudgetSummary = await _budgetService.GetBudgetSummaryAsync(SelectedPeriodStart, SelectedPeriodEnd);
+                System.Diagnostics.Debug.WriteLine($"RefreshDataAsync: BudgetSummary - Income: ${BudgetSummary?.TotalIncome ?? 0}, Spending: ${BudgetSummary?.TotalSpending ?? 0}");
 
                 // Update recent entries (last 5 of each type)
                 UpdateRecentEntries();
 
                 // Update budget trend data (last 10 weeks)
+                System.Diagnostics.Debug.WriteLine("RefreshDataAsync: Calling UpdateBudgetTrendDataAsync...");
                 await UpdateBudgetTrendDataAsync();
 
                 StatusMessage = $"Loaded {IncomeEntries.Count} income and {SpendingEntries.Count} spending entries";
@@ -261,15 +269,21 @@ namespace BudgetManagement.ViewModels
         {
             try
             {
+                System.Diagnostics.Debug.WriteLine("UpdateBudgetTrendDataAsync: Starting...");
+                
                 BudgetTrendData.Clear();
 
                 // Calculate 10 weeks back from today
                 var endDate = DateTime.Now.Date;
                 var startDate = endDate.AddDays(-70); // 10 weeks
 
+                System.Diagnostics.Debug.WriteLine($"UpdateBudgetTrendDataAsync: Fetching data from {startDate:yyyy-MM-dd} to {endDate:yyyy-MM-dd}");
+
                 // Get data for the entire 10-week period
                 var allIncome = await _budgetService.GetIncomeAsync(startDate, endDate);
                 var allSpending = await _budgetService.GetSpendingWithCategoryAsync(startDate, endDate);
+
+                System.Diagnostics.Debug.WriteLine($"UpdateBudgetTrendDataAsync: Retrieved {allIncome?.Count() ?? 0} income entries and {allSpending?.Count() ?? 0} spending entries");
 
                 // Group by week and calculate weekly totals
                 for (int weekOffset = 0; weekOffset < 10; weekOffset++)
@@ -285,16 +299,23 @@ namespace BudgetManagement.ViewModels
                         .Where(s => s.Date >= weekStart && s.Date <= weekEnd)
                         .Sum(s => s.Amount);
 
-                    BudgetTrendData.Add(new BudgetManagement.Views.UserControls.WeeklyBudgetData
+                    var weeklyData = new BudgetManagement.Views.UserControls.WeeklyBudgetData
                     {
                         WeekStartDate = weekStart,
                         TotalIncome = weeklyIncome,
                         TotalSpending = weeklySpending
-                    });
+                    };
+                    
+                    BudgetTrendData.Add(weeklyData);
+                    
+                    System.Diagnostics.Debug.WriteLine($"UpdateBudgetTrendDataAsync: Week {weekOffset+1} ({weekStart:MM/dd} - {weekEnd:MM/dd}): Income=${weeklyIncome}, Spending=${weeklySpending}, Remaining=${weeklyData.RemainingBudget}");
                 }
+                
+                System.Diagnostics.Debug.WriteLine($"UpdateBudgetTrendDataAsync: Added {BudgetTrendData.Count} weekly data points to BudgetTrendData collection");
             }
             catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine($"UpdateBudgetTrendDataAsync error: {ex}");
                 StatusMessage = $"Error updating trend data: {ex.Message}";
             }
         }
@@ -499,18 +520,20 @@ namespace BudgetManagement.ViewModels
             }
         }
 
-        private void SetCurrentMonth()
+        private async void SetCurrentMonth()
         {
             var now = DateTime.Now;
             SelectedPeriodStart = new DateTime(now.Year, now.Month, 1);
             SelectedPeriodEnd = SelectedPeriodStart.AddMonths(1).AddDays(-1);
+            await RefreshDataAsync(); // Refresh all data including analytics
         }
 
-        private void SetCurrentYear()
+        private async void SetCurrentYear()
         {
             var now = DateTime.Now;
             SelectedPeriodStart = new DateTime(now.Year, 1, 1);
             SelectedPeriodEnd = new DateTime(now.Year, 12, 31);
+            await RefreshDataAsync(); // Refresh all data including analytics
         }
 
         private async Task ExportDataAsync()
@@ -526,6 +549,54 @@ namespace BudgetManagement.ViewModels
             {
                 StatusMessage = $"Export failed: {ex.Message}";
                 await _dialogService.ShowErrorAsync("Export Error", ex.Message);
+            }
+        }
+
+        private async Task ManageCategoriesAsync()
+        {
+            try
+            {
+                System.Diagnostics.Debug.WriteLine("ManageCategoriesAsync: Starting...");
+                StatusMessage = "🔄 Opening category management...";
+                
+                // Show the category management dialog using proper dialog service pattern
+                System.Diagnostics.Debug.WriteLine("ManageCategoriesAsync: Creating CategoryManagementDialog...");
+                var dialog = new BudgetManagement.Views.Dialogs.CategoryManagementDialog(
+                    _budgetService, _dialogService)
+                {
+                    Owner = Application.Current.MainWindow,
+                    WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                    ShowInTaskbar = false
+                };
+                
+                // Use Dispatcher.Invoke to ensure proper dialog handling
+                System.Diagnostics.Debug.WriteLine("ManageCategoriesAsync: Showing dialog...");
+                var result = await Application.Current.Dispatcher.InvokeAsync(() => dialog.ShowDialog());
+                System.Diagnostics.Debug.WriteLine($"ManageCategoriesAsync: Dialog result: {result}");
+                
+                if (result == true)
+                {
+                    StatusMessage = "🔄 Refreshing categories...";
+                    
+                    // Refresh categories collection
+                    var categories = await _budgetService.GetCategoriesAsync();
+                    Categories.Clear();
+                    foreach (var category in categories.OrderBy(c => c.DisplayOrder))
+                    {
+                        Categories.Add(category);
+                    }
+                    
+                    StatusMessage = "✅ Categories updated successfully";
+                }
+                else
+                {
+                    StatusMessage = "❌ Category management canceled";
+                }
+            }
+            catch (Exception ex)
+            {
+                StatusMessage = $"❌ Error managing categories: {ex.Message}";
+                await _dialogService.ShowErrorAsync("Category Management Error", ex.Message);
             }
         }
     }

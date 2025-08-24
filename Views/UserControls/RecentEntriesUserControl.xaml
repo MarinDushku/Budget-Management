@@ -2,8 +2,8 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:converters="clr-namespace:BudgetManagement.Converters"
-             FontFamily="Segoe UI"
-             FontSize="14">
+             FontFamily="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"
+             FontSize="16">
 
     <UserControl.Resources>
         <converters:CurrencyConverter x:Key="CurrencyConverter"/>
@@ -11,76 +11,149 @@
         <converters:TextTruncateConverter x:Key="TextTruncateConverter"/>
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         
-        <!-- Entry card style -->
-        <Style x:Key="EntryCard" TargetType="Border">
-            <Setter Property="Background" Value="#FAFAFA"/>
-            <Setter Property="BorderBrush" Value="#E0E0E0"/>
+        <!-- Modern entry card style -->
+        <Style x:Key="ModernEntryCard" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource SurfaceBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderLightBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CornerRadius" Value="6"/>
-            <Setter Property="Margin" Value="0,2"/>
-            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Margin" Value="0,6"/>
+            <Setter Property="Padding" Value="16,12"/>
+            <Setter Property="Effect" Value="{StaticResource ModernCardShadow}"/>
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <ScaleTransform ScaleX="1" ScaleY="1"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Trigger.EnterActions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" 
+                                               To="1.01" Duration="0:0:0.15"/>
+                                <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" 
+                                               To="1.01" Duration="0:0:0.15"/>
+                                <ColorAnimation Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)"
+                                              To="#0078D4" Duration="0:0:0.15"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </Trigger.EnterActions>
+                    <Trigger.ExitActions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" 
+                                               To="1.0" Duration="0:0:0.15"/>
+                                <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" 
+                                               To="1.0" Duration="0:0:0.15"/>
+                                <ColorAnimation Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)"
+                                              To="#E1E1E1" Duration="0:0:0.15"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </Trigger.ExitActions>
+                </Trigger>
+            </Style.Triggers>
         </Style>
         
-        <!-- Entry type icon style -->
-        <Style x:Key="EntryIcon" TargetType="TextBlock">
+        <!-- Modern entry icon style -->
+        <Style x:Key="ModernEntryIcon" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe Fluent Icons"/>
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0,0,12,0"/>
+            <Setter Property="TextOptions.TextRenderingMode" Value="ClearType"/>
+        </Style>
+        
+        <!-- Modern entry amount style -->
+        <Style x:Key="ModernEntryAmount" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="FontSize" Value="16"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="Margin" Value="0,0,8,0"/>
+            <Setter Property="TextOptions.TextRenderingMode" Value="ClearType"/>
         </Style>
         
-        <!-- Entry amount style -->
-        <Style x:Key="EntryAmount" TargetType="TextBlock">
-            <Setter Property="FontWeight" Value="Bold"/>
+        <!-- Modern income amount style -->
+        <Style x:Key="ModernIncomeAmount" TargetType="TextBlock" BasedOn="{StaticResource ModernEntryAmount}">
+            <Setter Property="Foreground" Value="{StaticResource AccentGreenBrush}"/>
+        </Style>
+        
+        <!-- Modern spending amount style -->
+        <Style x:Key="ModernSpendingAmount" TargetType="TextBlock" BasedOn="{StaticResource ModernEntryAmount}">
+            <Setter Property="Foreground" Value="#D73527"/>
+        </Style>
+        
+        <!-- Modern entry description style -->
+        <Style x:Key="ModernEntryDescription" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"/>
             <Setter Property="FontSize" Value="14"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-        </Style>
-        
-        <!-- Income amount style -->
-        <Style x:Key="IncomeAmount" TargetType="TextBlock" BasedOn="{StaticResource EntryAmount}">
-            <Setter Property="Foreground" Value="#4CAF50"/>
-        </Style>
-        
-        <!-- Spending amount style -->
-        <Style x:Key="SpendingAmount" TargetType="TextBlock" BasedOn="{StaticResource EntryAmount}">
-            <Setter Property="Foreground" Value="#F44336"/>
-        </Style>
-        
-        <!-- Entry description style -->
-        <Style x:Key="EntryDescription" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="13"/>
-            <Setter Property="Foreground" Value="#333333"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+            <Setter Property="TextOptions.TextRenderingMode" Value="ClearType"/>
         </Style>
         
-        <!-- Entry date style -->
-        <Style x:Key="EntryDate" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="11"/>
-            <Setter Property="Foreground" Value="#666666"/>
+        <!-- Modern entry date style -->
+        <Style x:Key="ModernEntryDate" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="Normal"/>
+            <Setter Property="Foreground" Value="{StaticResource SecondaryTextBrush}"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="TextOptions.TextRenderingMode" Value="ClearType"/>
         </Style>
         
-        <!-- Category style -->
-        <Style x:Key="CategoryText" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="11"/>
-            <Setter Property="Foreground" Value="#888888"/>
-            <Setter Property="FontStyle" Value="Italic"/>
+        <!-- Modern category style -->
+        <Style x:Key="ModernCategoryText" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="Normal"/>
+            <Setter Property="Foreground" Value="{StaticResource SecondaryTextBrush}"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="TextOptions.TextRenderingMode" Value="ClearType"/>
+        </Style>
+
+        <!-- Modern section header style -->
+        <Style x:Key="ModernSectionHeader" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Margin" Value="0,0,0,12"/>
+            <Setter Property="TextOptions.TextRenderingMode" Value="ClearType"/>
+        </Style>
+
+        <!-- Income section header -->  
+        <Style x:Key="IncomeSectionHeader" TargetType="TextBlock" BasedOn="{StaticResource ModernSectionHeader}">
+            <Setter Property="Foreground" Value="{StaticResource AccentGreenBrush}"/>
+        </Style>
+        
+        <!-- Spending section header -->
+        <Style x:Key="SpendingSectionHeader" TargetType="TextBlock" BasedOn="{StaticResource ModernSectionHeader}">
+            <Setter Property="Foreground" Value="#D73527"/>
         </Style>
     </UserControl.Resources>
 
     <StackPanel>
         <!-- Recent Income Section -->
-        <TextBlock Text="{StaticResource RecentIncome}" 
-                   FontWeight="Bold" 
-                   FontSize="14" 
-                   Margin="0,0,0,8" 
-                   Foreground="#4CAF50"/>
+        <Grid Margin="0,0,0,4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <TextBlock Grid.Column="0" Text="&#xE8D4;" FontFamily="Segoe Fluent Icons" 
+                       FontSize="18" VerticalAlignment="Center" 
+                       Foreground="{StaticResource AccentGreenBrush}" Margin="0,0,8,0"/>
+            <TextBlock Grid.Column="1" Text="{StaticResource RecentIncome}" 
+                       Style="{StaticResource IncomeSectionHeader}"/>
+        </Grid>
         
         <ItemsControl ItemsSource="{Binding RecentIncomeEntries}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Border Style="{StaticResource EntryCard}">
+                    <Border Style="{StaticResource ModernEntryCard}">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>  <!-- Icon -->
@@ -90,87 +163,111 @@
                             </Grid.ColumnDefinitions>
                             
                             <TextBlock Grid.Column="0" 
-                                       Text="💰" 
-                                       Style="{StaticResource EntryIcon}"/>
+                                       Text="&#xE8D4;" 
+                                       Style="{StaticResource ModernEntryIcon}"
+                                       Foreground="{StaticResource AccentGreenBrush}"/>
                             
-                            <TextBlock Grid.Column="1" 
-                                       Text="{Binding Description, Converter={StaticResource TextTruncateConverter}, ConverterParameter=30}" 
-                                       Style="{StaticResource EntryDescription}"
-                                       Margin="0,0,10,0"/>
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,16,0">
+                                <TextBlock Text="{Binding Description, Converter={StaticResource TextTruncateConverter}, ConverterParameter=35}" 
+                                           Style="{StaticResource ModernEntryDescription}"/>
+                            </StackPanel>
                             
                             <TextBlock Grid.Column="2" 
                                        Text="{Binding Amount, Converter={StaticResource CurrencyConverter}}" 
-                                       Style="{StaticResource IncomeAmount}"
-                                       Margin="0,0,10,0"/>
+                                       Style="{StaticResource ModernIncomeAmount}"
+                                       Margin="0,0,16,0"/>
                             
                             <TextBlock Grid.Column="3" 
                                        Text="{Binding Date, Converter={StaticResource DateConverter}, ConverterParameter=short}" 
-                                       Style="{StaticResource EntryDate}"/>
+                                       Style="{StaticResource ModernEntryDate}"/>
                         </Grid>
                     </Border>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
         
-        <!-- Separator -->
-        <Separator Margin="0,15,0,10" Background="#E0E0E0"/>
+        <!-- Modern Separator -->
+        <Border Height="1" Background="{StaticResource BorderLightBrush}" 
+                Margin="0,20,0,16" Opacity="0.6"/>
         
         <!-- Recent Spending Section -->
-        <TextBlock Text="{StaticResource RecentSpending}" 
-                   FontWeight="Bold" 
-                   FontSize="14" 
-                   Margin="0,0,0,8" 
-                   Foreground="#F44336"/>
+        <Grid Margin="0,0,0,4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <TextBlock Grid.Column="0" Text="&#xE7BF;" FontFamily="Segoe Fluent Icons" 
+                       FontSize="18" VerticalAlignment="Center" 
+                       Foreground="#D73527" Margin="0,0,8,0"/>
+            <TextBlock Grid.Column="1" Text="{StaticResource RecentSpending}" 
+                       Style="{StaticResource SpendingSectionHeader}"/>
+        </Grid>
         
         <ItemsControl ItemsSource="{Binding RecentSpendingEntries}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Border Style="{StaticResource EntryCard}">
+                    <Border Style="{StaticResource ModernEntryCard}">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>  <!-- Icon -->
                                 <ColumnDefinition Width="*"/>     <!-- Description -->
                                 <ColumnDefinition Width="Auto"/>  <!-- Amount -->
-                                <ColumnDefinition Width="Auto"/>  <!-- Category -->
+                                <ColumnDefinition Width="Auto"/>  <!-- Date & Category -->
                             </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
                             
-                            <TextBlock Grid.Column="0" Grid.Row="0"
-                                       Text="💸" 
-                                       Style="{StaticResource EntryIcon}"/>
+                            <TextBlock Grid.Column="0" 
+                                       Text="&#xE7BF;" 
+                                       Style="{StaticResource ModernEntryIcon}"
+                                       Foreground="#D73527"/>
                             
-                            <TextBlock Grid.Column="1" Grid.Row="0"
-                                       Text="{Binding Description, Converter={StaticResource TextTruncateConverter}, ConverterParameter=25}" 
-                                       Style="{StaticResource EntryDescription}"
-                                       Margin="0,0,10,0"/>
-                            
-                            <TextBlock Grid.Column="2" Grid.Row="0"
-                                       Text="{Binding Amount, Converter={StaticResource CurrencyConverter}}" 
-                                       Style="{StaticResource SpendingAmount}"
-                                       Margin="0,0,10,0"/>
-                            
-                            <StackPanel Grid.Column="3" Grid.Row="0" Orientation="Vertical">
-                                <TextBlock Text="{Binding Date, Converter={StaticResource DateConverter}, ConverterParameter=short}" 
-                                           Style="{StaticResource EntryDate}"/>
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,16,0">
+                                <TextBlock Text="{Binding Description, Converter={StaticResource TextTruncateConverter}, ConverterParameter=30}" 
+                                           Style="{StaticResource ModernEntryDescription}"/>
                                 <TextBlock Text="{Binding CategoryName}" 
-                                           Style="{StaticResource CategoryText}"/>
+                                           Style="{StaticResource ModernCategoryText}"
+                                           Margin="0,2,0,0"/>
                             </StackPanel>
+                            
+                            <TextBlock Grid.Column="2" 
+                                       Text="{Binding Amount, Converter={StaticResource CurrencyConverter}}" 
+                                       Style="{StaticResource ModernSpendingAmount}"
+                                       Margin="0,0,16,0"/>
+                            
+                            <TextBlock Grid.Column="3" 
+                                       Text="{Binding Date, Converter={StaticResource DateConverter}, ConverterParameter=short}" 
+                                       Style="{StaticResource ModernEntryDate}"/>
                         </Grid>
                     </Border>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
         
-        <!-- Empty state message -->
-        <TextBlock Text="{StaticResource NoRecentEntries}" 
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"
-                   Margin="0,30"
-                   FontSize="12"
-                   Foreground="#999999"
-                   Visibility="{Binding HasNoEntries, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+        <!-- Modern Empty state -->
+        <Border Background="{StaticResource SurfaceElevatedBrush}" 
+                BorderBrush="{StaticResource BorderLightBrush}" 
+                BorderThickness="1" CornerRadius="8" 
+                Padding="32,24" Margin="0,24"
+                Visibility="{Binding HasNoEntries, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <StackPanel HorizontalAlignment="Center">
+                <TextBlock Text="&#xE7C3;" FontFamily="Segoe Fluent Icons" 
+                           FontSize="32" HorizontalAlignment="Center" 
+                           Foreground="{StaticResource SecondaryTextBrush}" 
+                           Margin="0,0,0,8"/>
+                <TextBlock Text="{StaticResource NoRecentEntries}" 
+                           HorizontalAlignment="Center"
+                           FontFamily="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"
+                           FontSize="14" FontWeight="Medium"
+                           Foreground="{StaticResource SecondaryTextBrush}"
+                           TextOptions.TextRenderingMode="ClearType"/>
+                <TextBlock Text="Your recent transactions will appear here" 
+                           HorizontalAlignment="Center"
+                           FontFamily="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"
+                           FontSize="12"
+                           Foreground="{StaticResource SecondaryTextBrush}"
+                           TextOptions.TextRenderingMode="ClearType"
+                           Margin="0,4,0,0"/>
+            </StackPanel>
+        </Border>
     </StackPanel>
 </UserControl>

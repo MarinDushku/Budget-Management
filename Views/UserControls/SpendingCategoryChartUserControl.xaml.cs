@@ -69,14 +69,34 @@ namespace BudgetManagement.Views.UserControls
         {
             if (d is SpendingCategoryChartUserControl control)
             {
+                // Unsubscribe from old collection
+                if (e.OldValue is ObservableCollection<SpendingWithCategory> oldCollection)
+                {
+                    oldCollection.CollectionChanged -= control.OnSpendingCollectionChanged;
+                }
+                
+                // Subscribe to new collection
+                if (e.NewValue is ObservableCollection<SpendingWithCategory> newCollection)
+                {
+                    newCollection.CollectionChanged += control.OnSpendingCollectionChanged;
+                }
+                
                 control.UpdateChart();
             }
         }
 
+        private void OnSpendingCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            UpdateChart();
+        }
+
         private void UpdateChart()
         {
+            System.Diagnostics.Debug.WriteLine($"SpendingCategoryChartUserControl.UpdateChart: Starting with {SpendingEntries?.Count ?? 0} spending entries");
+            
             if (SpendingEntries == null || !SpendingEntries.Any())
             {
+                System.Diagnostics.Debug.WriteLine("SpendingCategoryChartUserControl.UpdateChart: No data available, clearing chart");
                 PieChartModel?.Series.Clear();
                 CategorySummaries?.Clear();
                 PieChartModel?.InvalidatePlot(true);

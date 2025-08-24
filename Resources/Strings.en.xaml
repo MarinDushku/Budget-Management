@@ -3,10 +3,10 @@
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
     <!-- Main Window -->
-    <sys:String x:Key="AppTitle">💰 Budget Manager</sys:String>
-    <sys:String x:Key="AddIncomeButton">➕ Add Income</sys:String>
-    <sys:String x:Key="AddSpendingButton">💸 Add Spending</sys:String>
-    <sys:String x:Key="RefreshButton">🔄 Refresh</sys:String>
+    <sys:String x:Key="AppTitle">Budget Manager</sys:String>
+    <sys:String x:Key="AddIncomeButton">Add Income</sys:String>
+    <sys:String x:Key="AddSpendingButton">Add Spending</sys:String>
+    <sys:String x:Key="RefreshButton">Refresh</sys:String>
     
     <!-- Summary Cards -->
     <sys:String x:Key="TotalIncome">Total Income</sys:String>
@@ -17,9 +17,9 @@
     <sys:String x:Key="Available">Available</sys:String>
     
     <!-- Panel Headers -->
-    <sys:String x:Key="Analytics">📈 Analytics</sys:String>
-    <sys:String x:Key="RecentActivity">📝 Recent Activity</sys:String>
-    <sys:String x:Key="ExportTools">💾 Export &amp; Tools</sys:String>
+    <sys:String x:Key="Analytics">Analytics</sys:String>
+    <sys:String x:Key="RecentActivity">Recent Activity</sys:String>
+    <sys:String x:Key="ExportTools">Export &amp; Tools</sys:String>
     
     <!-- Analytics Panel -->
     <sys:String x:Key="SpendingByCategory">Spending by Category</sys:String>
@@ -30,14 +30,14 @@
     <sys:String x:Key="WeekTrend">10-Week Trend</sys:String>
     
     <!-- Recent Activity -->
-    <sys:String x:Key="RecentIncome">💰 Recent Income</sys:String>
-    <sys:String x:Key="RecentSpending">💸 Recent Spending</sys:String>
+    <sys:String x:Key="RecentIncome">Recent Income</sys:String>
+    <sys:String x:Key="RecentSpending">Recent Spending</sys:String>
     <sys:String x:Key="NoRecentEntries">No recent entries to display</sys:String>
     
     <!-- Export Panel -->
     <sys:String x:Key="ExportOptions">Export Options</sys:String>
-    <sys:String x:Key="ExportToExcel">📊 Export to Excel</sys:String>
-    <sys:String x:Key="ExportToPDF">📄 Export to PDF</sys:String>
+    <sys:String x:Key="ExportToExcel">Export to Excel</sys:String>
+    <sys:String x:Key="ExportToPDF">Export to PDF</sys:String>
     <sys:String x:Key="ComingSoon">Coming soon</sys:String>
     <sys:String x:Key="QuickStats">Quick Stats</sys:String>
     <sys:String x:Key="AverageDailySpending">Average Daily Spending</sys:String>
@@ -99,13 +99,39 @@
     <sys:String x:Key="English">English</sys:String>
     <sys:String x:Key="Albanian">Albanian</sys:String>
     
+    <!-- Category Management -->
+    <sys:String x:Key="Categories">Categories</sys:String>
+    <sys:String x:Key="ManageCategories">Manage Categories</sys:String>
+    <sys:String x:Key="ManageCategoriesTitle">Manage Spending Categories</sys:String>
+    <sys:String x:Key="ManageCategoriesDescription">Add, edit, or remove categories to organize your spending</sys:String>
+    <sys:String x:Key="AddNewCategory">Add New Category</sys:String>
+    <sys:String x:Key="AddCategory">Add Category</sys:String>
+    <sys:String x:Key="CurrentCategories">Current Categories</sys:String>
+    <sys:String x:Key="CategoryOrderDescription">Categories are shown in the order they appear in dialogs</sys:String>
+    <sys:String x:Key="EditCategory">Edit Category</sys:String>
+    <sys:String x:Key="DeleteCategory">Delete Category</sys:String>
+    <sys:String x:Key="MoveUp">Move Up</sys:String>
+    <sys:String x:Key="MoveDown">Move Down</sys:String>
+    <sys:String x:Key="ResetToDefault">Reset to Default</sys:String>
+    <sys:String x:Key="ResetCategoriesConfirm">This will restore the default categories (Family, Personal, Marini) and may affect existing spending entries. Are you sure you want to continue?</sys:String>
+    <sys:String x:Key="CategoryInUse">The category '{0}' is currently being used by existing spending entries. Deleting it will affect those entries. Are you sure you want to delete this category?</sys:String>
+    <sys:String x:Key="DeleteCategoryConfirm">Are you sure you want to delete the category '{0}'?</sys:String>
+    <sys:String x:Key="DuplicateCategory">A category with this name already exists.</sys:String>
+    <sys:String x:Key="CategoryNameTooLong">Category name cannot exceed 50 characters.</sys:String>
+    <sys:String x:Key="CategoryAddedSuccess">Category '{0}' has been added successfully.</sys:String>
+    <sys:String x:Key="EnterCategoryName">Please enter a category name.</sys:String>
+    <sys:String x:Key="EnterNewCategoryName">Enter new category name:</sys:String>
+    <sys:String x:Key="CategoryManagementError">Category Management Error</sys:String>
+    <sys:String x:Key="CategoriesUpdatedSuccess">Categories updated successfully</sys:String>
+    <sys:String x:Key="CategoryManagementCanceled">Category management canceled</sys:String>
+    
     <!-- Accessibility -->
-    <sys:String x:Key="Accessibility">🔧 Accessibility</sys:String>
+    <sys:String x:Key="Accessibility">Accessibility</sys:String>
     <sys:String x:Key="HighContrastMode">High Contrast Mode</sys:String>
     <sys:String x:Key="FontSize">Font Size:</sys:String>
     <sys:String x:Key="SmallFont">Small font size</sys:String>
     <sys:String x:Key="MediumFont">Medium font size (default)</sys:String>
     <sys:String x:Key="LargeFont">Large font size</sys:String>
-    <sys:String x:Key="QuickAmounts">💡 Quick amounts:</sys:String>
+    <sys:String x:Key="QuickAmounts">Quick amounts:</sys:String>
     
 </ResourceDictionary>

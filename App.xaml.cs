@@ -83,6 +83,7 @@ namespace BudgetManagement
                     // Register application services
                     services.AddSingleton<ISettingsService, SettingsService>();
                     services.AddSingleton<ILocalizationService, LocalizationService>();
+                    services.AddSingleton<IThemeService, ThemeService>();
                     services.AddSingleton<IBudgetService>(provider =>
                     {
                         var settings = provider.GetRequiredService<ISettingsService>();

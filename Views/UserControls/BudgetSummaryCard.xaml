@@ -9,110 +9,110 @@
         <converters:CurrencyConverter x:Key="CurrencyConverter"/>
         <converters:NumberToSignConverter x:Key="NumberToSignConverter"/>
         
-        <!-- Compact cube card style -->
-        <Style x:Key="SummaryCard" TargetType="Border">
-            <Setter Property="Background" Value="#FFFFFF"/>
-            <Setter Property="BorderBrush" Value="#E0E0E0"/>
-            <Setter Property="BorderThickness" Value="2"/>
-            <Setter Property="CornerRadius" Value="12"/>
-            <Setter Property="Padding" Value="16,12"/>
-            <Setter Property="Margin" Value="8"/>
-            <Setter Property="Width" Value="200"/>
-            <Setter Property="Height" Value="140"/>
-            <Setter Property="Effect">
-                <Setter.Value>
-                    <DropShadowEffect Color="#E0E0E0" Direction="270" ShadowDepth="4" BlurRadius="12" Opacity="0.3"/>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <!-- Compact header text style -->
-        <Style x:Key="CardHeader" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="12"/>
+        <!-- Modern card header text style -->
+        <Style x:Key="ModernCardHeader" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"/>
+            <Setter Property="FontSize" Value="14"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Foreground" Value="#666666"/>
+            <Setter Property="Foreground" Value="{StaticResource SecondaryTextBrush}"/>
             <Setter Property="HorizontalAlignment" Value="Center"/>
-            <Setter Property="Margin" Value="0,0,0,6"/>
+            <Setter Property="Margin" Value="0,0,0,8"/>
             <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="TextOptions.TextRenderingMode" Value="ClearType"/>
         </Style>
 
-        <!-- Compact value text style -->
-        <Style x:Key="CardValue" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="18"/>
-            <Setter Property="FontWeight" Value="Bold"/>
+        <!-- Modern value text style -->
+        <Style x:Key="ModernCardValue" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"/>
+            <Setter Property="FontSize" Value="24"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="HorizontalAlignment" Value="Center"/>
-            <Setter Property="FontFamily" Value="Consolas, Monaco, monospace"/>
-            <Setter Property="Foreground" Value="#2196F3"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryBlueBrush}"/>
             <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="TextOptions.TextRenderingMode" Value="ClearType"/>
+            <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
         </Style>
 
-        <!-- Positive value style -->
-        <Style x:Key="PositiveValue" TargetType="TextBlock" BasedOn="{StaticResource CardValue}">
-            <Setter Property="Foreground" Value="#4CAF50"/>
+        <!-- Positive value style with modern colors -->
+        <Style x:Key="ModernPositiveValue" TargetType="TextBlock" BasedOn="{StaticResource ModernCardValue}">
+            <Setter Property="Foreground" Value="{StaticResource AccentGreenBrush}"/>
         </Style>
 
-        <!-- Negative value style -->
-        <Style x:Key="NegativeValue" TargetType="TextBlock" BasedOn="{StaticResource CardValue}">
-            <Setter Property="Foreground" Value="#F44336"/>
+        <!-- Negative value style with modern colors -->
+        <Style x:Key="ModernNegativeValue" TargetType="TextBlock" BasedOn="{StaticResource ModernCardValue}">
+            <Setter Property="Foreground" Value="#D73527"/>
         </Style>
 
         <!-- Dynamic value style that changes based on number sign -->
-        <Style x:Key="DynamicValue" TargetType="TextBlock" BasedOn="{StaticResource CardValue}">
+        <Style x:Key="ModernDynamicValue" TargetType="TextBlock" BasedOn="{StaticResource ModernCardValue}">
             <Style.Triggers>
                 <DataTrigger Binding="{Binding Value, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource NumberToSignConverter}}" Value="Positive">
-                    <Setter Property="Foreground" Value="#4CAF50"/>
+                    <Setter Property="Foreground" Value="{StaticResource AccentGreenBrush}"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding Value, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource NumberToSignConverter}}" Value="Negative">
-                    <Setter Property="Foreground" Value="#F44336"/>
+                    <Setter Property="Foreground" Value="#D73527"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding Value, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource NumberToSignConverter}}" Value="Zero">
-                    <Setter Property="Foreground" Value="#FF9800"/>
+                    <Setter Property="Foreground" Value="{StaticResource WarningOrangeBrush}"/>
                 </DataTrigger>
             </Style.Triggers>
         </Style>
 
-        <!-- Compact icon style -->
-        <Style x:Key="CardIcon" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="20"/>
+        <!-- Modern icon style -->
+        <Style x:Key="ModernCardIcon" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe Fluent Icons"/>
+            <Setter Property="FontSize" Value="24"/>
             <Setter Property="HorizontalAlignment" Value="Center"/>
-            <Setter Property="Margin" Value="0,0,0,4"/>
+            <Setter Property="Margin" Value="0,0,0,8"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryBlueBrush}"/>
+            <Setter Property="TextOptions.TextRenderingMode" Value="ClearType"/>
         </Style>
 
-        <!-- Change indicator style -->
-        <Style x:Key="ChangeIndicator" TargetType="TextBlock">
+        <!-- Modern change indicator style -->
+        <Style x:Key="ModernChangeIndicator" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"/>
             <Setter Property="FontSize" Value="12"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontWeight" Value="Medium"/>
             <Setter Property="HorizontalAlignment" Value="Center"/>
-            <Setter Property="Margin" Value="0,5,0,0"/>
+            <Setter Property="Margin" Value="0,8,0,0"/>
+            <Setter Property="TextOptions.TextRenderingMode" Value="ClearType"/>
+        </Style>
+
+        <!-- Modern subtitle style -->
+        <Style x:Key="ModernCardSubtitle" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="Normal"/>
+            <Setter Property="Foreground" Value="{StaticResource SecondaryTextBrush}"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0,8,0,0"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="TextOptions.TextRenderingMode" Value="ClearType"/>
         </Style>
     </UserControl.Resources>
 
-    <Border Style="{StaticResource SummaryCard}">
+    <Border Style="{StaticResource SummaryCardStyle}">
         <StackPanel>
             <!-- Icon (if provided) -->
             <TextBlock x:Name="IconTextBlock"
                        Text="{Binding Icon, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                       Style="{StaticResource CardIcon}"
+                       Style="{StaticResource ModernCardIcon}"
                        Visibility="{Binding Icon, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource NullToVisibilityConverter}}"/>
 
             <!-- Header/Title -->
             <TextBlock x:Name="HeaderTextBlock"
                        Text="{Binding Header, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                       Style="{StaticResource CardHeader}"/>
+                       Style="{StaticResource ModernCardHeader}"/>
 
             <!-- Main Value -->
             <TextBlock x:Name="ValueTextBlock"
                        Text="{Binding Value, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource CurrencyConverter}}"
-                       Style="{StaticResource DynamicValue}"/>
+                       Style="{StaticResource ModernDynamicValue}"/>
 
             <!-- Subtitle/Description (optional) -->
             <TextBlock x:Name="SubtitleTextBlock"
                        Text="{Binding Subtitle, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                       FontSize="12"
-                       Foreground="#888888"
-                       HorizontalAlignment="Center"
-                       Margin="0,5,0,0"
-                       TextWrapping="Wrap"
+                       Style="{StaticResource ModernCardSubtitle}"
                        Visibility="{Binding Subtitle, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource NullToVisibilityConverter}}"/>
 
             <!-- Change Indicator (optional) -->
@@ -120,13 +120,13 @@
                        Text="{Binding ChangeText, RelativeSource={RelativeSource AncestorType=UserControl}}"
                        Visibility="{Binding ChangeText, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource NullToVisibilityConverter}}">
                 <TextBlock.Style>
-                    <Style TargetType="TextBlock" BasedOn="{StaticResource ChangeIndicator}">
+                    <Style TargetType="TextBlock" BasedOn="{StaticResource ModernChangeIndicator}">
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding ChangeValue, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource NumberToSignConverter}}" Value="Positive">
-                                <Setter Property="Foreground" Value="#4CAF50"/>
+                                <Setter Property="Foreground" Value="{StaticResource AccentGreenBrush}"/>
                             </DataTrigger>
                             <DataTrigger Binding="{Binding ChangeValue, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource NumberToSignConverter}}" Value="Negative">
-                                <Setter Property="Foreground" Value="#F44336"/>
+                                <Setter Property="Foreground" Value="#D73527"/>
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
@@ -138,9 +138,9 @@
                     Content="{Binding ActionButtonText, RelativeSource={RelativeSource AncestorType=UserControl}}"
                     Command="{Binding ActionCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                     Visibility="{Binding ActionButtonText, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource NullToVisibilityConverter}}"
-                    Style="{x:Null}"
-                    Margin="0,10,0,0"
-                    Width="120"/>
+                    Style="{StaticResource ModernSecondaryButtonStyle}"
+                    Margin="0,12,0,0"
+                    MinWidth="120"/>
         </StackPanel>
     </Border>
 </UserControl>

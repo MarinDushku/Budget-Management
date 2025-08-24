@@ -30,6 +30,7 @@ namespace BudgetManagement.Services
 
         // Category operations
         Task<IEnumerable<Category>> GetCategoriesAsync();
+        Task<IEnumerable<Category>> GetAllCategoriesAsync(); // Gets all categories including inactive ones
         Task<Category> GetCategoryByIdAsync(int id);
         Task<Category> AddCategoryAsync(Category category);
         Task<Category> UpdateCategoryAsync(Category category);
@@ -66,6 +67,7 @@ namespace BudgetManagement.Services
         Task ShowInformationAsync(string title, string message);
         Task ShowErrorAsync(string title, string message);
         Task ShowWarningAsync(string title, string message);
+        Task<string?> ShowInputDialogAsync(string title, string message, string defaultValue = "");
     }
 
     /// <summary>

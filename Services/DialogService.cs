@@ -16,25 +16,82 @@ namespace BudgetManagement.Services
     {
         private Window? GetActiveWindow()
         {
-            return Application.Current?.MainWindow ?? Application.Current?.Windows[0];
+            try
+            {
+                // Always prioritize MainWindow for dialog ownership to prevent app closing
+                if (Application.Current?.MainWindow != null && 
+                    Application.Current.MainWindow.IsLoaded &&
+                    Application.Current.MainWindow.IsVisible)
+                {
+                    System.Diagnostics.Debug.WriteLine($"DialogService: Using MainWindow as owner - Loaded: {Application.Current.MainWindow.IsLoaded}");
+                    return Application.Current.MainWindow;
+                }
+                    
+                // Fallback: try any loaded, visible window
+                if (Application.Current?.Windows != null && Application.Current.Windows.Count > 0)
+                {
+                    foreach (Window window in Application.Current.Windows)
+                    {
+                        if (window.IsLoaded && window.IsVisible && window.ShowInTaskbar)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"DialogService: Using fallback window: {window.GetType().Name}");
+                            return window;
+                        }
+                    }
+                    
+                    // Last resort: return any loaded window
+                    foreach (Window window in Application.Current.Windows)
+                    {
+                        if (window.IsLoaded)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"DialogService: Using last resort window: {window.GetType().Name}");
+                            return window;
+                        }
+                    }
+                }
+                
+                System.Diagnostics.Debug.WriteLine("DialogService: No suitable owner window found");
+                return null;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"DialogService: Error finding owner window: {ex.Message}");
+                return null;
+            }
         }
 
         public async Task<Income?> ShowIncomeDialogAsync(Income income)
         {
             return await Application.Current.Dispatcher.InvokeAsync(() =>
             {
+                IncomeDialog? dialog = null;
                 try
                 {
                     System.Diagnostics.Debug.WriteLine("DialogService: Creating IncomeDialog...");
-                    var dialog = new IncomeDialog(income)
+                    dialog = new IncomeDialog(income);
+                    
+                    // Get owner window and handle null case
+                    var owner = GetActiveWindow();
+                    if (owner != null)
                     {
-                        Owner = GetActiveWindow()
-                    };
+                        dialog.Owner = owner;
+                        dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                        System.Diagnostics.Debug.WriteLine($"DialogService: Dialog owner set to: {owner.GetType().Name}");
+                    }
+                    else
+                    {
+                        dialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                        System.Diagnostics.Debug.WriteLine("DialogService: No owner found, centering on screen");
+                    }
 
-                    // Senior-friendly dialog positioning and behavior
-                    dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                    // Critical: Ensure dialog doesn't close parent
                     dialog.ShowInTaskbar = false;
                     dialog.Topmost = false;
+                    
+                    // Prevent dialog close from propagating to main window
+                    dialog.Closing += (s, e) => {
+                        System.Diagnostics.Debug.WriteLine("DialogService: IncomeDialog closing event");
+                    };
 
                     System.Diagnostics.Debug.WriteLine("DialogService: Showing IncomeDialog...");
                     var result = dialog.ShowDialog();
@@ -283,6 +340,27 @@ namespace BudgetManagement.Services
                         MessageBoxResult.No);
 
                     return result == MessageBoxResult.Yes;
+                });
+            });
+        }
+
+        /// <summary>
+        /// Shows an input dialog for getting text from the user
+        /// </summary>
+        public async Task<string?> ShowInputDialogAsync(string title, string message, string defaultValue = "")
+        {
+            return await Task.Run(() =>
+            {
+                return Application.Current.Dispatcher.Invoke(() =>
+                {
+                    // Simple input dialog using a custom window
+                    var inputDialog = new Views.Dialogs.SimpleInputDialog(title, message, defaultValue)
+                    {
+                        Owner = GetActiveWindow()
+                    };
+                    
+                    var result = inputDialog.ShowDialog();
+                    return result == true ? inputDialog.InputText : null;
                 });
             });
         }

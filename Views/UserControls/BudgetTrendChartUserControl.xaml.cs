@@ -137,14 +137,34 @@ namespace BudgetManagement.Views.UserControls
         {
             if (d is BudgetTrendChartUserControl control)
             {
+                // Unsubscribe from old collection
+                if (e.OldValue is ObservableCollection<WeeklyBudgetData> oldCollection)
+                {
+                    oldCollection.CollectionChanged -= control.OnDataCollectionChanged;
+                }
+                
+                // Subscribe to new collection
+                if (e.NewValue is ObservableCollection<WeeklyBudgetData> newCollection)
+                {
+                    newCollection.CollectionChanged += control.OnDataCollectionChanged;
+                }
+                
                 control.UpdateChart();
             }
         }
 
+        private void OnDataCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            UpdateChart();
+        }
+
         private void UpdateChart()
         {
+            System.Diagnostics.Debug.WriteLine($"BudgetTrendChartUserControl.UpdateChart: Starting with {BudgetTrendData?.Count ?? 0} data points");
+            
             if (BudgetTrendData == null || !BudgetTrendData.Any())
             {
+                System.Diagnostics.Debug.WriteLine("BudgetTrendChartUserControl.UpdateChart: No data available, clearing chart");
                 LineChartModel?.Series.Clear();
                 LineChartModel?.InvalidatePlot(true);
                 return;
