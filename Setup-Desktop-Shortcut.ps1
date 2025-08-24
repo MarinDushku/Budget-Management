@@ -6,7 +6,7 @@ Write-Host "=================================" -ForegroundColor Green
 Write-Host ""
 
 # Get current directory and desktop path
-$currentDir = Get-Location
+$currentDir = (Get-Location).Path
 $desktopPath = [System.Environment]::GetFolderPath("Desktop")
 $shortcutPath = Join-Path $desktopPath "Budget Management.lnk"
 
