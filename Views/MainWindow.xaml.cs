@@ -64,6 +64,9 @@ namespace BudgetManagement.Views
             // Initialize theme controls and service
             InitializeThemeControls();
             
+            // Initialize budget settings controls
+            InitializeBudgetSettingsControls();
+            
             // Initialize theme service if available
             var app = Application.Current as App;
             var themeService = app?.GetService<IThemeService>();
@@ -110,6 +113,26 @@ namespace BudgetManagement.Views
             catch
             {
                 // Ignore errors in language setup
+            }
+        }
+
+        private void InitializeBudgetSettingsControls()
+        {
+            try
+            {
+                var app = Application.Current as App;
+                var settingsService = app?.GetService<ISettingsService>();
+                
+                if (settingsService != null)
+                {
+                    // Set current bank statement day value
+                    BankStatementDayTextBox.Text = settingsService.BankStatementDay.ToString();
+                }
+            }
+            catch
+            {
+                // Use default value if initialization fails
+                BankStatementDayTextBox.Text = "17";
             }
         }
 
@@ -682,6 +705,78 @@ namespace BudgetManagement.Views
                 UpdateThemeComboBoxSelection(e.NewTheme);
                 UpdateDarkModeToggle(e.IsDarkTheme);
             });
+        }
+
+        #endregion
+
+        #region Budget Settings Event Handlers
+
+        private void BankStatementDayTextBox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
+        {
+            // Only allow numeric input
+            if (!char.IsDigit(e.Text, 0))
+            {
+                e.Handled = true;
+                return;
+            }
+
+            // Check if the resulting value would be valid (1-31)
+            if (sender is TextBox textBox)
+            {
+                var currentText = textBox.Text;
+                var resultText = currentText.Insert(textBox.SelectionStart, e.Text);
+                
+                if (int.TryParse(resultText, out int value))
+                {
+                    if (value < 1 || value > 31)
+                    {
+                        e.Handled = true;
+                    }
+                }
+                else if (resultText.Length > 2)
+                {
+                    e.Handled = true;
+                }
+            }
+        }
+
+        private async void BankStatementDayTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (sender is not TextBox textBox) return;
+
+            try
+            {
+                var app = Application.Current as App;
+                var settingsService = app?.GetService<ISettingsService>();
+                
+                if (settingsService == null) return;
+
+                // Validate and parse the input
+                if (int.TryParse(textBox.Text, out int day) && day >= 1 && day <= 31)
+                {
+                    // Update the setting
+                    settingsService.BankStatementDay = day;
+                    await settingsService.SaveSettingsAsync();
+
+                    // Refresh the bank statement summary if MainViewModel is available
+                    if (DataContext is MainViewModel viewModel)
+                    {
+                        viewModel.BankStatementSummary = await app.GetRequiredService<IBudgetService>()
+                            .GetBankStatementSummaryAsync(day);
+                    }
+                }
+                else
+                {
+                    // Reset to current setting if invalid input
+                    textBox.Text = settingsService.BankStatementDay.ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                // Reset to default on error
+                textBox.Text = "17";
+                System.Diagnostics.Debug.WriteLine($"Error updating bank statement day: {ex.Message}");
+            }
         }
 
         #endregion

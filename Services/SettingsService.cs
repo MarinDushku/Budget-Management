@@ -161,6 +161,22 @@ namespace BudgetManagement.Services
             }
         }
 
+        public int BankStatementDay
+        {
+            get => _settings.BankStatementDay;
+            set
+            {
+                var newValue = Math.Max(1, Math.Min(31, value)); // Validate 1-31
+                if (_settings.BankStatementDay != newValue)
+                {
+                    var oldValue = _settings.BankStatementDay;
+                    _settings.BankStatementDay = newValue;
+                    OnPropertyChanged();
+                    NotifySettingChanged(nameof(BankStatementDay), oldValue, newValue);
+                }
+            }
+        }
+
         #endregion
 
         #region Window Settings
@@ -277,6 +293,7 @@ namespace BudgetManagement.Services
             NotifySettingChanged(nameof(DatabasePath), oldSettings.DatabasePath, _settings.DatabasePath);
             NotifySettingChanged(nameof(AutoBackup), oldSettings.AutoBackup, _settings.AutoBackup);
             NotifySettingChanged(nameof(BackupRetentionDays), oldSettings.BackupRetentionDays, _settings.BackupRetentionDays);
+            NotifySettingChanged(nameof(BankStatementDay), oldSettings.BankStatementDay, _settings.BankStatementDay);
             NotifySettingChanged(nameof(WindowWidth), oldSettings.WindowWidth, _settings.WindowWidth);
             NotifySettingChanged(nameof(WindowHeight), oldSettings.WindowHeight, _settings.WindowHeight);
             NotifySettingChanged(nameof(WindowMaximized), oldSettings.WindowMaximized, _settings.WindowMaximized);
@@ -327,6 +344,7 @@ namespace BudgetManagement.Services
             public string DatabasePath { get; set; } = GetDefaultDatabasePath();
             public bool AutoBackup { get; set; } = true;
             public int BackupRetentionDays { get; set; } = 30;
+            public int BankStatementDay { get; set; } = 17; // Default to 17th of each month
 
             // Window Settings - senior-friendly defaults
             public double WindowWidth { get; set; } = 1200; // Larger default window

@@ -600,6 +600,96 @@ namespace BudgetManagement.Services
 
         #endregion
 
+        #region Bank Statement Operations
+
+        /// <summary>
+        /// Calculates bank statement period from beginning of records to the most recent statement day
+        /// </summary>
+        /// <param name="statementDay">Day of the month for bank statements (1-31)</param>
+        /// <returns>Tuple of (start date, end date) from beginning of tracking to current statement day</returns>
+        public (DateTime StartDate, DateTime EndDate) GetLastBankStatementPeriod(int statementDay)
+        {
+            var today = DateTime.Today;
+            var currentMonth = new DateTime(today.Year, today.Month, 1);
+            
+            // Find the statement day for current month (handle months with fewer days)
+            var currentStatementDay = Math.Min(statementDay, DateTime.DaysInMonth(today.Year, today.Month));
+            var currentStatementDate = new DateTime(today.Year, today.Month, currentStatementDay);
+            
+            DateTime periodEnd;
+            
+            if (today >= currentStatementDate)
+            {
+                // We've passed this month's statement date, so the period ends on current statement date
+                periodEnd = currentStatementDate;
+            }
+            else
+            {
+                // We haven't reached this month's statement date, so use previous month's statement date
+                var prevMonth = currentMonth.AddMonths(-1);
+                var prevStatementDay = Math.Min(statementDay, DateTime.DaysInMonth(prevMonth.Year, prevMonth.Month));
+                periodEnd = new DateTime(prevMonth.Year, prevMonth.Month, prevStatementDay);
+            }
+            
+            // Period start is from the beginning of all data (use a reasonable early date)
+            var periodStart = new DateTime(2020, 1, 1); // Start from beginning of tracking
+            
+            return (periodStart, periodEnd);
+        }
+
+        /// <summary>
+        /// Gets bank statement summary for the most recent complete statement period
+        /// </summary>
+        /// <param name="statementDay">Day of the month for bank statements (1-31)</param>
+        /// <returns>Bank statement summary with income, spending, and period information</returns>
+        public async Task<BankStatementSummary> GetBankStatementSummaryAsync(int statementDay)
+        {
+            var (startDate, endDate) = GetLastBankStatementPeriod(statementDay);
+            
+            const string sql = @"
+                SELECT 
+                    COALESCE(SUM(CASE WHEN source = 'Income' THEN amount ELSE 0 END), 0) as TotalIncome,
+                    COALESCE(SUM(CASE WHEN source = 'Spending' THEN amount ELSE 0 END), 0) as TotalSpending
+                FROM (
+                    SELECT Amount, 'Income' as source FROM Income 
+                    WHERE Date >= @StartDate AND Date <= @EndDate
+                    UNION ALL
+                    SELECT Amount, 'Spending' as source FROM Spending 
+                    WHERE Date >= @StartDate AND Date <= @EndDate
+                )";
+
+            using var connection = new SqliteConnection(_connectionString);
+            await connection.OpenAsync();
+            using var command = new SqliteCommand(sql, connection);
+            command.Parameters.AddWithValue("@StartDate", startDate.Date);
+            command.Parameters.AddWithValue("@EndDate", endDate.Date);
+
+            using var reader = await command.ExecuteReaderAsync();
+            if (await reader.ReadAsync())
+            {
+                return new BankStatementSummary
+                {
+                    TotalIncome = reader.GetDecimal("TotalIncome"),
+                    TotalSpending = reader.GetDecimal("TotalSpending"),
+                    PeriodStart = startDate,
+                    PeriodEnd = endDate,
+                    StatementDay = statementDay
+                };
+            }
+
+            // Fallback if no data
+            return new BankStatementSummary
+            {
+                TotalIncome = 0,
+                TotalSpending = 0,
+                PeriodStart = startDate,
+                PeriodEnd = endDate,
+                StatementDay = statementDay
+            };
+        }
+
+        #endregion
+
         #region Export Operations
 
         public async Task ExportDataAsync(DateTime startDate, DateTime endDate, string? filePath = null)

@@ -177,6 +177,12 @@
                             Icon="&#xE9D2;"
                             Value="{Binding BudgetSummary.RemainingBudget}"
                             Subtitle="{StaticResource Available}"/>
+                        
+                        <userControls:BudgetSummaryCard 
+                            Header="Bank Statement"
+                            Icon="&#xE8C7;"
+                            Value="{Binding BankStatementSummary.RemainingBudget}"
+                            Subtitle="{Binding BankStatementSummary.PeriodDescription}"/>
                     </StackPanel>
 
                     <!-- Recent Activity Card -->
@@ -385,6 +391,48 @@
                                             Click="FontSizeLarge_Click" Style="{StaticResource ModernSecondaryButtonStyle}"
                                             ToolTip="Large font size" Margin="4,0,0,0"/>
                                 </UniformGrid>
+                            </StackPanel>
+                        </Border>
+                    </UniformGrid>
+
+                    <!-- Third Row: Budget Settings -->
+                    <UniformGrid Columns="1" Margin="0,16,0,0">
+                        <!-- Budget Settings Card -->
+                        <Border Style="{StaticResource ModernCardStyle}">
+                            <StackPanel>
+                                <TextBlock Text="Budget Settings" Style="{StaticResource SectionHeaderTextStyle}"/>
+                                
+                                <!-- Bank Statement Day Setting -->
+                                <Grid Margin="0,0,0,16">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    
+                                    <StackPanel Grid.Column="0">
+                                        <TextBlock Text="Bank Statement Day" 
+                                                   FontFamily="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"
+                                                   FontSize="14" FontWeight="Medium"
+                                                   Foreground="{StaticResource PrimaryTextBrush}"
+                                                   TextOptions.TextRenderingMode="ClearType"/>
+                                        <TextBlock Text="Day of the month when your bank statement is generated (1-31)" 
+                                                   FontSize="12" 
+                                                   Foreground="{StaticResource SecondaryTextBrush}"
+                                                   TextOptions.TextRenderingMode="ClearType"
+                                                   Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                    
+                                    <!-- Numeric Input for Statement Day -->
+                                    <TextBox x:Name="BankStatementDayTextBox" Grid.Column="1" 
+                                             Width="60" Height="32"
+                                             VerticalAlignment="Center"
+                                             HorizontalContentAlignment="Center"
+                                             FontSize="14" FontWeight="Medium"
+                                             Style="{StaticResource ModernTextBoxStyle}"
+                                             MaxLength="2"
+                                             LostFocus="BankStatementDayTextBox_LostFocus"
+                                             PreviewTextInput="BankStatementDayTextBox_PreviewTextInput"/>
+                                </Grid>
                             </StackPanel>
                         </Border>
                     </UniformGrid>

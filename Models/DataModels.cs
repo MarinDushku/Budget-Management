@@ -114,6 +114,24 @@ namespace BudgetManagement.Models
     }
 
     /// <summary>
+    /// Summary model for bank statement period budget calculations
+    /// </summary>
+    public class BankStatementSummary
+    {
+        public decimal TotalIncome { get; set; }
+        public decimal TotalSpending { get; set; }
+        public decimal RemainingBudget => TotalIncome - TotalSpending;
+        public DateTime PeriodStart { get; set; }
+        public DateTime PeriodEnd { get; set; }
+        public int StatementDay { get; set; }
+        
+        /// <summary>
+        /// Display-friendly period description (e.g., "All Time - Aug 17")
+        /// </summary>
+        public string PeriodDescription => $"All Time - {PeriodEnd:MMM dd}";
+    }
+
+    /// <summary>
     /// Monthly summary model
     /// </summary>
     public class MonthlySummary

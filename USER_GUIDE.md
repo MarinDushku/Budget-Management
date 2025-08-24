@@ -177,3 +177,9 @@ After installation:
 ---
 
 **Enjoy tracking your budget with confidence!** 🏠💰
+
+taskkill /F /IM "BudgetManagement.exe" 2>$null
+dotnet clean
+dotnet publish -c Release --self-contained true -r win-x64 -o publish
+ cd publish
+.\BudgetManagement.exe

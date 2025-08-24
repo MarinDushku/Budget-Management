@@ -21,9 +21,11 @@ namespace BudgetManagement.ViewModels
     {
         private readonly IBudgetService _budgetService;
         private readonly IDialogService _dialogService;
+        private readonly ISettingsService _settingsService;
 
         // Private fields
         private BudgetSummary _budgetSummary = new();
+        private BankStatementSummary _bankStatementSummary = new();
         private DateTime _selectedPeriodStart = DateTime.Now.AddMonths(-1);
         private DateTime _selectedPeriodEnd = DateTime.Now;
         private bool _isLoading;
@@ -50,6 +52,12 @@ namespace BudgetManagement.ViewModels
         {
             get => _budgetSummary;
             set => SetProperty(ref _budgetSummary, value);
+        }
+
+        public BankStatementSummary BankStatementSummary
+        {
+            get => _bankStatementSummary;
+            set => SetProperty(ref _bankStatementSummary, value);
         }
 
         public DateTime SelectedPeriodStart
@@ -104,10 +112,11 @@ namespace BudgetManagement.ViewModels
         public ICommand ExportDataCommand { get; }
         public ICommand ManageCategoriesCommand { get; }
 
-        public MainViewModel(IBudgetService budgetService, IDialogService dialogService)
+        public MainViewModel(IBudgetService budgetService, IDialogService dialogService, ISettingsService settingsService)
         {
             _budgetService = budgetService ?? throw new ArgumentNullException(nameof(budgetService));
             _dialogService = dialogService ?? throw new ArgumentNullException(nameof(dialogService));
+            _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
 
             // DEBUG: Log constructor call
             System.Diagnostics.Debug.WriteLine("MainViewModel constructor called - initializing...");
@@ -204,6 +213,10 @@ namespace BudgetManagement.ViewModels
                 // Calculate budget summary
                 BudgetSummary = await _budgetService.GetBudgetSummaryAsync(SelectedPeriodStart, SelectedPeriodEnd);
                 System.Diagnostics.Debug.WriteLine($"RefreshDataAsync: BudgetSummary - Income: ${BudgetSummary?.TotalIncome ?? 0}, Spending: ${BudgetSummary?.TotalSpending ?? 0}");
+
+                // Calculate bank statement summary
+                BankStatementSummary = await _budgetService.GetBankStatementSummaryAsync(_settingsService.BankStatementDay);
+                System.Diagnostics.Debug.WriteLine($"RefreshDataAsync: BankStatementSummary - Income: ${BankStatementSummary?.TotalIncome ?? 0}, Spending: ${BankStatementSummary?.TotalSpending ?? 0}, Period: {BankStatementSummary?.PeriodDescription}");
 
                 // Update recent entries (last 5 of each type)
                 UpdateRecentEntries();
@@ -348,6 +361,7 @@ namespace BudgetManagement.ViewModels
                     
                     // Update summary only
                     BudgetSummary = await _budgetService.GetBudgetSummaryAsync(SelectedPeriodStart, SelectedPeriodEnd);
+                    BankStatementSummary = await _budgetService.GetBankStatementSummaryAsync(_settingsService.BankStatementDay);
                     OnPropertyChanged(nameof(AverageDailySpending));
                     OnPropertyChanged(nameof(TotalEntries));
                     
@@ -405,6 +419,7 @@ namespace BudgetManagement.ViewModels
                     
                     // Update summary and trends
                     BudgetSummary = await _budgetService.GetBudgetSummaryAsync(SelectedPeriodStart, SelectedPeriodEnd);
+                    BankStatementSummary = await _budgetService.GetBankStatementSummaryAsync(_settingsService.BankStatementDay);
                     OnPropertyChanged(nameof(AverageDailySpending));
                     OnPropertyChanged(nameof(TotalEntries));
                     

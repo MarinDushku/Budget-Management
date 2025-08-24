@@ -40,6 +40,10 @@ namespace BudgetManagement.Services
         Task<BudgetSummary> GetBudgetSummaryAsync(DateTime startDate, DateTime endDate);
         Task<IEnumerable<MonthlySummary>> GetMonthlySummaryAsync(int year);
         Task<decimal> GetCategoryTotalAsync(int categoryId, DateTime startDate, DateTime endDate);
+        
+        // Bank statement operations
+        (DateTime StartDate, DateTime EndDate) GetLastBankStatementPeriod(int statementDay);
+        Task<BankStatementSummary> GetBankStatementSummaryAsync(int statementDay);
 
         // Data export operations
         Task ExportDataAsync(DateTime startDate, DateTime endDate, string? filePath = null);
@@ -86,6 +90,7 @@ namespace BudgetManagement.Services
         string DatabasePath { get; set; }
         bool AutoBackup { get; set; }
         int BackupRetentionDays { get; set; }
+        int BankStatementDay { get; set; }
 
         // Window Settings
         double WindowWidth { get; set; }
