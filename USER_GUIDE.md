@@ -94,9 +94,86 @@ Remember: This application is designed to be simple and safe. Take your time, an
 
 ---
 
-**Enjoy tracking your budget with confidence!** 🏠💰
+## 💻 Installation & Setup Instructions
 
+### **Quick Installation (Recommended)**
+
+1. **Download the app:**
+   ```powershell
+   git clone https://github.com/MarinDushku/Budget-Management.git
+   cd Budget-Management
+   ```
+
+2. **Automatic Desktop Setup:**
+   ```powershell
+   .\EASY-SETUP.bat
+   ```
+   
+   This will:
+   - ✅ Create a desktop shortcut with the Budget Management icon
+   - ✅ Set up everything automatically
+   - ✅ No manual configuration needed!
+
+3. **Run the app:**
+   - Double-click the **"Budget Management"** icon on your desktop
+   - The app will build and start automatically
+
+### **Alternative Installation Methods**
+
+#### **Method 1: Manual Build**
+```powershell
+# Download
+git clone https://github.com/MarinDushku/Budget-Management.git
+cd Budget-Management
+
+# Build and run
 dotnet clean
 dotnet publish -c Release --self-contained true -r win-x64 -o publish
- cd publish
+cd publish
 .\BudgetManagement.exe
+```
+
+#### **Method 2: Quick Start Script**
+```powershell
+# After downloading the app
+.\QuickStart.bat
+```
+
+#### **Method 3: Simple Runner**
+```powershell
+# Basic build and run
+.\RunBudgetApp.bat
+```
+
+### **Troubleshooting Installation**
+
+**If git clone fails:**
+1. Go to: https://github.com/MarinDushku/Budget-Management
+2. Click **"Code"** → **"Download ZIP"**
+3. Extract the ZIP file
+4. Run `.\EASY-SETUP.bat` from the extracted folder
+
+**If setup fails:**
+```powershell
+# Update to latest version
+cd Budget-Management
+git pull origin main
+.\EASY-SETUP.bat
+```
+
+**System Requirements:**
+- Windows 10 or 11
+- .NET SDK (automatically handled by self-contained build)
+- About 50MB of disk space
+
+### **First Run**
+
+After installation:
+1. **Double-click the desktop icon** 
+2. The app will start with sample data
+3. Begin adding your income and spending entries
+4. Your data is automatically saved locally
+
+---
+
+**Enjoy tracking your budget with confidence!** 🏠💰
