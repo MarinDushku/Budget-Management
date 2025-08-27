@@ -81,7 +81,7 @@
         
         <!-- Modern spending amount style -->
         <Style x:Key="ModernSpendingAmount" TargetType="TextBlock" BasedOn="{StaticResource ModernEntryAmount}">
-            <Setter Property="Foreground" Value="#D73527"/>
+            <Setter Property="Foreground" Value="{StaticResource DangerRedBrush}"/>
         </Style>
         
         <!-- Modern entry description style -->
@@ -131,7 +131,7 @@
         
         <!-- Spending section header -->
         <Style x:Key="SpendingSectionHeader" TargetType="TextBlock" BasedOn="{StaticResource ModernSectionHeader}">
-            <Setter Property="Foreground" Value="#D73527"/>
+            <Setter Property="Foreground" Value="{StaticResource DangerRedBrush}"/>
         </Style>
     </UserControl.Resources>
 
@@ -199,7 +199,7 @@
             
             <TextBlock Grid.Column="0" Text="&#xE7BF;" FontFamily="Segoe Fluent Icons" 
                        FontSize="18" VerticalAlignment="Center" 
-                       Foreground="#D73527" Margin="0,0,8,0"/>
+                       Foreground="{StaticResource DangerRedBrush}" Margin="0,0,8,0"/>
             <TextBlock Grid.Column="1" Text="{StaticResource RecentSpending}" 
                        Style="{StaticResource SpendingSectionHeader}"/>
         </Grid>
@@ -219,7 +219,7 @@
                             <TextBlock Grid.Column="0" 
                                        Text="&#xE7BF;" 
                                        Style="{StaticResource ModernEntryIcon}"
-                                       Foreground="#D73527"/>
+                                       Foreground="{StaticResource DangerRedBrush}"/>
                             
                             <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,16,0">
                                 <TextBlock Text="{Binding Description, Converter={StaticResource TextTruncateConverter}, ConverterParameter=30}" 

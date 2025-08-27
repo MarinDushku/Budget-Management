@@ -8,7 +8,7 @@
         ResizeMode="CanResize"
         FontFamily="Segoe UI"
         FontSize="16"
-        Background="#F8F9FA"
+        Background="{StaticResource BackgroundBrush}"
         ShowInTaskbar="False">
 
     <Window.Resources>
@@ -21,7 +21,7 @@
             <Setter Property="FontSize" Value="16"/>
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="Margin" Value="0,10,0,5"/>
-            <Setter Property="Foreground" Value="#333333"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
         </Style>
         
         <Style x:Key="InputStyle" TargetType="Control">
@@ -32,40 +32,15 @@
             <Setter Property="VerticalContentAlignment" Value="Center"/>
         </Style>
         
-        <Style x:Key="ButtonStyle" TargetType="Button">
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="MinWidth" Value="120"/>
-            <Setter Property="Height" Value="45"/>
-            <Setter Property="Background" Value="#2196F3"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderBrush" Value="#1976D2"/>
+        <!-- Quick Amount Button Style for spending (uses warning colors) -->
+        <Style x:Key="QuickAmountButtonStyle" TargetType="Button" BasedOn="{StaticResource ModernSecondaryButtonStyle}">
+            <Setter Property="MinWidth" Value="50"/>
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="Margin" Value="3"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Padding" Value="8,6"/>
+            <Setter Property="BorderBrush" Value="{StaticResource WarningOrangeBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Padding" Value="12,8"/>
-        </Style>
-        
-        <Style x:Key="LargeDangerButton" TargetType="Button">
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="MinWidth" Value="120"/>
-            <Setter Property="Height" Value="45"/>
-            <Setter Property="Background" Value="#F44336"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderBrush" Value="#D32F2F"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Padding" Value="12,8"/>
-        </Style>
-        
-        <Style x:Key="LargeSuccessButton" TargetType="Button">
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="MinWidth" Value="120"/>
-            <Setter Property="Height" Value="45"/>
-            <Setter Property="Background" Value="#4CAF50"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderBrush" Value="#388E3C"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Padding" Value="12,8"/>
         </Style>
         </ResourceDictionary>
     </Window.Resources>
@@ -87,13 +62,13 @@
             </Grid.RowDefinitions>
 
             <!-- Header -->
-            <Border Grid.Row="0" Background="White" BorderBrush="#DDD" BorderThickness="1" 
+            <Border Grid.Row="0" Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderLightBrush}" BorderThickness="1" 
                     CornerRadius="5" Padding="15" Margin="0,0,0,20">
                 <StackPanel>
                     <TextBlock Text="💳 Add Spending Entry" FontSize="22" FontWeight="Bold" 
-                               HorizontalAlignment="Center" Foreground="#D32F2F"/>
+                               HorizontalAlignment="Center" Foreground="{StaticResource WarningOrangeBrush}"/>
                     <TextBlock Text="Track your expenses easily" FontSize="14" 
-                               HorizontalAlignment="Center" Foreground="#666" Margin="0,5,0,0"/>
+                               HorizontalAlignment="Center" Foreground="{StaticResource SecondaryTextBrush}" Margin="0,5,0,0"/>
                 </StackPanel>
             </Border>
 
@@ -108,11 +83,11 @@
                       Style="{StaticResource ModernComboBoxStyle}" DisplayMemberPath="Name" SelectedValuePath="Id"/>
 
             <!-- Category Help -->
-            <Border Grid.Row="5" Background="#E3F2FD" BorderBrush="#2196F3" BorderThickness="1" 
+            <Border Grid.Row="5" Background="{StaticResource SurfaceElevatedBrush}" BorderBrush="{StaticResource PrimaryBlueBrush}" BorderThickness="1" 
                     CornerRadius="5" Padding="10" Margin="0,0,0,20">
                 <StackPanel>
-                    <TextBlock Text="💡 Category Guide:" FontWeight="Bold" FontSize="14" Foreground="#1976D2"/>
-                    <TextBlock FontSize="13" Foreground="#1976D2" TextWrapping="Wrap" Margin="0,5,0,0">
+                    <TextBlock Text="💡 Category Guide:" FontWeight="Bold" FontSize="14" Foreground="{StaticResource PrimaryBlueBrush}"/>
+                    <TextBlock FontSize="13" Foreground="{StaticResource PrimaryBlueBrush}" TextWrapping="Wrap" Margin="0,5,0,0">
                         • Family: Groceries, utilities, house expenses
                         • Personal: Clothing, hobbies, entertainment  
                         • Marini: Special Marini-related expenses
@@ -131,7 +106,7 @@
             <StackPanel Grid.Row="9" Orientation="Vertical" Margin="0,5,0,30">
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
                     <TextBlock Text="$" FontSize="24" FontWeight="Bold" VerticalAlignment="Center" 
-                               Margin="10,0,8,0" Foreground="#D32F2F"/>
+                               Margin="10,0,8,0" Foreground="{StaticResource WarningOrangeBrush}"/>
                     <TextBox x:Name="AmountTextBox" Width="240" MinHeight="44" 
                              Style="{StaticResource ModernTextBoxStyle}"
                              FontSize="18" TextAlignment="Right"
@@ -143,28 +118,23 @@
                 </StackPanel>
                 
                 <!-- Quick Amount Buttons -->
-                <TextBlock Text="{StaticResource QuickAmounts}" FontSize="12" Foreground="#666" Margin="0,0,0,8"/>
+                <TextBlock Text="{StaticResource QuickAmounts}" FontSize="12" Foreground="{StaticResource SecondaryTextBrush}" Margin="0,0,0,8"/>
                 <WrapPanel HorizontalAlignment="Center" Orientation="Horizontal">
                     <Button Content="$10" Click="QuickAmount_Click" Tag="10" 
-                            MinWidth="50" Height="35" Margin="3" FontSize="13" Padding="8,6"
-                            Background="#FFEBEE" BorderBrush="#F44336" BorderThickness="1"/>
+                            Style="{StaticResource QuickAmountButtonStyle}"/>
                     <Button Content="$25" Click="QuickAmount_Click" Tag="25" 
-                            MinWidth="50" Height="35" Margin="3" FontSize="13" Padding="8,6"
-                            Background="#FFEBEE" BorderBrush="#F44336" BorderThickness="1"/>
+                            Style="{StaticResource QuickAmountButtonStyle}"/>
                     <Button Content="$50" Click="QuickAmount_Click" Tag="50" 
-                            MinWidth="50" Height="35" Margin="3" FontSize="13" Padding="8,6"
-                            Background="#FFEBEE" BorderBrush="#F44336" BorderThickness="1"/>
+                            Style="{StaticResource QuickAmountButtonStyle}"/>
                     <Button Content="$100" Click="QuickAmount_Click" Tag="100" 
-                            MinWidth="55" Height="35" Margin="3" FontSize="13" Padding="8,6"
-                            Background="#FFEBEE" BorderBrush="#F44336" BorderThickness="1"/>
+                            Style="{StaticResource QuickAmountButtonStyle}" MinWidth="55"/>
                     <Button Content="$200" Click="QuickAmount_Click" Tag="200" 
-                            MinWidth="55" Height="35" Margin="3" FontSize="13" Padding="8,6"
-                            Background="#FFEBEE" BorderBrush="#F44336" BorderThickness="1"/>
+                            Style="{StaticResource QuickAmountButtonStyle}" MinWidth="55"/>
                 </WrapPanel>
             </StackPanel>
 
             <!-- Buttons -->
-            <Border Grid.Row="10" Background="#F5F5F5" BorderBrush="#DDD" BorderThickness="1" 
+            <Border Grid.Row="10" Background="{StaticResource SurfaceElevatedBrush}" BorderBrush="{StaticResource BorderLightBrush}" BorderThickness="1" 
                     CornerRadius="5" Padding="15" Margin="0,15,0,0">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                     <Button Content="❌ Cancel" Click="CancelButton_Click" 

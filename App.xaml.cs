@@ -11,6 +11,17 @@ using Microsoft.Extensions.Logging;
 using BudgetManagement.Services;
 using BudgetManagement.ViewModels;
 using BudgetManagement.Views;
+using BudgetManagement.Features.Dashboard;
+using BudgetManagement.Features.Dashboard.ViewModels;
+using BudgetManagement.Features.Income;
+using BudgetManagement.Features.Spending;
+using BudgetManagement.Shared.Core;
+using BudgetManagement.Shared.Infrastructure;
+using BudgetManagement.Shared.Infrastructure.Caching;
+using MediatR;
+using Serilog;
+using FluentValidation;
+using System.Reflection;
 
 namespace BudgetManagement
 {
@@ -78,42 +89,142 @@ namespace BudgetManagement
         private static IHostBuilder CreateHostBuilder()
         {
             return Host.CreateDefaultBuilder()
+                .UseSerilog((context, configuration) =>
+                {
+                    SerilogConfiguration.ConfigureEnterpriseLogging(context, configuration, "BudgetManagement");
+                })
                 .ConfigureServices((context, services) =>
                 {
-                    // Register application services
-                    services.AddSingleton<ISettingsService, SettingsService>();
-                    services.AddSingleton<ILocalizationService, LocalizationService>();
-                    services.AddSingleton<IThemeService, ThemeService>();
+                    // Get the current assembly and any additional assemblies to scan
+                    var currentAssembly = typeof(App).Assembly;
+                    var assembliesToScan = new[] { currentAssembly };
+
+                    // ========== AUTOMATIC SERVICE REGISTRATION WITH SCRUTOR ==========
+                    
+                    // Auto-register all services using Scrutor conventions
+                    services.AddAutoRegistrationWithOptions(options =>
+                    {
+                        options.ScanAssemblies = assembliesToScan;
+                        options.RegisterRepositories = true;
+                        options.RegisterMediatRHandlers = true;
+                        options.RegisterValidators = true;
+                        options.RegisterServices = true;
+                        options.RegisterViewModels = true;
+                        options.RegisterHealthChecks = true;
+                        options.RegisterBackgroundServices = true;
+                        
+                        // Custom filters for specific registration scenarios
+                        options.ServiceFilter = type => !type.IsAbstract && type.IsPublic;
+                        options.RepositoryFilter = type => type.Namespace?.Contains("Repositories") == true;
+                        options.HandlerFilter = type => type.Namespace?.Contains("Handlers") == true;
+                        options.ValidatorFilter = type => type.Namespace?.Contains("Validators") == true;
+                    });
+
+                    // ========== MANUAL REGISTRATION FOR SPECIAL CASES ==========
+
+                    // Configure MediatR for CQRS with behaviors
+                    services.AddMediatR(cfg =>
+                    {
+                        cfg.RegisterServicesFromAssembly(currentAssembly);
+                        cfg.AddOpenBehavior(typeof(LoggingBehavior<,>));
+                        cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
+                    });
+
+                    // Configure FluentValidation (auto-registered validators are automatically discovered)
+                    services.AddValidatorsFromAssembly(currentAssembly);
+
+                    // Register core services with specific configurations (not auto-discoverable due to complex setup)
                     services.AddSingleton<IBudgetService>(provider =>
                     {
                         var settings = provider.GetRequiredService<ISettingsService>();
                         return new BudgetService(settings.DatabasePath, settings);
                     });
-                    services.AddTransient<IDialogService, DialogService>();
 
-                    // Register ViewModels
-                    services.AddTransient<MainViewModel>();
+                    // Register feature modules with configuration
+                    services.AddDashboardFeature();
+                    services.ConfigureDashboardFeature(options =>
+                    {
+                        options.MaxRecentEntries = 5;
+                        options.DefaultDateRangeDays = 30;
+                        options.EnableRealTimeUpdates = false;
+                        options.CacheDurationMinutes = 5;
+                    });
 
-                    // Register Views
+                    services.AddIncomeFeature();
+                    services.ConfigureIncomeFeature(options =>
+                    {
+                        options.MaxRecentEntries = 10;
+                        options.DefaultDateRangeDays = 30;
+                        options.EnableRealTimeUpdates = false;
+                        options.CacheDurationMinutes = 15;
+                        options.MaxIncomeAmount = 1_000_000m;
+                        options.EnableStatistics = true;
+                        options.EnableExport = true;
+                        options.EnableAdvancedSearch = true;
+                    });
+
+                    services.AddSpendingFeature();
+                    services.ConfigureSpendingFeature(options =>
+                    {
+                        options.MaxRecentEntries = 10;
+                        options.DefaultDateRangeDays = 30;
+                        options.EnableRealTimeUpdates = false;
+                        options.CacheDurationMinutes = 15;
+                        options.MaxSpendingAmount = 1_000_000m;
+                        options.EnableStatistics = true;
+                        options.EnableExport = true;
+                        options.EnableAdvancedSearch = true;
+                        options.EnableCategoryAnalysis = true;
+                        options.EnableBudgeting = true;
+                    });
+
+                    // Register Views that require specific lifetime management
                     services.AddSingleton<MainWindow>();
                     services.AddTransient<Views.Dialogs.IncomeDialog>();
                     services.AddTransient<Views.Dialogs.SpendingDialog>();
 
-                    // Configure logging
-                    services.AddLogging(builder =>
+                    // Configure memory cache
+                    services.AddMemoryCache();
+
+                    // Configure health checks with auto-registered health check implementations
+                    services.AddHealthChecks()
+                        .AddCheck<BudgetServiceHealthCheck>("budget-service")
+                        .AddCheck<ThemeServiceHealthCheck>("theme-service");
+
+                    // Add application logging service
+                    services.AddApplicationLogging();
+
+                    // Add comprehensive caching infrastructure
+                    services.AddBudgetCaching();
+                    services.ConfigureBudgetMemoryCache(options =>
                     {
-                        builder.AddDebug();
-#if DEBUG
-                        builder.SetMinimumLevel(LogLevel.Debug);
-#else
-                        builder.SetMinimumLevel(LogLevel.Information);
-#endif
+                        options.SizeLimit = 2000; // Increased for desktop app
+                        options.CompactionPercentage = 0.15;
+                        options.ExpirationScanFrequency = TimeSpan.FromMinutes(3);
                     });
-                })
-                .ConfigureLogging(logging =>
-                {
-                    logging.ClearProviders();
-                    logging.AddDebug();
+
+                    // ========== VALIDATION OF AUTO-REGISTRATION ==========
+
+                    // Validate that all critical services are registered
+                    var validationResult = services.ValidateRegistrations(
+                        typeof(ISettingsService),
+                        typeof(ILocalizationService), 
+                        typeof(IThemeService),
+                        typeof(IBudgetService),
+                        typeof(IDialogService),
+                        typeof(MainViewModel),
+                        typeof(DashboardViewModel)
+                    );
+
+                    // Log validation results (will be available after host starts)
+                    if (!validationResult.IsValid)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Service registration validation failed. Missing services: {string.Join(", ", validationResult.MissingServiceNames)}");
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Service registration validation passed. Registration rate: {validationResult.RegistrationRate}%");
+                    }
                 });
         }
 

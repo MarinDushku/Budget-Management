@@ -40,7 +40,7 @@
 
         <!-- Negative value style with modern colors -->
         <Style x:Key="ModernNegativeValue" TargetType="TextBlock" BasedOn="{StaticResource ModernCardValue}">
-            <Setter Property="Foreground" Value="#D73527"/>
+            <Setter Property="Foreground" Value="{StaticResource DangerRedBrush}"/>
         </Style>
 
         <!-- Dynamic value style that changes based on number sign -->
@@ -50,7 +50,7 @@
                     <Setter Property="Foreground" Value="{StaticResource AccentGreenBrush}"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding Value, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource NumberToSignConverter}}" Value="Negative">
-                    <Setter Property="Foreground" Value="#D73527"/>
+                    <Setter Property="Foreground" Value="{StaticResource DangerRedBrush}"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding Value, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource NumberToSignConverter}}" Value="Zero">
                     <Setter Property="Foreground" Value="{StaticResource WarningOrangeBrush}"/>
@@ -126,7 +126,7 @@
                                 <Setter Property="Foreground" Value="{StaticResource AccentGreenBrush}"/>
                             </DataTrigger>
                             <DataTrigger Binding="{Binding ChangeValue, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource NumberToSignConverter}}" Value="Negative">
-                                <Setter Property="Foreground" Value="#D73527"/>
+                                <Setter Property="Foreground" Value="{StaticResource DangerRedBrush}"/>
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>

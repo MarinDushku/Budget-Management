@@ -58,7 +58,7 @@
                 
                 <Border Grid.Column="1" 
                         Background="{StaticResource SurfaceElevatedBrush}" 
-                        BorderBrush="#D73527"
+                        BorderBrush="{StaticResource DangerRedBrush}"
                         BorderThickness="1"
                         CornerRadius="6" 
                         Padding="12,8" 
@@ -75,7 +75,7 @@
                                    FontFamily="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"
                                    FontSize="16"
                                    FontWeight="SemiBold"
-                                   Foreground="#D73527"
+                                   Foreground="{StaticResource DangerRedBrush}"
                                    HorizontalAlignment="Center"
                                    TextOptions.TextRenderingMode="ClearType"
                                    Margin="0,4,0,0"/>

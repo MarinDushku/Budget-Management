@@ -8,6 +8,7 @@
     <SolidColorBrush x:Key="SecondaryNavyBrush" Color="#004578"/>
     <SolidColorBrush x:Key="AccentGreenBrush" Color="#107C10"/>
     <SolidColorBrush x:Key="WarningOrangeBrush" Color="#FF8C00"/>
+    <SolidColorBrush x:Key="DangerRedBrush" Color="#D73527"/>
     <SolidColorBrush x:Key="SuccessGreenBrush" Color="#00BCF2"/>
     
     <!-- Neutral Foundation -->

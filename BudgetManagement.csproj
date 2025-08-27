@@ -42,6 +42,29 @@
     <PackageReference Include="OxyPlot.Wpf" Version="2.1.2" />
     <!-- Excel export functionality -->
     <PackageReference Include="EPPlus" Version="7.0.0" />
+    
+    <!-- Modern Architecture Packages -->
+    <!-- MediatR for CQRS pattern implementation -->
+    <PackageReference Include="MediatR" Version="12.2.0" />
+    <!-- FluentValidation for comprehensive validation -->
+    <PackageReference Include="FluentValidation" Version="11.8.1" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.8.1" />
+    <!-- Scrutor for auto-registration of services -->
+    <PackageReference Include="Scrutor" Version="4.2.2" />
+    <!-- Serilog for structured logging -->
+    <PackageReference Include="Serilog" Version="3.1.1" />
+    <PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="5.0.1" />
+    <PackageReference Include="Serilog.Enrichers.Environment" Version="2.3.0" />
+    <!-- Polly for resilience patterns -->
+    <PackageReference Include="Polly" Version="8.2.0" />
+    <!-- Health checks -->
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="8.0.0" />
+    <!-- Memory caching -->
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.11" />
+    <!-- Serilog exceptions -->
+    <PackageReference Include="Serilog.Exceptions" Version="8.4.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -57,6 +80,12 @@
     <Resource Include="Resources\MD Logo.ico" />
   </ItemGroup>
 
+  <!-- Exclude test files from main project build -->
+  <ItemGroup>
+    <Compile Remove="BudgetManagement.Tests\**" />
+    <EmbeddedResource Remove="BudgetManagement.Tests\**" />
+    <None Remove="BudgetManagement.Tests\**" />
+  </ItemGroup>
 
   <!-- Senior-friendly features compilation symbols -->
   <PropertyGroup>

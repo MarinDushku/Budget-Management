@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -704,7 +705,67 @@ namespace BudgetManagement.Views
             {
                 UpdateThemeComboBoxSelection(e.NewTheme);
                 UpdateDarkModeToggle(e.IsDarkTheme);
+                
+                // Force refresh of all open dialogs and windows
+                RefreshAllWindowsForThemeChange();
             });
+        }
+        
+        private void RefreshAllWindowsForThemeChange()
+        {
+            try
+            {
+                // Refresh all open windows to apply new theme resources
+                foreach (Window window in Application.Current.Windows)
+                {
+                    if (window.IsLoaded)
+                    {
+                        // Force invalidate visual to refresh all theme-bound resources
+                        window.InvalidateVisual();
+                        
+                        // Force refresh of all child elements recursively
+                        RefreshVisualTree(window);
+                        
+                        // Update any DataContext that might need theme refresh
+                        if (window.DataContext is INotifyPropertyChanged notifyContext)
+                        {
+                            // The DataContext can handle any theme-specific updates
+                            // This is useful for ViewModels that generate theme-aware colors
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error refreshing windows for theme change: {ex.Message}");
+            }
+        }
+        
+        private void RefreshVisualTree(DependencyObject parent)
+        {
+            try
+            {
+                if (parent == null) return;
+                
+                // Invalidate this element
+                if (parent is FrameworkElement element)
+                {
+                    element.InvalidateVisual();
+                    element.UpdateLayout();
+                }
+                
+                // Recursively refresh all children
+                var childrenCount = VisualTreeHelper.GetChildrenCount(parent);
+                for (int i = 0; i < childrenCount; i++)
+                {
+                    var child = VisualTreeHelper.GetChild(parent, i);
+                    RefreshVisualTree(child);
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error refreshing visual tree element: {ex.Message}");
+            }
         }
 
         #endregion

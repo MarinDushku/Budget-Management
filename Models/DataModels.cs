@@ -44,6 +44,9 @@ namespace BudgetManagement.Models
 
         public int DisplayOrder { get; set; }
         public bool IsActive { get; set; } = true;
+        
+        [StringLength(50, ErrorMessage = "Icon name cannot exceed 50 characters")]
+        public string Icon { get; set; } = string.Empty;
     }
 
     /// <summary>

@@ -170,6 +170,8 @@ namespace BudgetManagement.Services
             {
                 resources.MergedDictionaries.Remove(dict);
             }
+            
+            // Don't remove the base resource keys - just let them be overridden by the theme dictionary
         }
 
         private static void ApplyThemeResourceDictionary(ResourceDictionary resources, string theme)
@@ -188,8 +190,11 @@ namespace BudgetManagement.Services
                     ApplyLightThemeResources(themeDict);
                 }
 
-                // Add the theme dictionary to the application resources
-                resources.MergedDictionaries.Add(themeDict);
+                // Add the theme dictionary resources directly to override base resources
+                foreach (var key in themeDict.Keys)
+                {
+                    resources[key] = themeDict[key];
+                }
             }
             catch (Exception ex)
             {
@@ -215,6 +220,35 @@ namespace BudgetManagement.Services
             themeDict["PrimaryBlueBrush"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0x00, 0x86, 0xF0));
             themeDict["AccentGreenBrush"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0x12, 0x8C, 0x12));
             themeDict["WarningOrangeBrush"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0xFF, 0x9C, 0x00));
+            themeDict["DangerRedBrush"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0xE5, 0x39, 0x35));
+            
+            // Chart and Visualization Colors for Dark Mode
+            themeDict["ChartBackgroundBrush"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0x2A, 0x2A, 0x2A));
+            themeDict["ChartGridBrush"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0x40, 0x40, 0x40));
+            themeDict["ChartAxisBrush"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0x60, 0x60, 0x60));
+            themeDict["ChartLabelBrush"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0xE0, 0xE0, 0xE0));
+            
+            // Chart Series Colors (bright colors for dark background)
+            themeDict["ChartSeries1Brush"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0x42, 0xA5, 0xF5)); // Light Blue
+            themeDict["ChartSeries2Brush"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0x66, 0xBB, 0x6A)); // Light Green
+            themeDict["ChartSeries3Brush"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0xFF, 0xA7, 0x26)); // Orange
+            themeDict["ChartSeries4Brush"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0xEF, 0x53, 0x50)); // Red
+            themeDict["ChartSeries5Brush"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0xAB, 0x47, 0xBC)); // Purple
+            themeDict["ChartSeries6Brush"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0x26, 0xC6, 0xDA)); // Cyan
+            
+            // Status-specific chart colors
+            themeDict["ChartSuccessBrush"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0x4C, 0xAF, 0x50));
+            themeDict["ChartWarningBrush"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0xFF, 0x9C, 0x02));
+            themeDict["ChartErrorBrush"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0xF4, 0x43, 0x36));
+            themeDict["ChartInfoBrush"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0x21, 0x96, 0xF3));
+            
+            // Header Gradient for Dark Mode
+            var headerGradient = new System.Windows.Media.LinearGradientBrush();
+            headerGradient.StartPoint = new System.Windows.Point(0, 0);
+            headerGradient.EndPoint = new System.Windows.Point(0, 1);
+            headerGradient.GradientStops.Add(new System.Windows.Media.GradientStop(System.Windows.Media.Color.FromRgb(0x00, 0x86, 0xF0), 0));
+            headerGradient.GradientStops.Add(new System.Windows.Media.GradientStop(System.Windows.Media.Color.FromRgb(0x12, 0x7A, 0xCE), 1));
+            themeDict["HeaderGradientBrush"] = headerGradient;
         }
 
         private static void ApplyLightThemeResources(ResourceDictionary themeDict)
@@ -235,6 +269,35 @@ namespace BudgetManagement.Services
             themeDict["PrimaryBlueBrush"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0x00, 0x78, 0xD4));
             themeDict["AccentGreenBrush"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0x10, 0x7C, 0x10));
             themeDict["WarningOrangeBrush"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0xFF, 0x8C, 0x00));
+            themeDict["DangerRedBrush"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0xD7, 0x35, 0x27));
+            
+            // Chart and Visualization Colors for Light Mode
+            themeDict["ChartBackgroundBrush"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0xFF, 0xFF, 0xFF));
+            themeDict["ChartGridBrush"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0xE0, 0xE0, 0xE0));
+            themeDict["ChartAxisBrush"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0x9E, 0x9E, 0x9E));
+            themeDict["ChartLabelBrush"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0x42, 0x42, 0x42));
+            
+            // Chart Series Colors (darker colors for light background)
+            themeDict["ChartSeries1Brush"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0x19, 0x76, 0xD2)); // Blue
+            themeDict["ChartSeries2Brush"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0x38, 0x8E, 0x3C)); // Green
+            themeDict["ChartSeries3Brush"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0xF5, 0x7C, 0x00)); // Orange
+            themeDict["ChartSeries4Brush"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0xD3, 0x2F, 0x2F)); // Red
+            themeDict["ChartSeries5Brush"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0x7B, 0x1F, 0xA2)); // Purple
+            themeDict["ChartSeries6Brush"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0x00, 0x96, 0x88)); // Teal
+            
+            // Status-specific chart colors
+            themeDict["ChartSuccessBrush"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0x2E, 0x7D, 0x32));
+            themeDict["ChartWarningBrush"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0xED, 0x6C, 0x02));
+            themeDict["ChartErrorBrush"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0xC6, 0x28, 0x28));
+            themeDict["ChartInfoBrush"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0x02, 0x79, 0xB9));
+            
+            // Header Gradient for Light Mode
+            var headerGradient = new System.Windows.Media.LinearGradientBrush();
+            headerGradient.StartPoint = new System.Windows.Point(0, 0);
+            headerGradient.EndPoint = new System.Windows.Point(0, 1);
+            headerGradient.GradientStops.Add(new System.Windows.Media.GradientStop(System.Windows.Media.Color.FromRgb(0x00, 0x78, 0xD4), 0));
+            headerGradient.GradientStops.Add(new System.Windows.Media.GradientStop(System.Windows.Media.Color.FromRgb(0x10, 0x6E, 0xBE), 1));
+            themeDict["HeaderGradientBrush"] = headerGradient;
         }
     }
 }

@@ -72,6 +72,13 @@ namespace BudgetManagement.Services
         Task ShowErrorAsync(string title, string message);
         Task ShowWarningAsync(string title, string message);
         Task<string?> ShowInputDialogAsync(string title, string message, string defaultValue = "");
+        
+        // Vertical slice architecture methods
+        Task<BudgetManagement.Shared.Core.Result<BudgetManagement.Features.Income.Commands.AddIncomeDto?>> ShowAddIncomeDialogAsync(BudgetManagement.Features.Income.Commands.AddIncomeDto? initialData = null);
+        Task<BudgetManagement.Shared.Core.Result<BudgetManagement.Features.Income.Commands.UpdateIncomeDto?>> ShowEditIncomeDialogAsync(BudgetManagement.Features.Income.Commands.UpdateIncomeDto incomeData);
+        Task<BudgetManagement.Shared.Core.Result<BudgetManagement.Features.Spending.Commands.AddSpendingDto?>> ShowAddSpendingDialogAsync(BudgetManagement.Features.Spending.Commands.AddSpendingDto? initialData = null);
+        Task<BudgetManagement.Shared.Core.Result<BudgetManagement.Features.Spending.Commands.UpdateSpendingDto?>> ShowEditSpendingDialogAsync(BudgetManagement.Features.Spending.Commands.UpdateSpendingDto spendingData);
+        Task<BudgetManagement.Shared.Core.Result<string?>> ShowExportIncomeDialogAsync(string? defaultFileName = null);
     }
 
     /// <summary>

@@ -6,6 +6,9 @@ using System.Windows;
 using Microsoft.Win32;
 using BudgetManagement.Models;
 using BudgetManagement.Views.Dialogs;
+using BudgetManagement.Features.Income.Commands;
+using BudgetManagement.Features.Spending.Commands;
+using BudgetManagement.Shared.Core;
 
 namespace BudgetManagement.Services
 {
@@ -401,6 +404,175 @@ namespace BudgetManagement.Services
                     return null;
                 });
             });
+        }
+
+        /// <summary>
+        /// Shows dialog for adding income (vertical slice architecture)
+        /// </summary>
+        public async Task<Result<AddIncomeDto?>> ShowAddIncomeDialogAsync(AddIncomeDto? initialData = null)
+        {
+            try
+            {
+                var income = new Income
+                {
+                    Date = initialData?.Date ?? DateTime.Today,
+                    Amount = initialData?.Amount ?? 0,
+                    Description = initialData?.Description ?? ""
+                };
+
+                var result = await ShowIncomeDialogAsync(income);
+                if (result != null)
+                {
+                    var addIncomeDto = new AddIncomeDto
+                    {
+                        Date = result.Date,
+                        Amount = result.Amount,
+                        Description = result.Description
+                    };
+                    return Result<AddIncomeDto?>.Success(addIncomeDto);
+                }
+
+                return Result<AddIncomeDto?>.Success(null);
+            }
+            catch (Exception ex)
+            {
+                return Result<AddIncomeDto?>.Failure(Error.System(Error.Codes.SYSTEM_ERROR, ex.Message));
+            }
+        }
+
+        /// <summary>
+        /// Shows dialog for editing income (vertical slice architecture)
+        /// </summary>
+        public async Task<Result<UpdateIncomeDto?>> ShowEditIncomeDialogAsync(UpdateIncomeDto incomeData)
+        {
+            try
+            {
+                var income = new Income
+                {
+                    Id = incomeData.Id,
+                    Date = incomeData.Date,
+                    Amount = incomeData.Amount,
+                    Description = incomeData.Description
+                };
+
+                var result = await ShowIncomeDialogAsync(income);
+                if (result != null)
+                {
+                    var updateIncomeDto = new UpdateIncomeDto
+                    {
+                        Id = result.Id,
+                        Date = result.Date,
+                        Amount = result.Amount,
+                        Description = result.Description
+                    };
+                    return Result<UpdateIncomeDto?>.Success(updateIncomeDto);
+                }
+
+                return Result<UpdateIncomeDto?>.Success(null);
+            }
+            catch (Exception ex)
+            {
+                return Result<UpdateIncomeDto?>.Failure(Error.System(Error.Codes.SYSTEM_ERROR, ex.Message));
+            }
+        }
+
+        /// <summary>
+        /// Shows dialog for adding spending (vertical slice architecture)
+        /// </summary>
+        public async Task<Result<AddSpendingDto?>> ShowAddSpendingDialogAsync(AddSpendingDto? initialData = null)
+        {
+            try
+            {
+                // We'll need to get categories for the dialog
+                // For now, using empty list - this will need proper implementation
+                var categories = new List<Category>();
+                
+                var spending = new Spending
+                {
+                    Date = initialData?.Date ?? DateTime.Today,
+                    Amount = initialData?.Amount ?? 0,
+                    Description = initialData?.Description ?? "",
+                    CategoryId = initialData?.CategoryId ?? 1
+                };
+
+                var result = await ShowSpendingDialogAsync(spending, categories);
+                if (result != null)
+                {
+                    var addSpendingDto = new AddSpendingDto
+                    {
+                        Date = result.Date,
+                        Amount = result.Amount,
+                        Description = result.Description,
+                        CategoryId = result.CategoryId
+                    };
+                    return Result<AddSpendingDto?>.Success(addSpendingDto);
+                }
+
+                return Result<AddSpendingDto?>.Success(null);
+            }
+            catch (Exception ex)
+            {
+                return Result<AddSpendingDto?>.Failure(Error.System(Error.Codes.SYSTEM_ERROR, ex.Message));
+            }
+        }
+
+        /// <summary>
+        /// Shows dialog for editing spending (vertical slice architecture)
+        /// </summary>
+        public async Task<Result<UpdateSpendingDto?>> ShowEditSpendingDialogAsync(UpdateSpendingDto spendingData)
+        {
+            try
+            {
+                // We'll need to get categories for the dialog
+                // For now, using empty list - this will need proper implementation
+                var categories = new List<Category>();
+                
+                var spending = new Spending
+                {
+                    Id = spendingData.Id,
+                    Date = spendingData.Date,
+                    Amount = spendingData.Amount,
+                    Description = spendingData.Description,
+                    CategoryId = spendingData.CategoryId
+                };
+
+                var result = await ShowSpendingDialogAsync(spending, categories);
+                if (result != null)
+                {
+                    var updateSpendingDto = new UpdateSpendingDto
+                    {
+                        Id = result.Id,
+                        Date = result.Date,
+                        Amount = result.Amount,
+                        Description = result.Description,
+                        CategoryId = result.CategoryId
+                    };
+                    return Result<UpdateSpendingDto?>.Success(updateSpendingDto);
+                }
+
+                return Result<UpdateSpendingDto?>.Success(null);
+            }
+            catch (Exception ex)
+            {
+                return Result<UpdateSpendingDto?>.Failure(Error.System(Error.Codes.SYSTEM_ERROR, ex.Message));
+            }
+        }
+
+        /// <summary>
+        /// Shows export dialog for income data
+        /// </summary>
+        public async Task<Result<string?>> ShowExportIncomeDialogAsync(string? defaultFileName = null)
+        {
+            try
+            {
+                var fileName = defaultFileName ?? "income_export.csv";
+                var filePath = await ShowSaveFileDialogAsync(fileName, "CSV files (*.csv)|*.csv|All files (*.*)|*.*");
+                return Result<string?>.Success(filePath);
+            }
+            catch (Exception ex)
+            {
+                return Result<string?>.Failure(Error.System(Error.Codes.SYSTEM_ERROR, ex.Message));
+            }
         }
     }
 }
