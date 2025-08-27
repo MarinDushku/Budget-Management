@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using BudgetManagement.Models;
+using BudgetManagement.Shared.Infrastructure;
 
 namespace BudgetManagement.Views.Dialogs
 {
@@ -33,7 +34,7 @@ namespace BudgetManagement.Views.Dialogs
                 DescriptionTextBox.Text = spending.Description;
                 SetAmountValue(spending.Amount);
                 CategoryComboBox.SelectedValue = spending.CategoryId;
-                Title = "Edit Spending Entry";
+                Title = LocalizationHelper.GetString("EditSpendingTitle", "Edit Spending Entry");
             }
         }
 

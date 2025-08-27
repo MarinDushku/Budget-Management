@@ -7,6 +7,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using BudgetManagement.ViewModels;
 using BudgetManagement.Services;
+using BudgetManagement.Shared.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BudgetManagement.Views
@@ -82,7 +83,7 @@ namespace BudgetManagement.Views
             try
             {
                 var app = Application.Current as App;
-                var localizationService = app?.GetService<ILocalizationService>();
+                var localizationService = app?.GetService<IEnterpriseLocalizationService>();
                 var settingsService = app?.GetService<ISettingsService>();
 
                 if (localizationService != null && settingsService != null)

@@ -4,6 +4,7 @@
 using BudgetManagement.Features.Income.Commands;
 using BudgetManagement.Features.Income.Queries;
 using BudgetManagement.Shared.Data.Repositories;
+using BudgetManagement.Shared.Infrastructure;
 using FluentValidation;
 
 namespace BudgetManagement.Features.Income.Validators
@@ -17,9 +18,9 @@ namespace BudgetManagement.Features.Income.Validators
         {
             RuleFor(x => x.Date)
                 .NotEmpty()
-                .WithMessage("Date is required")
+                .WithMessage(LocalizationHelper.ValidationMessages.DateRequired)
                 .LessThanOrEqualTo(DateTime.Today.AddDays(1))
-                .WithMessage("Date cannot be in the future")
+                .WithMessage(LocalizationHelper.ValidationMessages.DateCannotBeFuture)
                 .GreaterThan(DateTime.Today.AddYears(-10))
                 .WithMessage("Date cannot be more than 10 years in the past");
 
@@ -31,11 +32,11 @@ namespace BudgetManagement.Features.Income.Validators
 
             RuleFor(x => x.Description)
                 .NotEmpty()
-                .WithMessage("Description is required")
+                .WithMessage(LocalizationHelper.ValidationMessages.DescriptionRequired)
                 .MaximumLength(500)
                 .WithMessage("Description cannot exceed 500 characters")
                 .Matches(@"^[a-zA-Z0-9\s\-\.\,\!\?\(\)\[\]\:\;\'\""\&\%\$\#\@\*\+\=\_\|\\\/]*$")
-                .WithMessage("Description contains invalid characters");
+                .WithMessage(LocalizationHelper.ValidationMessages.DescriptionInvalidCharacters);
         }
     }
 
@@ -52,9 +53,9 @@ namespace BudgetManagement.Features.Income.Validators
 
             RuleFor(x => x.Date)
                 .NotEmpty()
-                .WithMessage("Date is required")
+                .WithMessage(LocalizationHelper.ValidationMessages.DateRequired)
                 .LessThanOrEqualTo(DateTime.Today.AddDays(1))
-                .WithMessage("Date cannot be in the future")
+                .WithMessage(LocalizationHelper.ValidationMessages.DateCannotBeFuture)
                 .GreaterThan(DateTime.Today.AddYears(-10))
                 .WithMessage("Date cannot be more than 10 years in the past");
 
@@ -66,11 +67,11 @@ namespace BudgetManagement.Features.Income.Validators
 
             RuleFor(x => x.Description)
                 .NotEmpty()
-                .WithMessage("Description is required")
+                .WithMessage(LocalizationHelper.ValidationMessages.DescriptionRequired)
                 .MaximumLength(500)
                 .WithMessage("Description cannot exceed 500 characters")
                 .Matches(@"^[a-zA-Z0-9\s\-\.\,\!\?\(\)\[\]\:\;\'\""\&\%\$\#\@\*\+\=\_\|\\\/]*$")
-                .WithMessage("Description contains invalid characters");
+                .WithMessage(LocalizationHelper.ValidationMessages.DescriptionInvalidCharacters);
         }
     }
 
@@ -96,15 +97,15 @@ namespace BudgetManagement.Features.Income.Validators
         {
             RuleFor(x => x.StartDate)
                 .NotEmpty()
-                .WithMessage("Start date is required")
+                .WithMessage(LocalizationHelper.ValidationMessages.StartDateRequired)
                 .LessThanOrEqualTo(x => x.EndDate)
-                .WithMessage("Start date must be before or equal to end date");
+                .WithMessage(LocalizationHelper.ValidationMessages.StartDateMustBeBeforeEndDate);
 
             RuleFor(x => x.EndDate)
                 .NotEmpty()
-                .WithMessage("End date is required")
+                .WithMessage(LocalizationHelper.ValidationMessages.EndDateRequired)
                 .LessThanOrEqualTo(DateTime.Today)
-                .WithMessage("End date cannot be in the future");
+                .WithMessage(LocalizationHelper.ValidationMessages.EndDateCannotBeFuture);
 
             RuleFor(x => x)
                 .Must(x => (x.EndDate - x.StartDate).TotalDays <= 365)
@@ -121,17 +122,17 @@ namespace BudgetManagement.Features.Income.Validators
         {
             RuleFor(x => x.StartDate)
                 .NotEmpty()
-                .WithMessage("Start date is required")
+                .WithMessage(LocalizationHelper.ValidationMessages.StartDateRequired)
                 .LessThanOrEqualTo(x => x.EndDate)
-                .WithMessage("Start date must be before or equal to end date")
+                .WithMessage(LocalizationHelper.ValidationMessages.StartDateMustBeBeforeEndDate)
                 .GreaterThan(DateTime.Today.AddYears(-10))
                 .WithMessage("Start date cannot be more than 10 years in the past");
 
             RuleFor(x => x.EndDate)
                 .NotEmpty()
-                .WithMessage("End date is required")
+                .WithMessage(LocalizationHelper.ValidationMessages.EndDateRequired)
                 .LessThanOrEqualTo(DateTime.Today.AddDays(1))
-                .WithMessage("End date cannot be in the future");
+                .WithMessage(LocalizationHelper.ValidationMessages.EndDateCannotBeFuture);
 
             RuleFor(x => x)
                 .Must(x => (x.EndDate - x.StartDate).TotalDays <= 1095) // 3 years
@@ -176,15 +177,15 @@ namespace BudgetManagement.Features.Income.Validators
         {
             RuleFor(x => x.StartDate)
                 .NotEmpty()
-                .WithMessage("Start date is required")
+                .WithMessage(LocalizationHelper.ValidationMessages.StartDateRequired)
                 .LessThanOrEqualTo(x => x.EndDate)
-                .WithMessage("Start date must be before or equal to end date");
+                .WithMessage(LocalizationHelper.ValidationMessages.StartDateMustBeBeforeEndDate);
 
             RuleFor(x => x.EndDate)
                 .NotEmpty()
-                .WithMessage("End date is required")
+                .WithMessage(LocalizationHelper.ValidationMessages.EndDateRequired)
                 .LessThanOrEqualTo(DateTime.Today.AddDays(1))
-                .WithMessage("End date cannot be in the future");
+                .WithMessage(LocalizationHelper.ValidationMessages.EndDateCannotBeFuture);
 
             RuleFor(x => x)
                 .Must(x => (x.EndDate - x.StartDate).TotalDays <= 1095) // 3 years
@@ -201,15 +202,15 @@ namespace BudgetManagement.Features.Income.Validators
         {
             RuleFor(x => x.StartDate)
                 .NotEmpty()
-                .WithMessage("Start date is required")
+                .WithMessage(LocalizationHelper.ValidationMessages.StartDateRequired)
                 .LessThanOrEqualTo(x => x.EndDate)
-                .WithMessage("Start date must be before or equal to end date");
+                .WithMessage(LocalizationHelper.ValidationMessages.StartDateMustBeBeforeEndDate);
 
             RuleFor(x => x.EndDate)
                 .NotEmpty()
-                .WithMessage("End date is required")
+                .WithMessage(LocalizationHelper.ValidationMessages.EndDateRequired)
                 .LessThanOrEqualTo(DateTime.Today.AddDays(1))
-                .WithMessage("End date cannot be in the future");
+                .WithMessage(LocalizationHelper.ValidationMessages.EndDateCannotBeFuture);
 
             RuleFor(x => x)
                 .Must(x => (x.EndDate - x.StartDate).TotalDays <= 1095) // 3 years
@@ -226,15 +227,15 @@ namespace BudgetManagement.Features.Income.Validators
         {
             RuleFor(x => x.StartDate)
                 .NotEmpty()
-                .WithMessage("Start date is required")
+                .WithMessage(LocalizationHelper.ValidationMessages.StartDateRequired)
                 .LessThanOrEqualTo(x => x.EndDate)
-                .WithMessage("Start date must be before or equal to end date");
+                .WithMessage(LocalizationHelper.ValidationMessages.StartDateMustBeBeforeEndDate);
 
             RuleFor(x => x.EndDate)
                 .NotEmpty()
-                .WithMessage("End date is required")
+                .WithMessage(LocalizationHelper.ValidationMessages.EndDateRequired)
                 .LessThanOrEqualTo(DateTime.Today.AddDays(1))
-                .WithMessage("End date cannot be in the future");
+                .WithMessage(LocalizationHelper.ValidationMessages.EndDateCannotBeFuture);
 
             RuleFor(x => x.Grouping)
                 .IsInEnum()
@@ -284,9 +285,9 @@ namespace BudgetManagement.Features.Income.Validators
         {
             RuleFor(x => x.Pattern)
                 .NotEmpty()
-                .WithMessage("Search pattern is required")
+                .WithMessage(LocalizationHelper.ValidationMessages.SearchPatternRequired)
                 .MinimumLength(2)
-                .WithMessage("Search pattern must be at least 2 characters")
+                .WithMessage(LocalizationHelper.ValidationMessages.SearchPatternTooShort)
                 .MaximumLength(100)
                 .WithMessage("Search pattern cannot exceed 100 characters");
         }

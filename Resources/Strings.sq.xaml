@@ -4,9 +4,16 @@
 
     <!-- Main Window -->
     <sys:String x:Key="AppTitle">Menaxhuesi i Buxhetit</sys:String>
+    <sys:String x:Key="AppFullTitle">Menaxhimi i Buxhetit - I Thjeshtë dhe i Lehtë</sys:String>
     <sys:String x:Key="AddIncomeButton">Shto të Ardhura</sys:String>
     <sys:String x:Key="AddSpendingButton">Shto Shpenzim</sys:String>
     <sys:String x:Key="RefreshButton">Rifresko</sys:String>
+    
+    <!-- Navigation Sections -->
+    <sys:String x:Key="MainSection">KRYESORE</sys:String>
+    <sys:String x:Key="ActionsSection">VEPRIME</sys:String>
+    <sys:String x:Key="ToolsSection">MJETE</sys:String>
+    <sys:String x:Key="Dashboard">Paneli Kryesor</sys:String>
     
     <!-- Summary Cards -->
     <sys:String x:Key="TotalIncome">Të Ardhurat Totale</sys:String>
@@ -48,12 +55,14 @@
     <sys:String x:Key="EditIncomeTitle">Ndrysho të Ardhurat</sys:String>
     <sys:String x:Key="AddSpendingTitle">Shto Shpenzim</sys:String>
     <sys:String x:Key="EditSpendingTitle">Ndrysho Shpenzimin</sys:String>
-    <sys:String x:Key="Date">Data:</sys:String>
-    <sys:String x:Key="Description">Përshkrimi:</sys:String>
-    <sys:String x:Key="Amount">Shuma:</sys:String>
-    <sys:String x:Key="Category">Kategoria:</sys:String>
+    <sys:String x:Key="Date">📅 Data:</sys:String>
+    <sys:String x:Key="Description">📝 Përshkrimi:</sys:String>
+    <sys:String x:Key="Amount">💵 Shuma:</sys:String>
+    <sys:String x:Key="Category">🏷️ Kategoria:</sys:String>
     <sys:String x:Key="Save">Ruaj</sys:String>
+    <sys:String x:Key="SaveSpending">💰 Ruaj Shpenzimin</sys:String>
     <sys:String x:Key="Cancel">Anulo</sys:String>
+    <sys:String x:Key="CancelButton">❌ Anulo</sys:String>
     
     <!-- Validation Messages -->
     <sys:String x:Key="ValidationError">Gabim Validimi</sys:String>
@@ -133,5 +142,112 @@
     <sys:String x:Key="MediumFont">Shkrim mesatar (default)</sys:String>
     <sys:String x:Key="LargeFont">Shkrim i madh</sys:String>
     <sys:String x:Key="QuickAmounts">Shuma të shpejta:</sys:String>
+    
+    <!-- Enterprise Architecture - New Features -->
+    <!-- Dialog Headers and Descriptions -->
+    <sys:String x:Key="AddIncomeDialogTitle">💰 Shto të Ardhura</sys:String>
+    <sys:String x:Key="AddIncomeDialogDescription">Shkruani detajet e të ardhurave tuaja më poshtë</sys:String>
+    <sys:String x:Key="AddSpendingDialogTitle">💳 Shto Shpenzim</sys:String>
+    <sys:String x:Key="AddSpendingDialogDescription">Ndiqni shpenzimet tuaja lehtësisht</sys:String>
+    <sys:String x:Key="CategoryGuideLabel">💡 Udhëzues Kategorish:</sys:String>
+    <sys:String x:Key="ManageSpendingCategoriesHeader">🏷️ Menaxho Kategoritë e Shpenzimeve</sys:String>
+    <sys:String x:Key="AddNewCategoryHeader">➕ Shto Kategori të Re</sys:String>
+    <sys:String x:Key="CurrentCategoriesHeader">📋 Kategoritë Aktuale</sys:String>
+    <sys:String x:Key="CategoriesOrderDescription">Kategoritë tregohen në rendin që shfaqen në dialogë</sys:String>
+    
+    <!-- Enterprise Validation Messages -->
+    <sys:String x:Key="DateRequired">Data është e nevojshme</sys:String>
+    <sys:String x:Key="DateCannotBeFuture">Data nuk mund të jetë në të ardhmen</sys:String>
+    <sys:String x:Key="DescriptionRequired">Përshkrimi është i nevojshëm</sys:String>
+    <sys:String x:Key="DescriptionInvalidCharacters">Përshkrimi përmban karaktere të pavlefshme</sys:String>
+    <sys:String x:Key="AmountMustBePositive">Shuma duhet të jetë më e madhe se zero</sys:String>
+    <sys:String x:Key="AmountRequired">Shuma është e nevojshme</sys:String>
+    <sys:String x:Key="CategoryIdRequired">ID e kategorisë është e nevojshme</sys:String>
+    <sys:String x:Key="StartDateRequired">Data e fillimit është e nevojshme</sys:String>
+    <sys:String x:Key="EndDateRequired">Data e përfundimit është e nevojshme</sys:String>
+    <sys:String x:Key="StartDateMustBeBeforeEndDate">Data e fillimit duhet të jetë para ose e barabartë me datën e përfundimit</sys:String>
+    <sys:String x:Key="EndDateCannotBeFuture">Data e përfundimit nuk mund të jetë në të ardhmen</sys:String>
+    <sys:String x:Key="SearchPatternRequired">Modeli i kërkimit është i nevojshëm</sys:String>
+    <sys:String x:Key="SearchPatternTooShort">Modeli i kërkimit duhet të ketë të paktën 2 karaktere</sys:String>
+    <sys:String x:Key="DescriptionCannotBeEmpty">Përshkrimi nuk mund të jetë bosh ose të përmbajë vetëm hapësira</sys:String>
+    <sys:String x:Key="CategoryNameRequired">Emri i kategorisë është i nevojshëm</sys:String>
+    <sys:String x:Key="CategoryNameInvalidCharacters">Emri i kategorisë përmban karaktere të pavlefshme</sys:String>
+    <sys:String x:Key="IdCannotBeEmpty">ID nuk mund të jetë bosh</sys:String>
+    <sys:String x:Key="CommandCannotBeNull">Komanda nuk mund të jetë null</sys:String>
+    <sys:String x:Key="QueryCannotBeNull">Query nuk mund të jetë null</sys:String>
+    
+    <!-- Enterprise Logging Messages -->
+    <sys:String x:Key="ErrorAddingIncome">Gabim gjatë shtimit të të ardhurave</sys:String>
+    <sys:String x:Key="ErrorLoadingIncomes">Gabim gjatë ngarkimit të të ardhurave</sys:String>
+    <sys:String x:Key="ErrorSearchingIncomes">Gabim gjatë kërkimit të të ardhurave</sys:String>
+    <sys:String x:Key="ErrorLoadingInitialData">Gabim gjatë ngarkimit të të dhënave fillestare</sys:String>
+    <sys:String x:Key="ErrorAddingSpending">Gabim gjatë shtimit të shpenzimit</sys:String>
+    <sys:String x:Key="ErrorLoadingSpendings">Gabim gjatë ngarkimit të shpenzimeve</sys:String>
+    <sys:String x:Key="ErrorSearchingSpendings">Gabim gjatë kërkimit të shpenzimeve</sys:String>
+    <sys:String x:Key="ErrorLoadingCategories">Gabim gjatë ngarkimit të kategorive</sys:String>
+    <sys:String x:Key="ErrorLoadingRecentSpendings">Gabim gjatë ngarkimit të shpenzimeve të fundit</sys:String>
+    <sys:String x:Key="ErrorLoadingRecentIncomes">Gabim gjatë ngarkimit të të ardhurave të fundit</sys:String>
+    
+    <!-- Health Check Messages -->
+    <sys:String x:Key="DatabaseConnectionFailed">Lidhja me bazën e të dhënave dështoi</sys:String>
+    <sys:String x:Key="DatabaseConnectionError">Gabim i lidhjes së bazës së të dhënave</sys:String>
+    <sys:String x:Key="DatabaseBasicOperationsFailed">Operacionet bazike të bazës së të dhënave dështuan</sys:String>
+    <sys:String x:Key="DatabaseSchemaVerificationFailed">Verifikimi i skemës së bazës së të dhënave dështoi</sys:String>
+    <sys:String x:Key="DatabaseSchemaIssuesDetected">U zbuluan probleme të skemës së bazës së të dhënave</sys:String>
+    <sys:String x:Key="CacheServiceStatisticsUnavailable">Statistikat e shërbimit të cache-it nuk janë të disponueshme</sys:String>
+    <sys:String x:Key="CacheServiceTestFailed">Testi i shërbimit të cache-it dështoi</sys:String>
+    <sys:String x:Key="ThemeServiceNotInitialized">Shërbimi i temës nuk është inicializuar siç duhet</sys:String>
+    <sys:String x:Key="ThemeServiceFunctioningCorrectly">Shërbimi i temës po funksionon siç duhet</sys:String>
+    <sys:String x:Key="BudgetServiceFunctioningCorrectly">Shërbimi i buxhetit po funksionon siç duhet</sys:String>
+    <sys:String x:Key="HealthCheckCancelled">Kontrolli i shëndetit u anulua</sys:String>
+    <sys:String x:Key="HealthCheckFailed">Kontrolli i shëndetit dështoi</sys:String>
+    <sys:String x:Key="ThemeSwitchingNotWorking">Funksionaliteti i ndërrimit të temës nuk po punon siç duhet</sys:String>
+    <sys:String x:Key="ThemeSwitchingPartiallyWorking">Ndërrimi i temës po punon pjesërisht - nuk mund të rikthejë temën origjinale</sys:String>
+    <sys:String x:Key="ThemeSwitchingTestFailed">Testi i ndërrimit të temës dështoi</sys:String>
+    <sys:String x:Key="ThemeResourcesNotAccessible">Shumë burime të temës nuk janë të qasshme</sys:String>
+    <sys:String x:Key="ThemeResourcesCheckFailed">Kontrolli i burimeve të temës dështoi</sys:String>
+    <sys:String x:Key="CurrentThemeInvalid">Tema aktuale '{0}' nuk është temë e vlefshme</sys:String>
+    <sys:String x:Key="CurrentThemeVerificationFailed">Dështoi verifikimi i temës aktuale</sys:String>
+    
+    <!-- System Status Messages -->
+    <sys:String x:Key="ApplicationStarting">Duke nisur aplikacionin...</sys:String>
+    <sys:String x:Key="ServicesInitializing">Duke inicializuar shërbimet...</sys:String>
+    <sys:String x:Key="DatabaseInitializing">Duke inicializuar bazën e të dhënave...</sys:String>
+    <sys:String x:Key="CacheInitializing">Duke inicializuar cache-in...</sys:String>
+    <sys:String x:Key="SystemHealthy">Sistemi është i shëndetshëm</sys:String>
+    <sys:String x:Key="SystemDegraded">Sistemi është i degraduar</sys:String>
+    <sys:String x:Key="SystemUnhealthy">Sistemi nuk është i shëndetshëm</sys:String>
+    
+    <!-- Enterprise Error Codes -->
+    <sys:String x:Key="SystemError">Gabim sistemi</sys:String>
+    <sys:String x:Key="DatabaseError">Gabim i bazës së të dhënave</sys:String>
+    <sys:String x:Key="NetworkError">Gabim rrjeti</sys:String>
+    <sys:String x:Key="TimeoutError">Gabim kohe</sys:String>
+    <sys:String x:Key="ConcurrencyError">Gabim njëkohësie</sys:String>
+    <sys:String x:Key="AuthorizationError">Gabim autorizimi</sys:String>
+    <sys:String x:Key="NotFoundError">Nuk u gjet</sys:String>
+    <sys:String x:Key="ConflictError">Konflikt</sys:String>
+    <sys:String x:Key="BadRequestError">Kërkesë e keqe</sys:String>
+    
+    <!-- Loading and Status Messages -->
+    <sys:String x:Key="LoadingIncomes">Duke ngarkuar të ardhurat...</sys:String>
+    <sys:String x:Key="LoadingSpendings">Duke ngarkuar shpenzimet...</sys:String>
+    <sys:String x:Key="LoadingCategories">Duke ngarkuar kategoritë...</sys:String>
+    <sys:String x:Key="LoadingDashboard">Duke ngarkuar panelin kryesor...</sys:String>
+    <sys:String x:Key="LoadingAnalytics">Duke ngarkuar analitikat...</sys:String>
+    <sys:String x:Key="ProcessingRequest">Duke procesuar kërkesën...</sys:String>
+    <sys:String x:Key="SavingChanges">Duke ruajtur ndryshimet...</sys:String>
+    <sys:String x:Key="OperationCompleted">Operacioni u përfundua</sys:String>
+    <sys:String x:Key="OperationFailed">Operacioni dështoi</sys:String>
+    <sys:String x:Key="NoDataAvailable">Nuk ka të dhëna të disponueshme</sys:String>
+    <sys:String x:Key="DataLoadedSuccessfully">Të dhënat u ngarkuan me sukses</sys:String>
+    
+    <!-- Performance Monitoring -->
+    <sys:String x:Key="SlowOperationDetected">U zbulua operacion i ngadalshëm</sys:String>
+    <sys:String x:Key="CriticalPerformanceIssue">Problem kritik performanse</sys:String>
+    <sys:String x:Key="PerformanceOptimal">Performanca është optimale</sys:String>
+    <sys:String x:Key="MemoryUsageHigh">Përdorimi i memorjes është i lartë</sys:String>
+    <sys:String x:Key="CacheHitRate">Shkalla e përputhjes së cache-it</sys:String>
+    <sys:String x:Key="DatabaseResponseTime">Koha e përgjigjes së bazës së të dhënave</sys:String>
     
 </ResourceDictionary>

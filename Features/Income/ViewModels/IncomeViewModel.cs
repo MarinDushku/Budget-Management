@@ -6,6 +6,7 @@ using BudgetManagement.Features.Income.Queries;
 using BudgetManagement.Models;
 using BudgetManagement.Services;
 using BudgetManagement.Shared.Core;
+using BudgetManagement.Shared.Infrastructure;
 using BudgetManagement.ViewModels;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -25,7 +26,6 @@ namespace BudgetManagement.Features.Income.ViewModels
 
         private readonly IMediator _mediator;
         private readonly IDialogService _dialogService;
-        private readonly ILocalizationService _localizationService;
         private readonly ILogger<IncomeViewModel> _logger;
 
         private ObservableCollection<Models.Income> _incomes = new();
@@ -154,12 +154,10 @@ namespace BudgetManagement.Features.Income.ViewModels
         public IncomeViewModel(
             IMediator mediator,
             IDialogService dialogService,
-            ILocalizationService localizationService,
             ILogger<IncomeViewModel> logger)
         {
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
             _dialogService = dialogService ?? throw new ArgumentNullException(nameof(dialogService));
-            _localizationService = localizationService ?? throw new ArgumentNullException(nameof(localizationService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
             // Initialize commands
@@ -212,13 +210,13 @@ namespace BudgetManagement.Features.Income.ViewModels
                 }
                 else
                 {
-                    ErrorMessage = _localizationService.GetString("FailedToLoadIncomes") ?? "Failed to load income entries.";
+                    ErrorMessage = LocalizationHelper.ErrorMessages.ErrorLoadingIncomes;
                     _logger.LogError("Failed to load income entries: {Error}", result.Error);
                 }
             }
             catch (Exception ex)
             {
-                ErrorMessage = _localizationService.GetString("UnexpectedError") ?? "An unexpected error occurred.";
+                ErrorMessage = LocalizationHelper.StatusMessages.OperationFailed;
                 _logger.LogError(ex, "Unexpected error loading income entries");
             }
             finally
@@ -254,14 +252,14 @@ namespace BudgetManagement.Features.Income.ViewModels
                     }
                     else
                     {
-                        ErrorMessage = _localizationService.GetString("FailedToAddIncome") ?? "Failed to add income entry.";
+                        ErrorMessage = LocalizationHelper.ErrorMessages.ErrorAddingIncome;
                         _logger.LogError("Failed to add income entry: {Error}", addResult.Error);
                     }
                 }
             }
             catch (Exception ex)
             {
-                ErrorMessage = _localizationService.GetString("UnexpectedError") ?? "An unexpected error occurred.";
+                ErrorMessage = LocalizationHelper.StatusMessages.OperationFailed;
                 _logger.LogError(ex, "Unexpected error adding income entry");
             }
             finally
@@ -303,14 +301,14 @@ namespace BudgetManagement.Features.Income.ViewModels
                     }
                     else
                     {
-                        ErrorMessage = _localizationService.GetString("FailedToUpdateIncome") ?? "Failed to update income entry.";
+                        ErrorMessage = LocalizationHelper.ErrorMessages.ErrorLoadingIncomes;
                         _logger.LogError("Failed to update income entry: {Error}", updateResult.Error);
                     }
                 }
             }
             catch (Exception ex)
             {
-                ErrorMessage = _localizationService.GetString("UnexpectedError") ?? "An unexpected error occurred.";
+                ErrorMessage = LocalizationHelper.StatusMessages.OperationFailed;
                 _logger.LogError(ex, "Unexpected error editing income entry");
             }
             finally
@@ -328,11 +326,10 @@ namespace BudgetManagement.Features.Income.ViewModels
 
             try
             {
-                var confirmMessage = _localizationService.GetString("ConfirmDeleteIncome") ?? 
-                    $"Are you sure you want to delete the income entry '{SelectedIncome.Description}' for {SelectedIncome.Amount:C}?";
+                var confirmMessage = $"Are you sure you want to delete the income entry '{SelectedIncome.Description}' for {SelectedIncome.Amount:C}?";
 
                 var confirmed = await _dialogService.ShowConfirmationAsync(
-                    _localizationService.GetString("DeleteIncomeTitle") ?? "Delete Income Entry",
+                    LocalizationHelper.GetString("DeleteIncomeTitle", "Delete Income Entry"),
                     confirmMessage);
 
                 if (!confirmed) return;
@@ -353,13 +350,13 @@ namespace BudgetManagement.Features.Income.ViewModels
                 }
                 else
                 {
-                    ErrorMessage = _localizationService.GetString("FailedToDeleteIncome") ?? "Failed to delete income entry.";
+                    ErrorMessage = LocalizationHelper.ErrorMessages.ErrorLoadingIncomes;
                     _logger.LogError("Failed to delete income entry: {Error}", result.Error);
                 }
             }
             catch (Exception ex)
             {
-                ErrorMessage = _localizationService.GetString("UnexpectedError") ?? "An unexpected error occurred.";
+                ErrorMessage = LocalizationHelper.StatusMessages.OperationFailed;
                 _logger.LogError(ex, "Unexpected error deleting income entry");
             }
             finally
@@ -402,13 +399,13 @@ namespace BudgetManagement.Features.Income.ViewModels
                 }
                 else
                 {
-                    ErrorMessage = _localizationService.GetString("SearchFailed") ?? "Search failed.";
+                    ErrorMessage = LocalizationHelper.StatusMessages.OperationFailed;
                     _logger.LogError("Failed to search income entries: {Error}", result.Error);
                 }
             }
             catch (Exception ex)
             {
-                ErrorMessage = _localizationService.GetString("UnexpectedError") ?? "An unexpected error occurred.";
+                ErrorMessage = LocalizationHelper.StatusMessages.OperationFailed;
                 _logger.LogError(ex, "Unexpected error searching income entries");
             }
             finally
@@ -443,13 +440,13 @@ namespace BudgetManagement.Features.Income.ViewModels
                 }
                 else if (result.Error != null)
                 {
-                    ErrorMessage = _localizationService.GetString("ExportFailed") ?? "Export failed.";
+                    ErrorMessage = LocalizationHelper.StatusMessages.OperationFailed;
                     _logger.LogError("Failed to export income entries: {Error}", result.Error);
                 }
             }
             catch (Exception ex)
             {
-                ErrorMessage = _localizationService.GetString("UnexpectedError") ?? "An unexpected error occurred.";
+                ErrorMessage = LocalizationHelper.StatusMessages.OperationFailed;
                 _logger.LogError(ex, "Unexpected error exporting income entries");
             }
             finally

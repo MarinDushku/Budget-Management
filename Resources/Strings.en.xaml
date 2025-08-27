@@ -4,9 +4,16 @@
 
     <!-- Main Window -->
     <sys:String x:Key="AppTitle">Budget Manager</sys:String>
+    <sys:String x:Key="AppFullTitle">Budget Management - Simple and Easy</sys:String>
     <sys:String x:Key="AddIncomeButton">Add Income</sys:String>
     <sys:String x:Key="AddSpendingButton">Add Spending</sys:String>
     <sys:String x:Key="RefreshButton">Refresh</sys:String>
+    
+    <!-- Navigation Sections -->
+    <sys:String x:Key="MainSection">MAIN</sys:String>
+    <sys:String x:Key="ActionsSection">ACTIONS</sys:String>
+    <sys:String x:Key="ToolsSection">TOOLS</sys:String>
+    <sys:String x:Key="Dashboard">Dashboard</sys:String>
     
     <!-- Summary Cards -->
     <sys:String x:Key="TotalIncome">Total Income</sys:String>
@@ -48,12 +55,14 @@
     <sys:String x:Key="EditIncomeTitle">Edit Income Entry</sys:String>
     <sys:String x:Key="AddSpendingTitle">Add Spending Entry</sys:String>
     <sys:String x:Key="EditSpendingTitle">Edit Spending Entry</sys:String>
-    <sys:String x:Key="Date">Date:</sys:String>
-    <sys:String x:Key="Description">Description:</sys:String>
-    <sys:String x:Key="Amount">Amount:</sys:String>
-    <sys:String x:Key="Category">Category:</sys:String>
+    <sys:String x:Key="Date">📅 Date:</sys:String>
+    <sys:String x:Key="Description">📝 Description:</sys:String>
+    <sys:String x:Key="Amount">💵 Amount:</sys:String>
+    <sys:String x:Key="Category">🏷️ Category:</sys:String>
     <sys:String x:Key="Save">Save</sys:String>
+    <sys:String x:Key="SaveSpending">💰 Save Spending</sys:String>
     <sys:String x:Key="Cancel">Cancel</sys:String>
+    <sys:String x:Key="CancelButton">❌ Cancel</sys:String>
     
     <!-- Validation Messages -->
     <sys:String x:Key="ValidationError">Validation Error</sys:String>
@@ -133,5 +142,112 @@
     <sys:String x:Key="MediumFont">Medium font size (default)</sys:String>
     <sys:String x:Key="LargeFont">Large font size</sys:String>
     <sys:String x:Key="QuickAmounts">Quick amounts:</sys:String>
+    
+    <!-- Enterprise Architecture - New Features -->
+    <!-- Dialog Headers and Descriptions -->
+    <sys:String x:Key="AddIncomeDialogTitle">💰 Add Income Entry</sys:String>
+    <sys:String x:Key="AddIncomeDialogDescription">Enter your income details below</sys:String>
+    <sys:String x:Key="AddSpendingDialogTitle">💳 Add Spending Entry</sys:String>
+    <sys:String x:Key="AddSpendingDialogDescription">Track your expenses easily</sys:String>
+    <sys:String x:Key="CategoryGuideLabel">💡 Category Guide:</sys:String>
+    <sys:String x:Key="ManageSpendingCategoriesHeader">🏷️ Manage Spending Categories</sys:String>
+    <sys:String x:Key="AddNewCategoryHeader">➕ Add New Category</sys:String>
+    <sys:String x:Key="CurrentCategoriesHeader">📋 Current Categories</sys:String>
+    <sys:String x:Key="CategoriesOrderDescription">Categories are shown in the order they appear in dialogs</sys:String>
+    
+    <!-- Enterprise Validation Messages -->
+    <sys:String x:Key="DateRequired">Date is required</sys:String>
+    <sys:String x:Key="DateCannotBeFuture">Date cannot be in the future</sys:String>
+    <sys:String x:Key="DescriptionRequired">Description is required</sys:String>
+    <sys:String x:Key="DescriptionInvalidCharacters">Description contains invalid characters</sys:String>
+    <sys:String x:Key="AmountMustBePositive">Amount must be greater than zero</sys:String>
+    <sys:String x:Key="AmountRequired">Amount is required</sys:String>
+    <sys:String x:Key="CategoryIdRequired">Category ID is required</sys:String>
+    <sys:String x:Key="StartDateRequired">Start date is required</sys:String>
+    <sys:String x:Key="EndDateRequired">End date is required</sys:String>
+    <sys:String x:Key="StartDateMustBeBeforeEndDate">Start date must be before or equal to end date</sys:String>
+    <sys:String x:Key="EndDateCannotBeFuture">End date cannot be in the future</sys:String>
+    <sys:String x:Key="SearchPatternRequired">Search pattern is required</sys:String>
+    <sys:String x:Key="SearchPatternTooShort">Search pattern must be at least 2 characters</sys:String>
+    <sys:String x:Key="DescriptionCannotBeEmpty">Description cannot be empty or contain only whitespace</sys:String>
+    <sys:String x:Key="CategoryNameRequired">Category name is required</sys:String>
+    <sys:String x:Key="CategoryNameInvalidCharacters">Category name contains invalid characters</sys:String>
+    <sys:String x:Key="IdCannotBeEmpty">ID cannot be empty</sys:String>
+    <sys:String x:Key="CommandCannotBeNull">Command cannot be null</sys:String>
+    <sys:String x:Key="QueryCannotBeNull">Query cannot be null</sys:String>
+    
+    <!-- Enterprise Logging Messages -->
+    <sys:String x:Key="ErrorAddingIncome">Error adding income</sys:String>
+    <sys:String x:Key="ErrorLoadingIncomes">Error loading incomes</sys:String>
+    <sys:String x:Key="ErrorSearchingIncomes">Error searching incomes</sys:String>
+    <sys:String x:Key="ErrorLoadingInitialData">Error loading initial data</sys:String>
+    <sys:String x:Key="ErrorAddingSpending">Error adding spending</sys:String>
+    <sys:String x:Key="ErrorLoadingSpendings">Error loading spendings</sys:String>
+    <sys:String x:Key="ErrorSearchingSpendings">Error searching spendings</sys:String>
+    <sys:String x:Key="ErrorLoadingCategories">Error loading categories</sys:String>
+    <sys:String x:Key="ErrorLoadingRecentSpendings">Error loading recent spendings</sys:String>
+    <sys:String x:Key="ErrorLoadingRecentIncomes">Error loading recent incomes</sys:String>
+    
+    <!-- Health Check Messages -->
+    <sys:String x:Key="DatabaseConnectionFailed">Database connection test failed</sys:String>
+    <sys:String x:Key="DatabaseConnectionError">Database connection error</sys:String>
+    <sys:String x:Key="DatabaseBasicOperationsFailed">Database basic operations failed</sys:String>
+    <sys:String x:Key="DatabaseSchemaVerificationFailed">Database schema verification failed</sys:String>
+    <sys:String x:Key="DatabaseSchemaIssuesDetected">Database schema issues detected</sys:String>
+    <sys:String x:Key="CacheServiceStatisticsUnavailable">Cache service statistics unavailable</sys:String>
+    <sys:String x:Key="CacheServiceTestFailed">Cache service test failed</sys:String>
+    <sys:String x:Key="ThemeServiceNotInitialized">Theme service is not properly initialized</sys:String>
+    <sys:String x:Key="ThemeServiceFunctioningCorrectly">Theme service is functioning correctly</sys:String>
+    <sys:String x:Key="BudgetServiceFunctioningCorrectly">Budget service is functioning correctly</sys:String>
+    <sys:String x:Key="HealthCheckCancelled">Health check was cancelled</sys:String>
+    <sys:String x:Key="HealthCheckFailed">Health check failed</sys:String>
+    <sys:String x:Key="ThemeSwitchingNotWorking">Theme switching functionality is not working correctly</sys:String>
+    <sys:String x:Key="ThemeSwitchingPartiallyWorking">Theme switching partially working - could not restore original theme</sys:String>
+    <sys:String x:Key="ThemeSwitchingTestFailed">Theme switching test failed</sys:String>
+    <sys:String x:Key="ThemeResourcesNotAccessible">Many theme resources are not accessible</sys:String>
+    <sys:String x:Key="ThemeResourcesCheckFailed">Failed to check theme resources</sys:String>
+    <sys:String x:Key="CurrentThemeInvalid">Current theme '{0}' is not a valid theme</sys:String>
+    <sys:String x:Key="CurrentThemeVerificationFailed">Failed to verify current theme</sys:String>
+    
+    <!-- System Status Messages -->
+    <sys:String x:Key="ApplicationStarting">Starting application...</sys:String>
+    <sys:String x:Key="ServicesInitializing">Initializing services...</sys:String>
+    <sys:String x:Key="DatabaseInitializing">Initializing database...</sys:String>
+    <sys:String x:Key="CacheInitializing">Initializing cache...</sys:String>
+    <sys:String x:Key="SystemHealthy">System is healthy</sys:String>
+    <sys:String x:Key="SystemDegraded">System is degraded</sys:String>
+    <sys:String x:Key="SystemUnhealthy">System is unhealthy</sys:String>
+    
+    <!-- Enterprise Error Codes -->
+    <sys:String x:Key="SystemError">System error</sys:String>
+    <sys:String x:Key="DatabaseError">Database error</sys:String>
+    <sys:String x:Key="NetworkError">Network error</sys:String>
+    <sys:String x:Key="TimeoutError">Timeout error</sys:String>
+    <sys:String x:Key="ConcurrencyError">Concurrency error</sys:String>
+    <sys:String x:Key="AuthorizationError">Authorization error</sys:String>
+    <sys:String x:Key="NotFoundError">Not found</sys:String>
+    <sys:String x:Key="ConflictError">Conflict</sys:String>
+    <sys:String x:Key="BadRequestError">Bad request</sys:String>
+    
+    <!-- Loading and Status Messages -->
+    <sys:String x:Key="LoadingIncomes">Loading incomes...</sys:String>
+    <sys:String x:Key="LoadingSpendings">Loading spendings...</sys:String>
+    <sys:String x:Key="LoadingCategories">Loading categories...</sys:String>
+    <sys:String x:Key="LoadingDashboard">Loading dashboard...</sys:String>
+    <sys:String x:Key="LoadingAnalytics">Loading analytics...</sys:String>
+    <sys:String x:Key="ProcessingRequest">Processing request...</sys:String>
+    <sys:String x:Key="SavingChanges">Saving changes...</sys:String>
+    <sys:String x:Key="OperationCompleted">Operation completed</sys:String>
+    <sys:String x:Key="OperationFailed">Operation failed</sys:String>
+    <sys:String x:Key="NoDataAvailable">No data available</sys:String>
+    <sys:String x:Key="DataLoadedSuccessfully">Data loaded successfully</sys:String>
+    
+    <!-- Performance Monitoring -->
+    <sys:String x:Key="SlowOperationDetected">Slow operation detected</sys:String>
+    <sys:String x:Key="CriticalPerformanceIssue">Critical performance issue</sys:String>
+    <sys:String x:Key="PerformanceOptimal">Performance is optimal</sys:String>
+    <sys:String x:Key="MemoryUsageHigh">Memory usage is high</sys:String>
+    <sys:String x:Key="CacheHitRate">Cache hit rate</sys:String>
+    <sys:String x:Key="DatabaseResponseTime">Database response time</sys:String>
     
 </ResourceDictionary>

@@ -4,14 +4,14 @@
         xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:userControls="clr-namespace:BudgetManagement.Views.UserControls"
         xmlns:converters="clr-namespace:BudgetManagement.Converters"
-        Title="Budget Management - Simple and Easy" 
+        Title="{DynamicResource AppFullTitle}" 
         Height="900" Width="1400" 
         MinHeight="700" MinWidth="1200"
         WindowStartupLocation="CenterScreen"
         WindowState="Maximized"
         FontFamily="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"
         FontSize="16"
-        Background="{StaticResource BackgroundBrush}"
+        Background="{DynamicResource BackgroundBrush}"
         Loaded="Window_Loaded"
         Closing="Window_Closing"
         KeyDown="Window_KeyDown">
@@ -75,7 +75,7 @@
                                    HorizontalAlignment="Center" Margin="0,0,0,8"/>
                             
                             <!-- App Title -->
-                            <TextBlock Grid.Row="1" Text="{StaticResource AppTitle}" 
+                            <TextBlock Grid.Row="1" Text="{DynamicResource AppTitle}" 
                                        FontFamily="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"
                                        FontSize="16" FontWeight="SemiBold" Foreground="White"
                                        HorizontalAlignment="Center" TextAlignment="Center"
@@ -84,29 +84,29 @@
                     </Border>
 
                     <!-- Main Navigation -->
-                    <TextBlock Text="MAIN" Style="{StaticResource NavigationSectionHeaderStyle}"/>
+                    <TextBlock Text="{DynamicResource MainSection}" Style="{StaticResource NavigationSectionHeaderStyle}"/>
                     
-                    <Button x:Name="DashboardButton" Content="Dashboard" Tag="&#xE80F;" 
+                    <Button x:Name="DashboardButton" Content="{DynamicResource Dashboard}" Tag="&#xE80F;" 
                             Style="{StaticResource SelectedNavigationItemStyle}"
                             Click="NavigationButton_Click"/>
                     
-                    <Button x:Name="AnalyticsButton" Content="Analytics" Tag="&#xE9D2;" 
+                    <Button x:Name="AnalyticsButton" Content="{DynamicResource Analytics}" Tag="&#xE9D2;" 
                             Style="{StaticResource NavigationItemStyle}"
                             Click="NavigationButton_Click"/>
 
                     <!-- Quick Actions -->
-                    <TextBlock Text="ACTIONS" Style="{StaticResource NavigationSectionHeaderStyle}"/>
+                    <TextBlock Text="{DynamicResource ActionsSection}" Style="{StaticResource NavigationSectionHeaderStyle}"/>
                     
-                    <Button Content="Add Income" Tag="&#xE8D4;" 
+                    <Button Content="{DynamicResource AddIncomeButton}" Tag="&#xE8D4;" 
                             Style="{StaticResource NavigationItemStyle}"
                             Command="{Binding AddIncomeCommand}"/>
                     
-                    <Button Content="Add Spending" Tag="&#xE7BF;" 
+                    <Button Content="{DynamicResource AddSpendingButton}" Tag="&#xE7BF;" 
                             Style="{StaticResource NavigationItemStyle}"
                             Command="{Binding AddSpendingCommand}"/>
 
                     <!-- Tools & Settings -->
-                    <TextBlock Text="TOOLS" Style="{StaticResource NavigationSectionHeaderStyle}"/>
+                    <TextBlock Text="{DynamicResource ToolsSection}" Style="{StaticResource NavigationSectionHeaderStyle}"/>
                     
                     <Button x:Name="ExportButton" Content="Export &amp; Tools" Tag="&#xE898;" 
                             Style="{StaticResource NavigationItemStyle}"
@@ -228,11 +228,11 @@
                         <Border Style="{StaticResource ModernCardStyle}" Margin="0,0,12,0">
                             <StackPanel>
                                 <TextBlock Text="Export Options" Style="{StaticResource SectionHeaderTextStyle}"/>
-                                <Button Content="{StaticResource ExportToExcel}" 
+                                <Button Content="{DynamicResource ExportToExcel}" 
                                         Style="{StaticResource ModernPrimaryButtonStyle}"
                                         Command="{Binding ExportDataCommand}"
                                         Margin="0,8,0,8"/>
-                                <Button Content="{StaticResource ExportToPDF}" 
+                                <Button Content="{DynamicResource ExportToPDF}" 
                                         Style="{StaticResource ModernSecondaryButtonStyle}"
                                         IsEnabled="False" Margin="0,0,0,8"
                                         ToolTip="{StaticResource ComingSoon}"/>
@@ -361,8 +361,8 @@
                             <StackPanel>
                                 <TextBlock Text="Language" Style="{StaticResource SectionHeaderTextStyle}"/>
                                 <ComboBox x:Name="LanguageComboBox" Style="{StaticResource ModernComboBoxStyle}">
-                                    <ComboBoxItem Content="{StaticResource English}" Tag="en"/>
-                                    <ComboBoxItem Content="{StaticResource Albanian}" Tag="sq"/>
+                                    <ComboBoxItem Content="{DynamicResource English}" Tag="en"/>
+                                    <ComboBoxItem Content="{DynamicResource Albanian}" Tag="sq"/>
                                 </ComboBox>
                             </StackPanel>
                         </Border>

@@ -88,9 +88,9 @@
         <Border Grid.Row="0" Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderLightBrush}" BorderThickness="1" 
                 CornerRadius="6" Padding="20" Margin="0,0,0,25">
             <StackPanel>
-                <TextBlock Text="🏷️ Manage Spending Categories" Style="{StaticResource HeaderStyle}" 
+                <TextBlock Text="{DynamicResource ManageSpendingCategoriesHeader}" Style="{StaticResource HeaderStyle}" 
                            HorizontalAlignment="Center"/>
-                <TextBlock Text="Add, edit, or remove categories to organize your spending" 
+                <TextBlock Text="{DynamicResource ManageCategoriesDescription}" 
                            FontSize="14" Foreground="{StaticResource SecondaryTextBrush}" HorizontalAlignment="Center"/>
             </StackPanel>
         </Border>
@@ -98,7 +98,7 @@
         <!-- Add New Category Section -->
         <Border Grid.Row="1" Style="{StaticResource CategoryCardStyle}" Margin="0,0,0,20">
             <StackPanel>
-                <TextBlock Text="➕ Add New Category" Style="{StaticResource SectionHeaderStyle}"/>
+                <TextBlock Text="{DynamicResource AddNewCategoryHeader}" Style="{StaticResource SectionHeaderStyle}"/>
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -121,8 +121,8 @@
         <!-- Categories List -->
         <Border Grid.Row="2" Style="{StaticResource CategoryCardStyle}">
             <StackPanel>
-                <TextBlock Text="📋 Current Categories" Style="{StaticResource SectionHeaderStyle}"/>
-                <TextBlock Text="Categories are shown in the order they appear in dialogs" 
+                <TextBlock Text="{DynamicResource CurrentCategoriesHeader}" Style="{StaticResource SectionHeaderStyle}"/>
+                <TextBlock Text="{DynamicResource CategoriesOrderDescription}" 
                            FontSize="12" Foreground="{StaticResource SecondaryTextBrush}" Margin="0,0,0,15"/>
                 
                 <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="300">

@@ -5,8 +5,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <!-- Load localization resources (default to English) -->
-                <ResourceDictionary Source="Resources/Strings.en.xaml"/>
+                <!-- Localization resources will be loaded dynamically by LocalizationService -->
                 <!-- Modern Design System -->
                 <ResourceDictionary Source="Views/Styles/ModernDesign.xaml"/>
                 <!-- Senior-friendly styles - comment out for now to test -->
@@ -30,7 +29,7 @@
             <Style TargetType="Window">
                 <Setter Property="FontFamily" Value="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"/>
                 <Setter Property="FontSize" Value="16"/>
-                <Setter Property="Background" Value="{StaticResource BackgroundBrush}"/>
+                <Setter Property="Background" Value="{DynamicResource BackgroundBrush}"/>
                 <Setter Property="UseLayoutRounding" Value="True"/>
                 <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
                 <Setter Property="TextOptions.TextRenderingMode" Value="ClearType"/>

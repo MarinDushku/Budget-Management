@@ -2,6 +2,7 @@
 // File: Shared/Validators/CommonValidators.cs
 
 using FluentValidation;
+using BudgetManagement.Shared.Infrastructure;
 
 namespace BudgetManagement.Shared.Validators
 {
@@ -38,7 +39,7 @@ namespace BudgetManagement.Shared.Validators
         {
             return ruleBuilder
                 .GreaterThan(0)
-                .WithMessage("Amount must be greater than zero");
+                .WithMessage(LocalizationHelper.ValidationMessages.AmountMustBePositive);
         }
 
         /// <summary>
@@ -48,7 +49,7 @@ namespace BudgetManagement.Shared.Validators
         {
             return ruleBuilder
                 .GreaterThan(0)
-                .WithMessage("Amount must be greater than zero")
+                .WithMessage(LocalizationHelper.ValidationMessages.AmountMustBePositive)
                 .LessThanOrEqualTo(maxAmount)
                 .WithMessage($"Amount cannot exceed {maxAmount:C}");
         }
@@ -60,11 +61,11 @@ namespace BudgetManagement.Shared.Validators
         {
             return ruleBuilder
                 .NotEmpty()
-                .WithMessage("Description is required")
+                .WithMessage(LocalizationHelper.ValidationMessages.DescriptionRequired)
                 .Length(minLength, maxLength)
                 .WithMessage($"Description must be between {minLength} and {maxLength} characters")
                 .Must(text => !string.IsNullOrWhiteSpace(text))
-                .WithMessage("Description cannot be empty or contain only whitespace");
+                .WithMessage(LocalizationHelper.ValidationMessages.DescriptionCannotBeEmpty);
         }
 
         /// <summary>
@@ -74,7 +75,7 @@ namespace BudgetManagement.Shared.Validators
         {
             return ruleBuilder
                 .Must((obj, endDate) => endDate >= startDateSelector(obj))
-                .WithMessage("End date must be greater than or equal to start date");
+                .WithMessage(LocalizationHelper.ValidationMessages.StartDateMustBeBeforeEndDate);
         }
 
         /// <summary>
@@ -102,11 +103,11 @@ namespace BudgetManagement.Shared.Validators
         {
             return ruleBuilder
                 .NotEmpty()
-                .WithMessage("Category name is required")
+                .WithMessage(LocalizationHelper.ValidationMessages.CategoryNameRequired)
                 .Length(1, 100)
                 .WithMessage("Category name must be between 1 and 100 characters")
                 .Must(BeValidCategoryName)
-                .WithMessage("Category name contains invalid characters");
+                .WithMessage(LocalizationHelper.ValidationMessages.CategoryNameInvalidCharacters);
         }
 
         /// <summary>
@@ -126,7 +127,7 @@ namespace BudgetManagement.Shared.Validators
         {
             return ruleBuilder
                 .NotEqual(Guid.Empty)
-                .WithMessage("ID cannot be empty");
+                .WithMessage(LocalizationHelper.ValidationMessages.IdCannotBeEmpty);
         }
 
         /// <summary>

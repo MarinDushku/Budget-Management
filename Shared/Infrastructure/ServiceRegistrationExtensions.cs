@@ -36,6 +36,10 @@ namespace BudgetManagement.Shared.Infrastructure
 
             // Register repositories
             services.AddRepositories(assemblies);
+            
+            // Register enterprise localization service
+            services.AddSingleton<IEnterpriseLocalizationService, EnterpriseLocalizationService>();
+            services.AddSingleton<ILanguageManager, LanguageManager>();
 
             // Register MediatR handlers
             services.AddMediatRHandlers(assemblies);

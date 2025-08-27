@@ -13,10 +13,10 @@ using BudgetManagement.ViewModels;
 using BudgetManagement.Views;
 using BudgetManagement.Features.Dashboard;
 using BudgetManagement.Features.Dashboard.ViewModels;
+using BudgetManagement.Shared.Infrastructure;
 using BudgetManagement.Features.Income;
 using BudgetManagement.Features.Spending;
 using BudgetManagement.Shared.Core;
-using BudgetManagement.Shared.Infrastructure;
 using BudgetManagement.Shared.Infrastructure.Caching;
 using MediatR;
 using Serilog;
@@ -32,6 +32,11 @@ namespace BudgetManagement
     {
         private IHost? _host;
 
+        /// <summary>
+        /// Gets the dependency injection host
+        /// </summary>
+        public IHost? Host => _host;
+
         protected override async void OnStartup(StartupEventArgs e)
         {
             try
@@ -44,6 +49,9 @@ namespace BudgetManagement
 
                 // Initialize services
                 await InitializeServicesAsync();
+                
+                // Initialize localization
+                InitializeLocalization();
 
                 // Create and show main window with proper DataContext
                 var mainViewModel = _host.Services.GetRequiredService<MainViewModel>();
@@ -88,7 +96,7 @@ namespace BudgetManagement
 
         private static IHostBuilder CreateHostBuilder()
         {
-            return Host.CreateDefaultBuilder()
+            return Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder()
                 .UseSerilog((context, configuration) =>
                 {
                     SerilogConfiguration.ConfigureEnterpriseLogging(context, configuration, "BudgetManagement");
@@ -208,7 +216,7 @@ namespace BudgetManagement
                     // Validate that all critical services are registered
                     var validationResult = services.ValidateRegistrations(
                         typeof(ISettingsService),
-                        typeof(ILocalizationService), 
+                        typeof(IEnterpriseLocalizationService), 
                         typeof(IThemeService),
                         typeof(IBudgetService),
                         typeof(IDialogService),
@@ -238,9 +246,9 @@ namespace BudgetManagement
                 var settingsService = _host.Services.GetRequiredService<ISettingsService>();
                 await settingsService.LoadSettingsAsync();
 
-                // Initialize localization service with saved language
-                var localizationService = _host.Services.GetRequiredService<ILocalizationService>();
-                localizationService.SetLanguage(settingsService.Language);
+                // Initialize enterprise localization service with saved language
+                var enterpriseLocalizationService = _host.Services.GetRequiredService<IEnterpriseLocalizationService>();
+                enterpriseLocalizationService.SetLanguage(settingsService.Language);
 
                 // CRITICAL: Always ensure database is properly initialized
                 var budgetService = _host.Services.GetRequiredService<IBudgetService>();
@@ -258,6 +266,24 @@ namespace BudgetManagement
                 logger?.LogError(ex, "Failed to initialize services");
                 ShowStartupError(ex);
                 throw;
+            }
+        }
+
+        /// <summary>
+        /// Initializes the localization helper for enterprise components
+        /// </summary>
+        private void InitializeLocalization()
+        {
+            if (_host == null) return;
+
+            try
+            {
+                var enterpriseLocalizationService = _host.Services.GetRequiredService<IEnterpriseLocalizationService>();
+                LocalizationHelper.Initialize(enterpriseLocalizationService);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Failed to initialize localization helper: {ex.Message}");
             }
         }
 
