@@ -41,21 +41,20 @@ namespace BudgetManagement
         {
             try
             {
-                // Create and configure the host
+                // Build the dependency injection host
                 _host = CreateHostBuilder().Build();
-
+                
                 // Start the host
                 await _host.StartAsync();
-
-                // Initialize services
+                
+                // Initialize all services
                 await InitializeServicesAsync();
                 
-                // Initialize localization
+                // Initialize localization helper for enterprise components
                 InitializeLocalization();
-
-                // Create and show main window with proper DataContext
-                var mainViewModel = _host.Services.GetRequiredService<MainViewModel>();
-                var mainWindow = new MainWindow(mainViewModel);
+                
+                // Get the main window from DI container
+                var mainWindow = _host.Services.GetRequiredService<MainWindow>();
                 mainWindow.Show();
 
                 base.OnStartup(e);
@@ -190,6 +189,9 @@ namespace BudgetManagement
                     services.AddSingleton<MainWindow>();
                     services.AddTransient<Views.Dialogs.IncomeDialog>();
                     services.AddTransient<Views.Dialogs.SpendingDialog>();
+
+                    // CRITICAL FIX: Register missing ILanguageManager for runtime language switching
+                    services.AddSingleton<ILanguageManager, LanguageManager>();
 
                     // Configure memory cache
                     services.AddMemoryCache();

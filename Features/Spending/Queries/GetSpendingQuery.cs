@@ -102,4 +102,76 @@ namespace BudgetManagement.Features.Spending.Queries
         DateTime StartDate,
         DateTime EndDate
     ) : IRequest<Result<IEnumerable<CategorySpendingSummary>>>;
+
+    /// <summary>
+    /// Advanced spending search query with multiple criteria
+    /// </summary>
+    public record AdvancedSpendingSearchQuery(
+        string? DescriptionPattern = null,
+        DateTime? StartDate = null,
+        DateTime? EndDate = null,
+        decimal? MinAmount = null,
+        decimal? MaxAmount = null,
+        List<int>? CategoryIds = null,
+        int Skip = 0,
+        int Take = 50,
+        SpendingSortBy SortBy = SpendingSortBy.Date,
+        SortDirection SortDirection = SortDirection.Descending
+    ) : IRequest<Result<AdvancedSpendingSearchResult>>;
+
+    /// <summary>
+    /// Query to get all spending entries with pagination
+    /// </summary>
+    public record GetAllSpendingsQuery(
+        int Skip = 0,
+        int Take = 50,
+        SpendingSortBy SortBy = SpendingSortBy.Date,
+        SortDirection SortDirection = SortDirection.Descending
+    ) : IRequest<Result<PaginatedSpendingResult>>;
+}
+
+namespace BudgetManagement.Features.Spending.Queries
+{
+    /// <summary>
+    /// Sort options for spending queries
+    /// </summary>
+    public enum SpendingSortBy
+    {
+        Date,
+        Amount,
+        Description,
+        Category,
+        CreatedAt
+    }
+
+    /// <summary>
+    /// Sort direction (reusing from Income namespace)
+    /// </summary>
+    public enum SortDirection
+    {
+        Ascending,
+        Descending
+    }
+
+    /// <summary>
+    /// Result for advanced spending search with pagination info
+    /// </summary>
+    public class AdvancedSpendingSearchResult
+    {
+        public IEnumerable<SpendingWithCategory> Spendings { get; set; } = [];
+        public int TotalCount { get; set; }
+        public decimal TotalAmount { get; set; }
+        public bool HasMore { get; set; }
+        public Dictionary<int, decimal> CategoryTotals { get; set; } = [];
+    }
+
+    /// <summary>
+    /// Result for paginated spending queries
+    /// </summary>
+    public class PaginatedSpendingResult
+    {
+        public IEnumerable<SpendingWithCategory> Spendings { get; set; } = [];
+        public int TotalCount { get; set; }
+        public bool HasMore { get; set; }
+    }
 }

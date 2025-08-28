@@ -10,7 +10,7 @@ namespace BudgetManagement.Services
     /// </summary>
     public class LocalizationService : ILocalizationService, INotifyPropertyChanged
     {
-        private string _currentLanguage = "en"; // Default to English
+        private string _currentLanguage = "sq"; // Default to Albanian
         private ResourceDictionary? _currentResourceDictionary;
 
         public event PropertyChangedEventHandler? PropertyChanged;

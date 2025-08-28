@@ -69,14 +69,14 @@ namespace BudgetManagement.Shared.Infrastructure
 
         public Language[] AvailableLanguages { get; } = 
         {
-            new Language("en", "English", "🇺🇸"),
-            new Language("sq", "Shqip", "🇦🇱")
+            new Language("sq", "Shqip", "🇦🇱"),
+            new Language("en", "English", "🇺🇸")
         };
 
         public LanguageManager(IEnterpriseLocalizationService localizationService)
         {
             _localizationService = localizationService ?? throw new ArgumentNullException(nameof(localizationService));
-            _currentLanguage = AvailableLanguages[0]; // Default to English
+            _currentLanguage = AvailableLanguages[0]; // Default to Albanian (now at index 0)
         }
 
         public void ChangeLanguage(Language language)

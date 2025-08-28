@@ -336,7 +336,7 @@ namespace BudgetManagement.Services
             // UI Settings with senior-friendly defaults
             public int FontSize { get; set; } = 16; // Larger default font
             public string Theme { get; set; } = "Light";
-            public string Language { get; set; } = "en"; // Default to English
+            public string Language { get; set; } = "sq"; // Default to Albanian
             public string CurrencySymbol { get; set; } = "$";
             public string DateFormat { get; set; } = "MM/dd/yyyy";
 

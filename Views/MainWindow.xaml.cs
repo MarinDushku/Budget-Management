@@ -20,6 +20,7 @@ namespace BudgetManagement.Views
     {
         public MainWindow()
         {
+            System.Diagnostics.Debug.WriteLine("🏗️ MainWindow: DEFAULT constructor called (no ViewModel)");
             InitializeComponent();
             
             // Set up senior-friendly window behavior
@@ -28,6 +29,7 @@ namespace BudgetManagement.Views
 
         public MainWindow(MainViewModel viewModel) : this()
         {
+            System.Diagnostics.Debug.WriteLine("🏗️ MainWindow: DI constructor called (with ViewModel)");
             DataContext = viewModel;
         }
 
@@ -54,14 +56,24 @@ namespace BudgetManagement.Views
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine("=== MAINWINDOW WINDOW_LOADED START ===");
+            
             // Initialize the view model when the window loads
             if (DataContext is MainViewModel viewModel)
             {
+                System.Diagnostics.Debug.WriteLine("MainWindow: Initializing ViewModel...");
                 await viewModel.InitializeAsync();
+                System.Diagnostics.Debug.WriteLine("MainWindow: ViewModel initialization completed");
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("MainWindow: No ViewModel found in DataContext");
             }
 
             // Set up language combobox
+            System.Diagnostics.Debug.WriteLine("MainWindow: About to call SetupLanguageSelector()");
             SetupLanguageSelector();
+            System.Diagnostics.Debug.WriteLine("MainWindow: SetupLanguageSelector() completed");
             
             // Initialize theme controls and service
             InitializeThemeControls();
@@ -76,45 +88,113 @@ namespace BudgetManagement.Views
             {
                 await themeService.InitializeAsync();
             }
+            
+            System.Diagnostics.Debug.WriteLine("=== MAINWINDOW WINDOW_LOADED END ===");
         }
 
         private void SetupLanguageSelector()
         {
             try
             {
+                System.Diagnostics.Debug.WriteLine("SetupLanguageSelector: Starting language selector setup");
+                
+                // CRITICAL: Check if LanguageComboBox exists
+                if (LanguageComboBox == null)
+                {
+                    System.Diagnostics.Debug.WriteLine("SetupLanguageSelector: ⚠️ CRITICAL: LanguageComboBox is NULL!");
+                    return;
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("SetupLanguageSelector: ✅ LanguageComboBox found successfully");
+                }
+                
                 var app = Application.Current as App;
                 var localizationService = app?.GetService<IEnterpriseLocalizationService>();
                 var settingsService = app?.GetService<ISettingsService>();
+
+                System.Diagnostics.Debug.WriteLine($"SetupLanguageSelector: App is null: {app == null}");
+                System.Diagnostics.Debug.WriteLine($"SetupLanguageSelector: LocalizationService is null: {localizationService == null}");
+                System.Diagnostics.Debug.WriteLine($"SetupLanguageSelector: SettingsService is null: {settingsService == null}");
 
                 if (localizationService != null && settingsService != null)
                 {
                     // Set current selection based on current language
                     var currentLanguage = localizationService.CurrentLanguage;
+                    System.Diagnostics.Debug.WriteLine($"SetupLanguageSelector: Current language: {currentLanguage}");
+                    System.Diagnostics.Debug.WriteLine($"SetupLanguageSelector: LanguageComboBox has {LanguageComboBox.Items.Count} items");
+                    
                     foreach (ComboBoxItem item in LanguageComboBox.Items)
                     {
-                        if (item.Tag?.ToString() == currentLanguage)
+                        var tagValue = item.Tag?.ToString();
+                        System.Diagnostics.Debug.WriteLine($"SetupLanguageSelector: ComboBoxItem - Content: {item.Content}, Tag: {tagValue}");
+                        if (tagValue == currentLanguage)
                         {
                             LanguageComboBox.SelectedItem = item;
+                            System.Diagnostics.Debug.WriteLine($"SetupLanguageSelector: Selected item with tag '{tagValue}'");
                             break;
                         }
                     }
 
-                    // Handle language changes
+                    // Handle language changes - ADD MULTIPLE EVENT TYPES FOR DEBUGGING
+                    System.Diagnostics.Debug.WriteLine("SetupLanguageSelector: About to attach SelectionChanged event handler");
+                    
                     LanguageComboBox.SelectionChanged += async (s, e) =>
                     {
+                        System.Diagnostics.Debug.WriteLine("🔥 MainWindow: LanguageComboBox.SelectionChanged event triggered");
+                        System.Diagnostics.Debug.WriteLine($"🔥 Event sender: {s?.GetType().Name}");
+                        System.Diagnostics.Debug.WriteLine($"🔥 AddedItems count: {e.AddedItems.Count}");
+                        System.Diagnostics.Debug.WriteLine($"🔥 RemovedItems count: {e.RemovedItems.Count}");
+                        
                         if (LanguageComboBox.SelectedItem is ComboBoxItem selectedItem &&
                             selectedItem.Tag?.ToString() is string languageCode)
                         {
-                            localizationService.SetLanguage(languageCode);
-                            settingsService.Language = languageCode;
-                            await settingsService.SaveSettingsAsync();
+                            System.Diagnostics.Debug.WriteLine($"🔥 MainWindow: Selected language = '{languageCode}'");
+                            System.Diagnostics.Debug.WriteLine($"🔥 MainWindow: Current localizationService is null: {localizationService == null}");
+                            
+                            if (localizationService != null)
+                            {
+                                localizationService.SetLanguage(languageCode);
+                                settingsService.Language = languageCode;
+                                await settingsService.SaveSettingsAsync();
+                                
+                                System.Diagnostics.Debug.WriteLine("🔥 MainWindow: About to call RefreshUIForLanguageChange()");
+                                // Force UI refresh for language changes
+                                RefreshUIForLanguageChange();
+                            }
+                            else
+                            {
+                                System.Diagnostics.Debug.WriteLine("🔥 MainWindow: LocalizationService is null - cannot change language");
+                            }
+                        }
+                        else
+                        {
+                            System.Diagnostics.Debug.WriteLine($"🔥 MainWindow: Invalid selection - SelectedItem: {LanguageComboBox.SelectedItem}, Tag: {(LanguageComboBox.SelectedItem as ComboBoxItem)?.Tag}");
                         }
                     };
+                    
+                    // ALSO ADD DROPDOWN OPENED/CLOSED EVENTS FOR DEBUGGING
+                    LanguageComboBox.DropDownOpened += (s, e) => 
+                    {
+                        System.Diagnostics.Debug.WriteLine("🔥 MainWindow: LanguageComboBox dropdown OPENED");
+                    };
+                    
+                    LanguageComboBox.DropDownClosed += (s, e) => 
+                    {
+                        System.Diagnostics.Debug.WriteLine("🔥 MainWindow: LanguageComboBox dropdown CLOSED");
+                        System.Diagnostics.Debug.WriteLine($"🔥 Current selection after close: {(LanguageComboBox.SelectedItem as ComboBoxItem)?.Tag}");
+                    };
+                    
+                    System.Diagnostics.Debug.WriteLine("SetupLanguageSelector: Event handler attached successfully");
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("SetupLanguageSelector: Cannot setup language selector - services are null");
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                // Ignore errors in language setup
+                System.Diagnostics.Debug.WriteLine($"SetupLanguageSelector: Error during setup: {ex.Message}");
             }
         }
 
@@ -769,6 +849,335 @@ namespace BudgetManagement.Views
             }
         }
 
+        /// <summary>
+        /// Forces UI refresh when language changes to update all DynamicResource bindings
+        /// </summary>
+        private void RefreshUIForLanguageChange()
+        {
+            try
+            {
+                // More aggressive approach: Force complete resource refresh
+                Application.Current.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() =>
+                {
+                    try
+                    {
+                        // Force refresh of all open windows with a delay to ensure resources are loaded
+                        foreach (Window window in Application.Current.Windows)
+                        {
+                            if (window.IsLoaded)
+                            {
+                                // Force complete visual tree refresh
+                                window.InvalidateVisual();
+                                RefreshVisualTreeForLanguage(window);
+                                window.UpdateLayout();
+                            }
+                        }
+                        
+                        // Additional pass to ensure everything is updated
+                        Application.Current.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, new Action(() =>
+                        {
+                            foreach (Window window in Application.Current.Windows)
+                            {
+                                if (window.IsLoaded)
+                                {
+                                    window.InvalidateVisual();
+                                    window.UpdateLayout();
+                                }
+                            }
+                        }));
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Error in UI refresh pass: {ex.Message}");
+                    }
+                }));
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error refreshing UI for language change: {ex.Message}");
+            }
+        }
+        
+        /// <summary>
+        /// Recursively refreshes visual tree for language changes
+        /// </summary>
+        private void RefreshVisualTreeForLanguage(DependencyObject parent)
+        {
+            try
+            {
+                if (parent == null) return;
+                
+                // Force refresh of this element
+                if (parent is FrameworkElement element)
+                {
+                    // Force refresh
+                    element.InvalidateVisual();
+                    element.UpdateLayout();
+                    
+                    // Special handling for TextBlocks and other text elements
+                    if (element is TextBlock textBlock)
+                    {
+                        // Force text refresh by clearing and re-evaluating bindings
+                        var expression = textBlock.GetBindingExpression(TextBlock.TextProperty);
+                        expression?.UpdateTarget();
+                    }
+                    else if (element is ContentControl contentControl)
+                    {
+                        // Force content refresh
+                        var expression = contentControl.GetBindingExpression(ContentControl.ContentProperty);
+                        expression?.UpdateTarget();
+                    }
+                }
+                
+                // Recursively refresh all children
+                var childrenCount = VisualTreeHelper.GetChildrenCount(parent);
+                for (int i = 0; i < childrenCount; i++)
+                {
+                    var child = VisualTreeHelper.GetChild(parent, i);
+                    RefreshVisualTreeForLanguage(child);
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error refreshing visual tree element for language: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Test method to manually trigger language switching - can be called from debugger
+        /// </summary>
+        public void TestLanguageSwitch(string languageCode)
+        {
+            try
+            {
+                System.Diagnostics.Debug.WriteLine($"TestLanguageSwitch: Manually switching to '{languageCode}'");
+                
+                var app = Application.Current as App;
+                var localizationService = app?.GetService<IEnterpriseLocalizationService>();
+                var settingsService = app?.GetService<ISettingsService>();
+                
+                if (localizationService != null && settingsService != null)
+                {
+                    System.Diagnostics.Debug.WriteLine($"TestLanguageSwitch: Current language before switch: {localizationService.CurrentLanguage}");
+                    
+                    localizationService.SetLanguage(languageCode);
+                    settingsService.Language = languageCode;
+                    _ = settingsService.SaveSettingsAsync(); // Fire and forget
+                    
+                    System.Diagnostics.Debug.WriteLine($"TestLanguageSwitch: Language set to: {localizationService.CurrentLanguage}");
+                    
+                    // Test if resources are actually available
+                    TestCurrentResources();
+                    
+                    // Force UI refresh
+                    RefreshUIForLanguageChange();
+                    
+                    System.Diagnostics.Debug.WriteLine("TestLanguageSwitch: UI refresh completed");
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("TestLanguageSwitch: Services not available");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"TestLanguageSwitch: Error: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Test what resources are currently available
+        /// </summary>
+        public void TestCurrentResources()
+        {
+            try
+            {
+                System.Diagnostics.Debug.WriteLine("TestCurrentResources: === CURRENT RESOURCE STATUS ===");
+                
+                // Test critical language-specific keys
+                var testKeys = new[] { 
+                    "AppTitle", "Dashboard", "AddIncomeButton", "English", "Albanian", "Language",
+                    "MainSection", "ActionsSection", "SearchSection", "ToolsSection"
+                };
+                
+                foreach (var key in testKeys)
+                {
+                    try
+                    {
+                        if (Application.Current.Resources.Contains(key))
+                        {
+                            var resource = Application.Current.Resources[key];
+                            System.Diagnostics.Debug.WriteLine($"TestCurrentResources: ✓ {key} = '{resource}'");
+                        }
+                        else
+                        {
+                            System.Diagnostics.Debug.WriteLine($"TestCurrentResources: ✗ {key} = KEY NOT FOUND");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"TestCurrentResources: ✗ {key} - ERROR: {ex.Message}");
+                    }
+                }
+                
+                // Check merged dictionaries with detailed info
+                System.Diagnostics.Debug.WriteLine($"TestCurrentResources: Total merged dictionaries: {Application.Current.Resources.MergedDictionaries.Count}");
+                
+                for (int i = 0; i < Application.Current.Resources.MergedDictionaries.Count; i++)
+                {
+                    var dict = Application.Current.Resources.MergedDictionaries[i];
+                    System.Diagnostics.Debug.WriteLine($"TestCurrentResources: Dictionary {i}:");
+                    System.Diagnostics.Debug.WriteLine($"  - Source: '{dict.Source}'");
+                    System.Diagnostics.Debug.WriteLine($"  - Count: {dict.Count} resources");
+                    
+                    // Sample a few keys from this dictionary
+                    var sampleKeys = new[] { "English", "Albanian", "Dashboard" };
+                    foreach (var sampleKey in sampleKeys)
+                    {
+                        if (dict.Contains(sampleKey))
+                        {
+                            System.Diagnostics.Debug.WriteLine($"  - Sample: {sampleKey} = '{dict[sampleKey]}'");
+                        }
+                    }
+                }
+                
+                System.Diagnostics.Debug.WriteLine("TestCurrentResources: === END RESOURCE STATUS ===");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"TestCurrentResources: Error: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Nuclear option: Force complete resource reload by restarting the app with new language
+        /// </summary>
+        public void ForceLanguageRestart(string languageCode)
+        {
+            try
+            {
+                System.Diagnostics.Debug.WriteLine($"ForceLanguageRestart: Nuclear option - restarting with language '{languageCode}'");
+                
+                // Save the language setting
+                var app = Application.Current as App;
+                var settingsService = app?.GetService<ISettingsService>();
+                if (settingsService != null)
+                {
+                    settingsService.Language = languageCode;
+                    _ = settingsService.SaveSettingsAsync();
+                }
+                
+                // Show message and restart
+                MessageBox.Show("Language will change after restart. The application will now restart.", 
+                    "Language Change", MessageBoxButton.OK, MessageBoxImage.Information);
+                
+                // Restart the application
+                System.Diagnostics.Process.Start(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName);
+                Application.Current.Shutdown();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"ForceLanguageRestart: Error: {ex.Message}");
+                MessageBox.Show($"Failed to restart application: {ex.Message}", "Error", 
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        /// <summary>
+        /// Alternative nuclear option: Manually inject Albanian resources without using LocalizationService
+        /// </summary>
+        public void DirectInjectAlbanianResources()
+        {
+            try
+            {
+                System.Diagnostics.Debug.WriteLine("DirectInjectAlbanianResources: Bypassing LocalizationService completely");
+                
+                // Create Albanian resource dictionary directly
+                var albanianUri = new Uri("Resources/Strings.sq.xaml", UriKind.Relative);
+                var albanianDict = new ResourceDictionary { Source = albanianUri };
+                
+                // Remove ALL existing string dictionaries
+                var toRemove = Application.Current.Resources.MergedDictionaries
+                    .Where(d => d.Source != null && d.Source.ToString().Contains("Strings."))
+                    .ToList();
+                
+                foreach (var dict in toRemove)
+                {
+                    Application.Current.Resources.MergedDictionaries.Remove(dict);
+                    System.Diagnostics.Debug.WriteLine($"DirectInjectAlbanianResources: Removed {dict.Source}");
+                }
+                
+                // Add Albanian dictionary
+                Application.Current.Resources.MergedDictionaries.Insert(0, albanianDict);
+                System.Diagnostics.Debug.WriteLine("DirectInjectAlbanianResources: Added Albanian dictionary at index 0");
+                
+                // Force super-aggressive refresh
+                foreach (Window window in Application.Current.Windows)
+                {
+                    window.InvalidateVisual();
+                    window.UpdateLayout();
+                    
+                    // Force complete re-render
+                    window.Visibility = Visibility.Hidden;
+                    window.Visibility = Visibility.Visible;
+                }
+                
+                System.Diagnostics.Debug.WriteLine("DirectInjectAlbanianResources: Completed direct injection");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"DirectInjectAlbanianResources: Error: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Test method to directly load Albanian resources and catch any parsing errors
+        /// </summary>
+        public void TestAlbanianResourceLoading()
+        {
+            try
+            {
+                System.Diagnostics.Debug.WriteLine("TestAlbanianResourceLoading: Starting direct Albanian resource test");
+                
+                // Try to create Albanian ResourceDictionary directly
+                var albanianUri = new Uri("Resources/Strings.sq.xaml", UriKind.Relative);
+                System.Diagnostics.Debug.WriteLine($"TestAlbanianResourceLoading: Created URI: {albanianUri}");
+                
+                var albanianDict = new ResourceDictionary();
+                System.Diagnostics.Debug.WriteLine("TestAlbanianResourceLoading: Created empty ResourceDictionary");
+                
+                // This is where the error likely occurs
+                albanianDict.Source = albanianUri;
+                System.Diagnostics.Debug.WriteLine($"TestAlbanianResourceLoading: Successfully loaded Albanian dictionary with {albanianDict.Count} resources");
+                
+                // Test key access
+                if (albanianDict.Contains("AppTitle"))
+                {
+                    var appTitle = albanianDict["AppTitle"];
+                    System.Diagnostics.Debug.WriteLine($"TestAlbanianResourceLoading: AppTitle = '{appTitle}'");
+                }
+                
+                if (albanianDict.Contains("Albanian"))
+                {
+                    var albanian = albanianDict["Albanian"];
+                    System.Diagnostics.Debug.WriteLine($"TestAlbanianResourceLoading: Albanian = '{albanian}'");
+                }
+                
+                System.Diagnostics.Debug.WriteLine("TestAlbanianResourceLoading: ✅ SUCCESS - Albanian resources loaded without error");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"TestAlbanianResourceLoading: ❌ ERROR - {ex.GetType().Name}: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"TestAlbanianResourceLoading: Stack Trace: {ex.StackTrace}");
+                
+                // Check for inner exception
+                if (ex.InnerException != null)
+                {
+                    System.Diagnostics.Debug.WriteLine($"TestAlbanianResourceLoading: Inner Exception - {ex.InnerException.GetType().Name}: {ex.InnerException.Message}");
+                }
+            }
+        }
+
         #endregion
 
         #region Budget Settings Event Handlers
@@ -864,6 +1273,12 @@ namespace BudgetManagement.Views
                 case "AnalyticsButton":
                     ShowAnalyticsContent();
                     break;
+                case "SearchIncomeButton":
+                    ShowSearchIncomeContent();
+                    break;
+                case "SearchSpendingButton":
+                    ShowSearchSpendingContent();
+                    break;
                 case "ExportButton":
                     ShowExportContent();
                     break;
@@ -880,6 +1295,8 @@ namespace BudgetManagement.Views
             { 
                 DashboardButton, 
                 AnalyticsButton, 
+                SearchIncomeButton,
+                SearchSpendingButton,
                 ExportButton, 
                 SettingsButton 
             };
@@ -894,6 +1311,8 @@ namespace BudgetManagement.Views
             {
                 "DashboardButton" => DashboardButton,
                 "AnalyticsButton" => AnalyticsButton,
+                "SearchIncomeButton" => SearchIncomeButton,
+                "SearchSpendingButton" => SearchSpendingButton,
                 "ExportButton" => ExportButton,
                 "SettingsButton" => SettingsButton,
                 _ => DashboardButton
@@ -912,6 +1331,8 @@ namespace BudgetManagement.Views
             AnalyticsContent.Visibility = Visibility.Collapsed;
             ExportContent.Visibility = Visibility.Collapsed;
             SettingsContent.Visibility = Visibility.Collapsed;
+            SearchIncomeContent.Visibility = Visibility.Collapsed;
+            SearchSpendingContent.Visibility = Visibility.Collapsed;
 
             // Animate content appearance
             AnimateContentTransition(DashboardContent);
@@ -927,6 +1348,8 @@ namespace BudgetManagement.Views
             AnalyticsContent.Visibility = Visibility.Visible;
             ExportContent.Visibility = Visibility.Collapsed;
             SettingsContent.Visibility = Visibility.Collapsed;
+            SearchIncomeContent.Visibility = Visibility.Collapsed;
+            SearchSpendingContent.Visibility = Visibility.Collapsed;
 
             // Animate content appearance
             AnimateContentTransition(AnalyticsContent);
@@ -942,6 +1365,8 @@ namespace BudgetManagement.Views
             AnalyticsContent.Visibility = Visibility.Collapsed;
             ExportContent.Visibility = Visibility.Visible;
             SettingsContent.Visibility = Visibility.Collapsed;
+            SearchIncomeContent.Visibility = Visibility.Collapsed;
+            SearchSpendingContent.Visibility = Visibility.Collapsed;
 
             // Animate content appearance
             AnimateContentTransition(ExportContent);
@@ -957,9 +1382,45 @@ namespace BudgetManagement.Views
             AnalyticsContent.Visibility = Visibility.Collapsed;
             ExportContent.Visibility = Visibility.Collapsed;
             SettingsContent.Visibility = Visibility.Visible;
+            SearchIncomeContent.Visibility = Visibility.Collapsed;
+            SearchSpendingContent.Visibility = Visibility.Collapsed;
 
             // Animate content appearance
             AnimateContentTransition(SettingsContent);
+        }
+
+        private void ShowSearchIncomeContent()
+        {
+            PageTitle.Text = "Search Income";
+            PageSubtitle.Text = "Find and filter your income entries";
+
+            // Show search income content, hide others
+            DashboardContent.Visibility = Visibility.Collapsed;
+            AnalyticsContent.Visibility = Visibility.Collapsed;
+            ExportContent.Visibility = Visibility.Collapsed;
+            SettingsContent.Visibility = Visibility.Collapsed;
+            SearchIncomeContent.Visibility = Visibility.Visible;
+            SearchSpendingContent.Visibility = Visibility.Collapsed;
+
+            // Animate content appearance
+            AnimateContentTransition(SearchIncomeContent);
+        }
+
+        private void ShowSearchSpendingContent()
+        {
+            PageTitle.Text = "Search Spending";
+            PageSubtitle.Text = "Find and filter your spending entries";
+
+            // Show search spending content, hide others
+            DashboardContent.Visibility = Visibility.Collapsed;
+            AnalyticsContent.Visibility = Visibility.Collapsed;
+            ExportContent.Visibility = Visibility.Collapsed;
+            SettingsContent.Visibility = Visibility.Collapsed;
+            SearchIncomeContent.Visibility = Visibility.Collapsed;
+            SearchSpendingContent.Visibility = Visibility.Visible;
+
+            // Animate content appearance
+            AnimateContentTransition(SearchSpendingContent);
         }
 
         private void AnimateContentTransition(FrameworkElement content)

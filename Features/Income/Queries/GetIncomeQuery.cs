@@ -68,4 +68,73 @@ namespace BudgetManagement.Features.Income.Queries
         decimal MinAmount,
         decimal MaxAmount
     ) : IRequest<Result<IEnumerable<Models.Income>>>;
+
+    /// <summary>
+    /// Advanced income search query with multiple criteria
+    /// </summary>
+    public record AdvancedIncomeSearchQuery(
+        string? DescriptionPattern = null,
+        DateTime? StartDate = null,
+        DateTime? EndDate = null,
+        decimal? MinAmount = null,
+        decimal? MaxAmount = null,
+        int Skip = 0,
+        int Take = 50,
+        IncomeSortBy SortBy = IncomeSortBy.Date,
+        SortDirection SortDirection = SortDirection.Descending
+    ) : IRequest<Result<AdvancedIncomeSearchResult>>;
+
+    /// <summary>
+    /// Query to get all income entries with pagination
+    /// </summary>
+    public record GetAllIncomesQuery(
+        int Skip = 0,
+        int Take = 50,
+        IncomeSortBy SortBy = IncomeSortBy.Date,
+        SortDirection SortDirection = SortDirection.Descending
+    ) : IRequest<Result<PaginatedIncomeResult>>;
+}
+
+namespace BudgetManagement.Features.Income.Queries
+{
+    /// <summary>
+    /// Sort options for income queries
+    /// </summary>
+    public enum IncomeSortBy
+    {
+        Date,
+        Amount,
+        Description,
+        CreatedAt
+    }
+
+    /// <summary>
+    /// Sort direction
+    /// </summary>
+    public enum SortDirection
+    {
+        Ascending,
+        Descending
+    }
+
+    /// <summary>
+    /// Result for advanced income search with pagination info
+    /// </summary>
+    public class AdvancedIncomeSearchResult
+    {
+        public IEnumerable<Models.Income> Incomes { get; set; } = [];
+        public int TotalCount { get; set; }
+        public decimal TotalAmount { get; set; }
+        public bool HasMore { get; set; }
+    }
+
+    /// <summary>
+    /// Result for paginated income queries
+    /// </summary>
+    public class PaginatedIncomeResult
+    {
+        public IEnumerable<Models.Income> Incomes { get; set; } = [];
+        public int TotalCount { get; set; }
+        public bool HasMore { get; set; }
+    }
 }

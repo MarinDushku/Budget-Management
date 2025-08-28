@@ -12,6 +12,7 @@
     <!-- Navigation Sections -->
     <sys:String x:Key="MainSection">KRYESORE</sys:String>
     <sys:String x:Key="ActionsSection">VEPRIME</sys:String>
+    <sys:String x:Key="SearchSection">KËRKIM</sys:String>
     <sys:String x:Key="ToolsSection">MJETE</sys:String>
     <sys:String x:Key="Dashboard">Paneli Kryesor</sys:String>
     
@@ -41,6 +42,10 @@
     <sys:String x:Key="RecentSpending">Shpenzimet e Fundit</sys:String>
     <sys:String x:Key="NoRecentEntries">Nuk ka të dhëna të fundit për të shfaqur</sys:String>
     
+    <!-- Navigation Buttons -->
+    <sys:String x:Key="Settings">Rregullimet</sys:String>
+    <sys:String x:Key="RefreshData">Rifresko të Dhënat</sys:String>
+    
     <!-- Export Panel -->
     <sys:String x:Key="ExportOptions">Opsionet e Eksportit</sys:String>
     <sys:String x:Key="ExportToExcel">Eksporto në Excel</sys:String>
@@ -63,6 +68,56 @@
     <sys:String x:Key="SaveSpending">💰 Ruaj Shpenzimin</sys:String>
     <sys:String x:Key="Cancel">Anulo</sys:String>
     <sys:String x:Key="CancelButton">❌ Anulo</sys:String>
+    
+    <!-- Action Buttons -->
+    <sys:String x:Key="Edit">Ndrysho</sys:String>
+    <sys:String x:Key="Delete">Fshi</sys:String>
+    <sys:String x:Key="EditEntry">Ndrysho këtë shënim</sys:String>
+    <sys:String x:Key="DeleteEntry">Fshi këtë shënim</sys:String>
+    
+    <!-- Search Interface -->
+    <sys:String x:Key="SearchIncome">🔍 Kërko të Ardhura</sys:String>
+    <sys:String x:Key="SearchSpending">🔍 Kërko Shpenzime</sys:String>
+    <sys:String x:Key="SearchIncomeEntries">Kërko të Ardhurat</sys:String>
+    <sys:String x:Key="SearchSpendingEntries">Kërko Shpenzimet</sys:String>
+    <sys:String x:Key="SearchDescription">Përshkrimi</sys:String>
+    <sys:String x:Key="SearchDescriptionPlaceholder">Shkruaj përshkrimin për të kërkuar...</sys:String>
+    <sys:String x:Key="DateRange">Periudha e Datës</sys:String>
+    <sys:String x:Key="FromDate">Nga Data</sys:String>
+    <sys:String x:Key="ToDate">Deri më Datë</sys:String>
+    <sys:String x:Key="AmountRange">Diapazon i Shumës</sys:String>
+    <sys:String x:Key="MinAmount">Shuma Minimale</sys:String>
+    <sys:String x:Key="MaxAmount">Shuma Maksimale</sys:String>
+    <sys:String x:Key="SelectCategories">Përzgjidh Kategoritë</sys:String>
+    <sys:String x:Key="AllCategoriesFilter">Të gjitha Kategoritë</sys:String>
+    <sys:String x:Key="SortBy">Rendit sipas</sys:String>
+    <sys:String x:Key="SortByDate">Data</sys:String>
+    <sys:String x:Key="SortByAmount">Shuma</sys:String>
+    <sys:String x:Key="SortByDescription">Përshkrimi</sys:String>
+    <sys:String x:Key="SortByCategory">Kategoria</sys:String>
+    <sys:String x:Key="SortAscending">Rritës</sys:String>
+    <sys:String x:Key="SortDescending">Zbritës</sys:String>
+    <sys:String x:Key="Search">Kërko</sys:String>
+    <sys:String x:Key="ClearAll">Pastro të Gjitha</sys:String>
+    <sys:String x:Key="ExportResults">Eksporto Rezultatet</sys:String>
+    
+    <!-- Search Results -->
+    <sys:String x:Key="SearchResults">Rezultatet e Kërkimit</sys:String>
+    <sys:String x:Key="EntriesFound">{0} shënime të gjetura</sys:String>
+    <sys:String x:Key="TotalAmount">Totali: {0}</sys:String>
+    <sys:String x:Key="NoResultsFound">Nuk u gjetën rezultate</sys:String>
+    <sys:String x:Key="NoResultsMessage">Provo të ndryshosh kriteret e kërkimit</sys:String>
+    <sys:String x:Key="LoadMore">Ngarko më shumë</sys:String>
+    <sys:String x:Key="ShowingResults">Duke treguar {0} - {1} nga {2} rezultate</sys:String>
+    
+    <!-- Date Presets -->
+    <sys:String x:Key="DatePresets">Zgjedhje të Shpejta</sys:String>
+    <sys:String x:Key="ThisMonth">Këtë Muaj</sys:String>
+    <sys:String x:Key="LastMonth">Muajin e Kaluar</sys:String>
+    <sys:String x:Key="Last3Months">3 Muajt e Fundit</sys:String>
+    <sys:String x:Key="Last6Months">6 Muajt e Fundit</sys:String>
+    <sys:String x:Key="ThisYear">Këtë Vit</sys:String>
+    <sys:String x:Key="LastYear">Vitin e Kaluar</sys:String>
     
     <!-- Validation Messages -->
     <sys:String x:Key="ValidationError">Gabim Validimi</sys:String>
@@ -109,7 +164,6 @@
     <sys:String x:Key="Albanian">Shqip</sys:String>
     
     <!-- Category Management -->
-    <sys:String x:Key="Categories">Kategoritë</sys:String>
     <sys:String x:Key="ManageCategories">Menaxho Kategoritë</sys:String>
     <sys:String x:Key="ManageCategoriesTitle">Menaxho Kategoritë e Shpenzimeve</sys:String>
     <sys:String x:Key="ManageCategoriesDescription">Shto, redakto ose hiq kategoritë për të organizuar shpenzimet tuaja</sys:String>

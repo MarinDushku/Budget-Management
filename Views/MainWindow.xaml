@@ -105,6 +105,17 @@
                             Style="{StaticResource NavigationItemStyle}"
                             Command="{Binding AddSpendingCommand}"/>
 
+                    <!-- Search -->
+                    <TextBlock Text="{DynamicResource SearchSection}" Style="{StaticResource NavigationSectionHeaderStyle}"/>
+                    
+                    <Button x:Name="SearchIncomeButton" Content="{DynamicResource SearchIncome}" Tag="&#xE721;" 
+                            Style="{StaticResource NavigationItemStyle}"
+                            Click="NavigationButton_Click"/>
+                    
+                    <Button x:Name="SearchSpendingButton" Content="{DynamicResource SearchSpending}" Tag="&#xE721;" 
+                            Style="{StaticResource NavigationItemStyle}"
+                            Click="NavigationButton_Click"/>
+
                     <!-- Tools & Settings -->
                     <TextBlock Text="{DynamicResource ToolsSection}" Style="{StaticResource NavigationSectionHeaderStyle}"/>
                     
@@ -436,6 +447,16 @@
                             </StackPanel>
                         </Border>
                     </UniformGrid>
+                    </StackPanel>
+
+                    <!-- Search Income Content (Hidden by default) -->
+                    <StackPanel x:Name="SearchIncomeContent" Visibility="Collapsed">
+                        <userControls:IncomeSearchControl DataContext="{Binding IncomeSearchViewModel}"/>
+                    </StackPanel>
+
+                    <!-- Search Spending Content (Hidden by default) -->
+                    <StackPanel x:Name="SearchSpendingContent" Visibility="Collapsed">
+                        <userControls:SpendingSearchControl DataContext="{Binding SpendingSearchViewModel}"/>
                     </StackPanel>
                 </Grid>
             </ScrollViewer>

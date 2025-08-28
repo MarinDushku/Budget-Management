@@ -78,6 +78,8 @@
   
   <ItemGroup>
     <Resource Include="Resources\MD Logo.ico" />
+    <Resource Include="Resources\Strings.en.xaml" />
+    <Resource Include="Resources\Strings.sq.xaml" />
   </ItemGroup>
 
   <!-- Exclude test files from main project build -->

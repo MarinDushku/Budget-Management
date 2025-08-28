@@ -12,6 +12,7 @@
     <!-- Navigation Sections -->
     <sys:String x:Key="MainSection">MAIN</sys:String>
     <sys:String x:Key="ActionsSection">ACTIONS</sys:String>
+    <sys:String x:Key="SearchSection">SEARCH</sys:String>
     <sys:String x:Key="ToolsSection">TOOLS</sys:String>
     <sys:String x:Key="Dashboard">Dashboard</sys:String>
     
@@ -41,6 +42,10 @@
     <sys:String x:Key="RecentSpending">Recent Spending</sys:String>
     <sys:String x:Key="NoRecentEntries">No recent entries to display</sys:String>
     
+    <!-- Navigation Buttons -->
+    <sys:String x:Key="Settings">Settings</sys:String>
+    <sys:String x:Key="RefreshData">Refresh Data</sys:String>
+    
     <!-- Export Panel -->
     <sys:String x:Key="ExportOptions">Export Options</sys:String>
     <sys:String x:Key="ExportToExcel">Export to Excel</sys:String>
@@ -63,6 +68,56 @@
     <sys:String x:Key="SaveSpending">💰 Save Spending</sys:String>
     <sys:String x:Key="Cancel">Cancel</sys:String>
     <sys:String x:Key="CancelButton">❌ Cancel</sys:String>
+    
+    <!-- Action Buttons -->
+    <sys:String x:Key="Edit">Edit</sys:String>
+    <sys:String x:Key="Delete">Delete</sys:String>
+    <sys:String x:Key="EditEntry">Edit this entry</sys:String>
+    <sys:String x:Key="DeleteEntry">Delete this entry</sys:String>
+    
+    <!-- Search Interface -->
+    <sys:String x:Key="SearchIncome">🔍 Search Income</sys:String>
+    <sys:String x:Key="SearchSpending">🔍 Search Spending</sys:String>
+    <sys:String x:Key="SearchIncomeEntries">Search Income Entries</sys:String>
+    <sys:String x:Key="SearchSpendingEntries">Search Spending Entries</sys:String>
+    <sys:String x:Key="SearchDescription">Description</sys:String>
+    <sys:String x:Key="SearchDescriptionPlaceholder">Enter description to search...</sys:String>
+    <sys:String x:Key="DateRange">Date Range</sys:String>
+    <sys:String x:Key="FromDate">From Date</sys:String>
+    <sys:String x:Key="ToDate">To Date</sys:String>
+    <sys:String x:Key="AmountRange">Amount Range</sys:String>
+    <sys:String x:Key="MinAmount">Min Amount</sys:String>
+    <sys:String x:Key="MaxAmount">Max Amount</sys:String>
+    <sys:String x:Key="SelectCategories">Select Categories</sys:String>
+    <sys:String x:Key="AllCategoriesFilter">All Categories</sys:String>
+    <sys:String x:Key="SortBy">Sort By</sys:String>
+    <sys:String x:Key="SortByDate">Date</sys:String>
+    <sys:String x:Key="SortByAmount">Amount</sys:String>
+    <sys:String x:Key="SortByDescription">Description</sys:String>
+    <sys:String x:Key="SortByCategory">Category</sys:String>
+    <sys:String x:Key="SortAscending">Ascending</sys:String>
+    <sys:String x:Key="SortDescending">Descending</sys:String>
+    <sys:String x:Key="Search">Search</sys:String>
+    <sys:String x:Key="ClearAll">Clear All</sys:String>
+    <sys:String x:Key="ExportResults">Export Results</sys:String>
+    
+    <!-- Search Results -->
+    <sys:String x:Key="SearchResults">Search Results</sys:String>
+    <sys:String x:Key="EntriesFound">{0} entries found</sys:String>
+    <sys:String x:Key="TotalAmount">Total: {0}</sys:String>
+    <sys:String x:Key="NoResultsFound">No results found</sys:String>
+    <sys:String x:Key="NoResultsMessage">Try adjusting your search criteria</sys:String>
+    <sys:String x:Key="LoadMore">Load More</sys:String>
+    <sys:String x:Key="ShowingResults">Showing {0} - {1} of {2} results</sys:String>
+    
+    <!-- Date Presets -->
+    <sys:String x:Key="DatePresets">Quick Select</sys:String>
+    <sys:String x:Key="ThisMonth">This Month</sys:String>
+    <sys:String x:Key="LastMonth">Last Month</sys:String>
+    <sys:String x:Key="Last3Months">Last 3 Months</sys:String>
+    <sys:String x:Key="Last6Months">Last 6 Months</sys:String>
+    <sys:String x:Key="ThisYear">This Year</sys:String>
+    <sys:String x:Key="LastYear">Last Year</sys:String>
     
     <!-- Validation Messages -->
     <sys:String x:Key="ValidationError">Validation Error</sys:String>
@@ -109,7 +164,6 @@
     <sys:String x:Key="Albanian">Albanian</sys:String>
     
     <!-- Category Management -->
-    <sys:String x:Key="Categories">Categories</sys:String>
     <sys:String x:Key="ManageCategories">Manage Categories</sys:String>
     <sys:String x:Key="ManageCategoriesTitle">Manage Spending Categories</sys:String>
     <sys:String x:Key="ManageCategoriesDescription">Add, edit, or remove categories to organize your spending</sys:String>

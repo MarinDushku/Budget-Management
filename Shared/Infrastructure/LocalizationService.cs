@@ -51,7 +51,7 @@ namespace BudgetManagement.Shared.Infrastructure
     /// </summary>
     public class EnterpriseLocalizationService : IEnterpriseLocalizationService
     {
-        private const string DefaultLanguage = "en";
+        private const string DefaultLanguage = "sq";
         private string _currentLanguage = DefaultLanguage;
 
         public CultureInfo CurrentCulture => CultureInfo.GetCultureInfo(_currentLanguage);
@@ -105,17 +105,25 @@ namespace BudgetManagement.Shared.Infrastructure
         {
             try
             {
+                System.Diagnostics.Debug.WriteLine($"SetLanguage: Called with languageCode = '{languageCode}'");
+                System.Diagnostics.Debug.WriteLine($"SetLanguage: Current language before change = '{_currentLanguage}'");
+                
                 _currentLanguage = languageCode.ToLowerInvariant();
                 var culture = CultureInfo.GetCultureInfo(_currentLanguage);
                 CultureInfo.DefaultThreadCurrentCulture = culture;
                 CultureInfo.DefaultThreadCurrentUICulture = culture;
 
+                System.Diagnostics.Debug.WriteLine($"SetLanguage: Set culture to {culture.Name}");
+
                 // Load appropriate resource dictionary
                 LoadLanguageResources(languageCode);
+                
+                System.Diagnostics.Debug.WriteLine($"SetLanguage: Completed successfully for '{languageCode}'");
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Failed to set language {languageCode}: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"SetLanguage: Failed to set language {languageCode}: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"SetLanguage: Stack trace: {ex.StackTrace}");
                 // Fallback to default language
                 if (_currentLanguage != DefaultLanguage)
                 {
@@ -126,33 +134,195 @@ namespace BudgetManagement.Shared.Infrastructure
 
         private void LoadLanguageResources(string languageCode)
         {
-            if (Application.Current == null) return;
+            if (Application.Current == null) 
+            {
+                System.Diagnostics.Debug.WriteLine("LoadLanguageResources: Application.Current is null");
+                return;
+            }
 
+            System.Diagnostics.Debug.WriteLine($"LoadLanguageResources: Loading resources for language '{languageCode}'");
+
+            // Use same URI format as App.xaml (no leading slash) for consistency
             var resourceUri = languageCode.ToLowerInvariant() switch
             {
-                "sq" => new Uri("/Resources/Strings.sq.xaml", UriKind.Relative),
-                "en" => new Uri("/Resources/Strings.en.xaml", UriKind.Relative),
-                _ => new Uri("/Resources/Strings.en.xaml", UriKind.Relative)
+                "sq" => new Uri("Resources/Strings.sq.xaml", UriKind.Relative),
+                "en" => new Uri("Resources/Strings.en.xaml", UriKind.Relative),
+                _ => new Uri("Resources/Strings.en.xaml", UriKind.Relative)
             };
+
+            System.Diagnostics.Debug.WriteLine($"LoadLanguageResources: Resource URI = {resourceUri}");
 
             try
             {
-                var resourceDict = new ResourceDictionary { Source = resourceUri };
+                System.Diagnostics.Debug.WriteLine($"LoadLanguageResources: About to create ResourceDictionary with URI: {resourceUri}");
+                
+                var resourceDict = new ResourceDictionary();
+                System.Diagnostics.Debug.WriteLine("LoadLanguageResources: Created empty ResourceDictionary");
+                
+                System.Diagnostics.Debug.WriteLine($"LoadLanguageResources: Setting Source to: {resourceUri}");
+                resourceDict.Source = resourceUri;
+                System.Diagnostics.Debug.WriteLine($"LoadLanguageResources: Successfully set Source. ResourceDict Count: {resourceDict.Count}");
+                
+                // Test accessing a few specific keys immediately after loading
+                System.Diagnostics.Debug.WriteLine("LoadLanguageResources: Testing resource access...");
+                if (resourceDict.Contains("AppTitle"))
+                {
+                    var appTitle = resourceDict["AppTitle"]?.ToString();
+                    System.Diagnostics.Debug.WriteLine($"LoadLanguageResources: Direct access - AppTitle = '{appTitle}'");
+                }
+                if (resourceDict.Contains("Albanian"))
+                {
+                    var albanian = resourceDict["Albanian"]?.ToString();
+                    System.Diagnostics.Debug.WriteLine($"LoadLanguageResources: Direct access - Albanian = '{albanian}'");
+                }
                 
                 // Clear existing language resources and add new ones
+                // Match App.xaml format exactly: "Resources/Strings.*.xaml"
                 var existingLangDict = Application.Current.Resources.MergedDictionaries
-                    .FirstOrDefault(d => d.Source?.ToString().Contains("Strings.") == true);
+                    .FirstOrDefault(d => d.Source != null && 
+                        (d.Source.ToString().Equals("Resources/Strings.en.xaml") || 
+                         d.Source.ToString().Equals("Resources/Strings.sq.xaml") ||
+                         d.Source.ToString().Contains("Resources/Strings.") ||
+                         d.Source.ToString().Contains("Strings.en.xaml") ||
+                         d.Source.ToString().Contains("Strings.sq.xaml")));
                 
                 if (existingLangDict != null)
                 {
+                    System.Diagnostics.Debug.WriteLine($"LoadLanguageResources: Removing existing resource dictionary: {existingLangDict.Source}");
                     Application.Current.Resources.MergedDictionaries.Remove(existingLangDict);
+                    System.Diagnostics.Debug.WriteLine($"LoadLanguageResources: Successfully removed. Remaining dictionaries: {Application.Current.Resources.MergedDictionaries.Count}");
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("LoadLanguageResources: No existing language dictionary found");
+                    System.Diagnostics.Debug.WriteLine("LoadLanguageResources: Current merged dictionaries:");
+                    for (int i = 0; i < Application.Current.Resources.MergedDictionaries.Count; i++)
+                    {
+                        var dict = Application.Current.Resources.MergedDictionaries[i];
+                        System.Diagnostics.Debug.WriteLine($"  Dictionary {i}: Source = '{dict.Source}', Count = {dict.Count}");
+                    }
                 }
                 
                 Application.Current.Resources.MergedDictionaries.Add(resourceDict);
+                System.Diagnostics.Debug.WriteLine($"LoadLanguageResources: Added new resource dictionary. Total merged dictionaries: {Application.Current.Resources.MergedDictionaries.Count}");
+                
+                // CRITICAL: Force complete WPF resource system refresh
+                // This ensures DynamicResource bindings pick up the new values
+                Application.Current.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() =>
+                {
+                    try
+                    {
+                        System.Diagnostics.Debug.WriteLine("LoadLanguageResources: Starting aggressive UI refresh");
+                        
+                        // Method 1: Force all windows to invalidate and update
+                        foreach (Window window in Application.Current.Windows)
+                        {
+                            ForceRefreshAllDynamicResources(window);
+                        }
+                        
+                        // Method 2: Force a second pass after a delay to catch any lazy-loaded elements
+                        Application.Current.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, new Action(() =>
+                        {
+                            foreach (Window window in Application.Current.Windows)
+                            {
+                                window.InvalidateVisual();
+                                window.UpdateLayout();
+                            }
+                        }));
+                        
+                        System.Diagnostics.Debug.WriteLine("LoadLanguageResources: Aggressive UI refresh completed");
+                    }
+                    catch (Exception refreshEx)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"LoadLanguageResources: Error during resource refresh: {refreshEx.Message}");
+                    }
+                }));
+                
+                // COMPREHENSIVE RESOURCE VERIFICATION
+                System.Diagnostics.Debug.WriteLine("LoadLanguageResources: === RESOURCE VERIFICATION START ===");
+                
+                // Test critical UI keys that should change language
+                var testKeys = new[] { 
+                    ("AppTitle", languageCode == "sq" ? "Menaxhuesi i Buxhetit" : "Budget Manager"),
+                    ("Dashboard", languageCode == "sq" ? "Paneli Kryesor" : "Dashboard"),
+                    ("English", languageCode == "sq" ? "Anglisht" : "English"),
+                    ("Albanian", languageCode == "sq" ? "Shqip" : "Albanian"),
+                    ("AddIncomeButton", languageCode == "sq" ? "Shto të Ardhura" : "Add Income"),
+                    ("Language", languageCode == "sq" ? "Gjuha" : "Language")
+                };
+                
+                bool allKeysCorrect = true;
+                foreach (var (key, expectedValue) in testKeys)
+                {
+                    if (Application.Current.Resources.Contains(key))
+                    {
+                        var actualValue = Application.Current.Resources[key]?.ToString();
+                        bool isCorrect = actualValue == expectedValue;
+                        System.Diagnostics.Debug.WriteLine($"LoadLanguageResources: {key} = '{actualValue}' (Expected: '{expectedValue}') ✓{(isCorrect ? "CORRECT" : "WRONG")}");
+                        if (!isCorrect) allKeysCorrect = false;
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine($"LoadLanguageResources: {key} = KEY NOT FOUND ✗");
+                        allKeysCorrect = false;
+                    }
+                }
+                
+                System.Diagnostics.Debug.WriteLine($"LoadLanguageResources: Overall verification: {(allKeysCorrect ? "✓ ALL CORRECT" : "✗ SOME WRONG")}");
+                System.Diagnostics.Debug.WriteLine("LoadLanguageResources: === RESOURCE VERIFICATION END ===");
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Failed to load language resources for {languageCode}: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"LoadLanguageResources: Failed to load language resources for {languageCode}: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"LoadLanguageResources: Stack trace: {ex.StackTrace}");
+            }
+        }
+        
+        /// <summary>
+        /// Forces refresh of all DynamicResource bindings in a visual tree
+        /// </summary>
+        private static void ForceRefreshAllDynamicResources(DependencyObject parent)
+        {
+            try
+            {
+                if (parent == null) return;
+
+                // Force refresh of this element
+                if (parent is FrameworkElement element)
+                {
+                    // Multiple approaches to force DynamicResource refresh
+                    element.InvalidateVisual();
+                    element.UpdateLayout();
+                    
+                    // Force refresh of specific properties that commonly use DynamicResource
+                    if (element is System.Windows.Controls.TextBlock textBlock)
+                    {
+                        var binding = textBlock.GetBindingExpression(System.Windows.Controls.TextBlock.TextProperty);
+                        binding?.UpdateTarget();
+                    }
+                    else if (element is System.Windows.Controls.ContentControl contentControl)
+                    {
+                        var binding = contentControl.GetBindingExpression(System.Windows.Controls.ContentControl.ContentProperty);
+                        binding?.UpdateTarget();
+                    }
+                    else if (element is System.Windows.Controls.Button button)
+                    {
+                        var binding = button.GetBindingExpression(System.Windows.Controls.ContentControl.ContentProperty);
+                        binding?.UpdateTarget();
+                    }
+                }
+                
+                // Recursively refresh all children
+                var childrenCount = System.Windows.Media.VisualTreeHelper.GetChildrenCount(parent);
+                for (int i = 0; i < childrenCount; i++)
+                {
+                    var child = System.Windows.Media.VisualTreeHelper.GetChild(parent, i);
+                    ForceRefreshAllDynamicResources(child);
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"ForceRefreshAllDynamicResources: Error refreshing element: {ex.Message}");
             }
         }
     }

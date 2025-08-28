@@ -84,6 +84,7 @@
             <Setter Property="Foreground" Value="{StaticResource DangerRedBrush}"/>
         </Style>
         
+        
         <!-- Modern entry description style -->
         <Style x:Key="ModernEntryDescription" TargetType="TextBlock">
             <Setter Property="FontFamily" Value="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"/>
@@ -133,6 +134,80 @@
         <Style x:Key="SpendingSectionHeader" TargetType="TextBlock" BasedOn="{StaticResource ModernSectionHeader}">
             <Setter Property="Foreground" Value="{StaticResource DangerRedBrush}"/>
         </Style>
+        
+        <!-- Action Buttons Container -->
+        <Style x:Key="ActionButtonsPanel" TargetType="StackPanel">
+            <Setter Property="Orientation" Value="Vertical"/>
+            <Setter Property="Margin" Value="8,0,0,0"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Opacity" Value="0.4"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Border}, Path=IsMouseOver}" Value="True">
+                    <DataTrigger.EnterActions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Storyboard.TargetProperty="Opacity" To="1.0" Duration="0:0:0.2"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </DataTrigger.EnterActions>
+                    <DataTrigger.ExitActions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Storyboard.TargetProperty="Opacity" To="0.4" Duration="0:0:0.2"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </DataTrigger.ExitActions>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Base Action Button Style -->
+        <Style x:Key="BaseActionButton" TargetType="Button">
+            <Setter Property="Width" Value="24"/>
+            <Setter Property="Height" Value="24"/>
+            <Setter Property="Margin" Value="0,1"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="FontFamily" Value="Segoe Fluent Icons"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" 
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="4"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                BorderBrush="{TemplateBinding BorderBrush}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#1A000000"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#2A000000"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Edit Action Button -->
+        <Style x:Key="EditActionButton" TargetType="Button" BasedOn="{StaticResource BaseActionButton}">
+            <Setter Property="Content" Value="&#xE70F;"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryBlueBrush}"/>
+            <Setter Property="ToolTip" Value="{DynamicResource EditEntry}"/>
+        </Style>
+
+        <!-- Delete Action Button -->
+        <Style x:Key="DeleteActionButton" TargetType="Button" BasedOn="{StaticResource BaseActionButton}">
+            <Setter Property="Content" Value="&#xE74D;"/>
+            <Setter Property="Foreground" Value="{StaticResource DangerRedBrush}"/>
+            <Setter Property="ToolTip" Value="{DynamicResource DeleteEntry}"/>
+        </Style>
     </UserControl.Resources>
 
     <StackPanel>
@@ -146,7 +221,7 @@
             <TextBlock Grid.Column="0" Text="&#xE8D4;" FontFamily="Segoe Fluent Icons" 
                        FontSize="18" VerticalAlignment="Center" 
                        Foreground="{StaticResource AccentGreenBrush}" Margin="0,0,8,0"/>
-            <TextBlock Grid.Column="1" Text="{StaticResource RecentIncome}" 
+            <TextBlock Grid.Column="1" Text="{DynamicResource RecentIncome}" 
                        Style="{StaticResource IncomeSectionHeader}"/>
         </Grid>
         
@@ -160,6 +235,7 @@
                                 <ColumnDefinition Width="*"/>     <!-- Description -->
                                 <ColumnDefinition Width="Auto"/>  <!-- Amount -->
                                 <ColumnDefinition Width="Auto"/>  <!-- Date -->
+                                <ColumnDefinition Width="Auto"/>  <!-- Actions -->
                             </Grid.ColumnDefinitions>
                             
                             <TextBlock Grid.Column="0" 
@@ -179,7 +255,18 @@
                             
                             <TextBlock Grid.Column="3" 
                                        Text="{Binding Date, Converter={StaticResource DateConverter}, ConverterParameter=short}" 
-                                       Style="{StaticResource ModernEntryDate}"/>
+                                       Style="{StaticResource ModernEntryDate}"
+                                       Margin="0,0,8,0"/>
+                            
+                            <!-- Action Buttons -->
+                            <StackPanel Grid.Column="4" Style="{StaticResource ActionButtonsPanel}">
+                                <Button Style="{StaticResource EditActionButton}" 
+                                        Command="{Binding DataContext.EditIncomeCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}"/>
+                                <Button Style="{StaticResource DeleteActionButton}" 
+                                        Command="{Binding DataContext.DeleteIncomeCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}"/>
+                            </StackPanel>
                         </Grid>
                     </Border>
                 </DataTemplate>
@@ -200,7 +287,7 @@
             <TextBlock Grid.Column="0" Text="&#xE7BF;" FontFamily="Segoe Fluent Icons" 
                        FontSize="18" VerticalAlignment="Center" 
                        Foreground="{StaticResource DangerRedBrush}" Margin="0,0,8,0"/>
-            <TextBlock Grid.Column="1" Text="{StaticResource RecentSpending}" 
+            <TextBlock Grid.Column="1" Text="{DynamicResource RecentSpending}" 
                        Style="{StaticResource SpendingSectionHeader}"/>
         </Grid>
         
@@ -213,7 +300,8 @@
                                 <ColumnDefinition Width="Auto"/>  <!-- Icon -->
                                 <ColumnDefinition Width="*"/>     <!-- Description -->
                                 <ColumnDefinition Width="Auto"/>  <!-- Amount -->
-                                <ColumnDefinition Width="Auto"/>  <!-- Date & Category -->
+                                <ColumnDefinition Width="Auto"/>  <!-- Date -->
+                                <ColumnDefinition Width="Auto"/>  <!-- Actions -->
                             </Grid.ColumnDefinitions>
                             
                             <TextBlock Grid.Column="0" 
@@ -236,7 +324,18 @@
                             
                             <TextBlock Grid.Column="3" 
                                        Text="{Binding Date, Converter={StaticResource DateConverter}, ConverterParameter=short}" 
-                                       Style="{StaticResource ModernEntryDate}"/>
+                                       Style="{StaticResource ModernEntryDate}"
+                                       Margin="0,0,8,0"/>
+                            
+                            <!-- Action Buttons -->
+                            <StackPanel Grid.Column="4" Style="{StaticResource ActionButtonsPanel}">
+                                <Button Style="{StaticResource EditActionButton}" 
+                                        Command="{Binding DataContext.EditSpendingCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}"/>
+                                <Button Style="{StaticResource DeleteActionButton}" 
+                                        Command="{Binding DataContext.DeleteSpendingCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}"/>
+                            </StackPanel>
                         </Grid>
                     </Border>
                 </DataTemplate>
@@ -254,7 +353,7 @@
                            FontSize="32" HorizontalAlignment="Center" 
                            Foreground="{StaticResource SecondaryTextBrush}" 
                            Margin="0,0,0,8"/>
-                <TextBlock Text="{StaticResource NoRecentEntries}" 
+                <TextBlock Text="{DynamicResource NoRecentEntries}" 
                            HorizontalAlignment="Center"
                            FontFamily="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"
                            FontSize="14" FontWeight="Medium"
