@@ -42,6 +42,9 @@ namespace BudgetManagement.ViewModels
 
         // Budget trend data for analytics
         public ObservableCollection<WeeklyBudgetData> BudgetTrendData { get; } = new();
+        
+        // Daily budget balance data for tracking budget changes over time
+        public ObservableCollection<DailyBudgetBalance> BudgetBalanceData { get; } = new();
 
         // Collection views for filtering and sorting
         public ICollectionView IncomeView { get; }
@@ -235,6 +238,10 @@ namespace BudgetManagement.ViewModels
                 // Update budget trend data (last 10 weeks)
                 System.Diagnostics.Debug.WriteLine("RefreshDataAsync: Calling UpdateBudgetTrendDataAsync...");
                 await UpdateBudgetTrendDataAsync();
+                
+                // Update daily budget balance data (last 30 days)
+                System.Diagnostics.Debug.WriteLine("RefreshDataAsync: Calling UpdateBudgetBalanceDataAsync...");
+                await UpdateBudgetBalanceDataAsync();
 
                 StatusMessage = $"Loaded {IncomeEntries.Count} income and {SpendingEntries.Count} spending entries";
             }
@@ -341,6 +348,67 @@ namespace BudgetManagement.ViewModels
             {
                 System.Diagnostics.Debug.WriteLine($"UpdateBudgetTrendDataAsync error: {ex}");
                 StatusMessage = $"Error updating trend data: {ex.Message}";
+            }
+        }
+
+        /// <summary>
+        /// Updates the daily budget balance data for the last 30 days
+        /// </summary>
+        private async Task UpdateBudgetBalanceDataAsync()
+        {
+            try
+            {
+                System.Diagnostics.Debug.WriteLine("UpdateBudgetBalanceDataAsync: Starting...");
+                
+                BudgetBalanceData.Clear();
+
+                // Calculate 30 days back from today
+                var endDate = DateTime.Now.Date;
+                var startDate = endDate.AddDays(-30);
+
+                System.Diagnostics.Debug.WriteLine($"UpdateBudgetBalanceDataAsync: Fetching data from {startDate:yyyy-MM-dd} to {endDate:yyyy-MM-dd}");
+
+                // Get data for the entire 30-day period
+                var allIncome = await _budgetService.GetIncomeAsync(startDate, endDate);
+                var allSpending = await _budgetService.GetSpendingWithCategoryAsync(startDate, endDate);
+
+                System.Diagnostics.Debug.WriteLine($"UpdateBudgetBalanceDataAsync: Retrieved {allIncome?.Count() ?? 0} income entries and {allSpending?.Count() ?? 0} spending entries");
+
+                // Calculate daily balances and cumulative balance
+                decimal cumulativeBalance = 0m;
+                
+                for (var date = startDate; date <= endDate; date = date.AddDays(1))
+                {
+                    var dailyIncome = allIncome
+                        .Where(i => i.Date.Date == date.Date)
+                        .Sum(i => i.Amount);
+
+                    var dailySpending = allSpending
+                        .Where(s => s.Date.Date == date.Date)
+                        .Sum(s => s.Amount);
+
+                    var dailyBalance = dailyIncome - dailySpending;
+                    cumulativeBalance += dailyBalance;
+
+                    var dailyData = new DailyBudgetBalance
+                    {
+                        Date = date,
+                        DailyIncome = dailyIncome,
+                        DailySpending = dailySpending,
+                        CumulativeBalance = cumulativeBalance
+                    };
+                    
+                    BudgetBalanceData.Add(dailyData);
+                    
+                    System.Diagnostics.Debug.WriteLine($"UpdateBudgetBalanceDataAsync: {date:MM/dd}: Income=${dailyIncome}, Spending=${dailySpending}, Daily=${dailyBalance}, Cumulative=${cumulativeBalance}");
+                }
+                
+                System.Diagnostics.Debug.WriteLine($"UpdateBudgetBalanceDataAsync: Added {BudgetBalanceData.Count} daily data points to BudgetBalanceData collection");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"UpdateBudgetBalanceDataAsync error: {ex}");
+                StatusMessage = $"Error updating balance data: {ex.Message}";
             }
         }
 

@@ -165,4 +165,26 @@ namespace BudgetManagement.Models
         /// </summary>
         public DateTime WeekEndDate => WeekStartDate.AddDays(6);
     }
+
+    /// <summary>
+    /// Daily budget balance data for tracking budget changes over time
+    /// </summary>
+    public class DailyBudgetBalance
+    {
+        public DateTime Date { get; set; }
+        public decimal DailyIncome { get; set; }
+        public decimal DailySpending { get; set; }
+        public decimal DailyBalance => DailyIncome - DailySpending;
+        public decimal CumulativeBalance { get; set; }
+        
+        /// <summary>
+        /// Display-friendly date label for charts
+        /// </summary>
+        public string DateLabel => Date.ToString("MMM dd", System.Globalization.CultureInfo.InvariantCulture);
+        
+        /// <summary>
+        /// Indicates if this day had a positive balance
+        /// </summary>
+        public bool IsPositiveDay => DailyBalance >= 0;
+    }
 }

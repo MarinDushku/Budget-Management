@@ -230,6 +230,15 @@
                             </StackPanel>
                         </Border>
                     </UniformGrid>
+                    
+                    <!-- Budget Balance Chart Card (Full Width) -->
+                    <Border Style="{StaticResource ModernCardStyle}" Margin="0,0,0,24">
+                        <StackPanel>
+                            <TextBlock Text="Budget Balance Tracking (Last 30 Days)" Style="{StaticResource SectionHeaderTextStyle}"/>
+                            <userControls:BudgetBalanceChartUserControl 
+                                BudgetBalanceData="{Binding BudgetBalanceData}"/>
+                        </StackPanel>
+                    </Border>
                     </StackPanel>
 
                     <!-- Export & Tools Content (Hidden by default) -->
