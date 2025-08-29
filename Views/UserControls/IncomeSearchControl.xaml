@@ -13,8 +13,8 @@
         
         <!-- Search Section Style -->
         <Style x:Key="SearchSectionStyle" TargetType="Border">
-            <Setter Property="Background" Value="{StaticResource SurfaceBrush}"/>
-            <Setter Property="BorderBrush" Value="{StaticResource BorderLightBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource SurfaceBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderLightBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="CornerRadius" Value="8"/>
             <Setter Property="Padding" Value="20"/>
@@ -30,7 +30,7 @@
         <Style x:Key="FilterLabelStyle" TargetType="TextBlock">
             <Setter Property="FontWeight" Value="Medium"/>
             <Setter Property="FontSize" Value="14"/>
-            <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
             <Setter Property="Margin" Value="0,0,0,8"/>
         </Style>
 
@@ -53,10 +53,12 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#1A78C2"/>
+                                <Setter TargetName="border" Property="Background" Value="{DynamicResource PrimaryBlueBrush}"/>
+                                <Setter TargetName="border" Property="Opacity" Value="0.8"/>
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#0F639F"/>
+                                <Setter TargetName="border" Property="Background" Value="{DynamicResource PrimaryBlueBrush}"/>
+                                <Setter TargetName="border" Property="Opacity" Value="0.6"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -67,7 +69,7 @@
         <!-- Clear Button Style -->
         <Style x:Key="ClearButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="{StaticResource SecondaryTextBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource SecondaryTextBrush}"/>
             <Setter Property="BorderBrush" Value="{StaticResource BorderMediumBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Padding" Value="16,12"/>
@@ -132,7 +134,7 @@
 
                             <StackPanel Grid.Column="0" Margin="0,0,16,0">
                                 <TextBlock Text="{DynamicResource FromDate}" FontSize="12" 
-                                           Foreground="{StaticResource SecondaryTextBrush}" Margin="0,0,0,4"/>
+                                           Foreground="{DynamicResource SecondaryTextBrush}" Margin="0,0,0,4"/>
                                 <DatePicker x:Name="FromDatePicker" 
                                            SelectedDate="{Binding StartDate}"
                                            Style="{StaticResource ModernDatePickerStyle}"/>
@@ -143,7 +145,7 @@
 
                             <StackPanel Grid.Column="2" Margin="16,0,16,0">
                                 <TextBlock Text="{DynamicResource ToDate}" FontSize="12" 
-                                           Foreground="{StaticResource SecondaryTextBrush}" Margin="0,0,0,4"/>
+                                           Foreground="{DynamicResource SecondaryTextBrush}" Margin="0,0,0,4"/>
                                 <DatePicker x:Name="ToDatePicker" 
                                            SelectedDate="{Binding EndDate}"
                                            Style="{StaticResource ModernDatePickerStyle}"/>
@@ -152,7 +154,7 @@
                             <!-- Date Presets -->
                             <StackPanel Grid.Column="3" Margin="16,0,0,0">
                                 <TextBlock Text="{DynamicResource DatePresets}" FontSize="12" 
-                                           Foreground="{StaticResource SecondaryTextBrush}" Margin="0,0,0,4"/>
+                                           Foreground="{DynamicResource SecondaryTextBrush}" Margin="0,0,0,4"/>
                                 <WrapPanel Orientation="Vertical" MaxHeight="80">
                                     <Button Content="{DynamicResource ThisMonth}" Style="{StaticResource PresetButtonStyle}"
                                             Command="{Binding SetDatePresetCommand}" CommandParameter="ThisMonth"/>
@@ -177,7 +179,7 @@
 
                             <StackPanel Grid.Column="0" Margin="0,0,16,0">
                                 <TextBlock Text="{DynamicResource MinAmount}" FontSize="12" 
-                                           Foreground="{StaticResource SecondaryTextBrush}" Margin="0,0,0,4"/>
+                                           Foreground="{DynamicResource SecondaryTextBrush}" Margin="0,0,0,4"/>
                                 <TextBox x:Name="MinAmountTextBox" 
                                          Text="{Binding MinAmount, UpdateSourceTrigger=PropertyChanged}"
                                          Style="{StaticResource ModernTextBoxStyle}"
@@ -189,7 +191,7 @@
 
                             <StackPanel Grid.Column="2" Margin="16,0,0,0">
                                 <TextBlock Text="{DynamicResource MaxAmount}" FontSize="12" 
-                                           Foreground="{StaticResource SecondaryTextBrush}" Margin="0,0,0,4"/>
+                                           Foreground="{DynamicResource SecondaryTextBrush}" Margin="0,0,0,4"/>
                                 <TextBox x:Name="MaxAmountTextBox" 
                                          Text="{Binding MaxAmount, UpdateSourceTrigger=PropertyChanged}"
                                          Style="{StaticResource ModernTextBoxStyle}"

@@ -193,6 +193,9 @@ namespace BudgetManagement
                     // CRITICAL FIX: Register missing ILanguageManager for runtime language switching
                     services.AddSingleton<ILanguageManager, LanguageManager>();
 
+                    // Register theme service explicitly (might not be picked up by auto-registration)
+                    services.AddSingleton<IThemeService, ThemeService>();
+
                     // Configure memory cache
                     services.AddMemoryCache();
 
@@ -251,6 +254,14 @@ namespace BudgetManagement
                 // Initialize enterprise localization service with saved language
                 var enterpriseLocalizationService = _host.Services.GetRequiredService<IEnterpriseLocalizationService>();
                 enterpriseLocalizationService.SetLanguage(settingsService.Language);
+
+                // Initialize and register theme service in Application.Resources for UserControl access
+                var themeService = _host.Services.GetRequiredService<IThemeService>();
+                System.Diagnostics.Debug.WriteLine($"App: ThemeService initialized. Current theme: {themeService.CurrentTheme}, IsDarkTheme: {themeService.IsDarkTheme}");
+                await themeService.InitializeAsync();
+                System.Diagnostics.Debug.WriteLine($"App: ThemeService InitializeAsync completed. Current theme: {themeService.CurrentTheme}, IsDarkTheme: {themeService.IsDarkTheme}");
+                Application.Current.Resources["ThemeService"] = themeService;
+                System.Diagnostics.Debug.WriteLine("App: ThemeService registered in Application.Resources");
 
                 // CRITICAL: Always ensure database is properly initialized
                 var budgetService = _host.Services.GetRequiredService<IBudgetService>();

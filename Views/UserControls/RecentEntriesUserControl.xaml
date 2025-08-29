@@ -13,8 +13,8 @@
         
         <!-- Modern entry card style -->
         <Style x:Key="ModernEntryCard" TargetType="Border">
-            <Setter Property="Background" Value="{StaticResource SurfaceBrush}"/>
-            <Setter Property="BorderBrush" Value="{StaticResource BorderLightBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource SurfaceBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderLightBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="CornerRadius" Value="8"/>
             <Setter Property="Margin" Value="0,6"/>
@@ -36,7 +36,7 @@
                                 <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" 
                                                To="1.01" Duration="0:0:0.15"/>
                                 <ColorAnimation Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)"
-                                              To="#0078D4" Duration="0:0:0.15"/>
+                                              To="{x:Static SystemColors.HighlightColor}" Duration="0:0:0.15"/>
                             </Storyboard>
                         </BeginStoryboard>
                     </Trigger.EnterActions>
@@ -48,7 +48,7 @@
                                 <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" 
                                                To="1.0" Duration="0:0:0.15"/>
                                 <ColorAnimation Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)"
-                                              To="#E1E1E1" Duration="0:0:0.15"/>
+                                              To="{x:Static SystemColors.ControlLightColor}" Duration="0:0:0.15"/>
                             </Storyboard>
                         </BeginStoryboard>
                     </Trigger.ExitActions>
@@ -76,12 +76,12 @@
         
         <!-- Modern income amount style -->
         <Style x:Key="ModernIncomeAmount" TargetType="TextBlock" BasedOn="{StaticResource ModernEntryAmount}">
-            <Setter Property="Foreground" Value="{StaticResource AccentGreenBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource AccentGreenBrush}"/>
         </Style>
         
         <!-- Modern spending amount style -->
         <Style x:Key="ModernSpendingAmount" TargetType="TextBlock" BasedOn="{StaticResource ModernEntryAmount}">
-            <Setter Property="Foreground" Value="{StaticResource DangerRedBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource DangerRedBrush}"/>
         </Style>
         
         
@@ -90,7 +90,7 @@
             <Setter Property="FontFamily" Value="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"/>
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="FontWeight" Value="Medium"/>
-            <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
             <Setter Property="TextOptions.TextRenderingMode" Value="ClearType"/>
@@ -101,7 +101,7 @@
             <Setter Property="FontFamily" Value="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"/>
             <Setter Property="FontSize" Value="12"/>
             <Setter Property="FontWeight" Value="Normal"/>
-            <Setter Property="Foreground" Value="{StaticResource SecondaryTextBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource SecondaryTextBrush}"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="TextOptions.TextRenderingMode" Value="ClearType"/>
         </Style>
@@ -111,7 +111,7 @@
             <Setter Property="FontFamily" Value="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"/>
             <Setter Property="FontSize" Value="12"/>
             <Setter Property="FontWeight" Value="Normal"/>
-            <Setter Property="Foreground" Value="{StaticResource SecondaryTextBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource SecondaryTextBrush}"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="TextOptions.TextRenderingMode" Value="ClearType"/>
         </Style>
@@ -127,12 +127,12 @@
 
         <!-- Income section header -->  
         <Style x:Key="IncomeSectionHeader" TargetType="TextBlock" BasedOn="{StaticResource ModernSectionHeader}">
-            <Setter Property="Foreground" Value="{StaticResource AccentGreenBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource AccentGreenBrush}"/>
         </Style>
         
         <!-- Spending section header -->
         <Style x:Key="SpendingSectionHeader" TargetType="TextBlock" BasedOn="{StaticResource ModernSectionHeader}">
-            <Setter Property="Foreground" Value="{StaticResource DangerRedBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource DangerRedBrush}"/>
         </Style>
         
         <!-- Action Buttons Container -->
@@ -184,10 +184,12 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#1A000000"/>
+                                <Setter TargetName="border" Property="Background" Value="{DynamicResource SurfaceElevatedBrush}"/>
+                                <Setter TargetName="border" Property="Opacity" Value="0.7"/>
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#2A000000"/>
+                                <Setter TargetName="border" Property="Background" Value="{DynamicResource SurfaceElevatedBrush}"/>
+                                <Setter TargetName="border" Property="Opacity" Value="0.5"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -205,7 +207,7 @@
         <!-- Delete Action Button -->
         <Style x:Key="DeleteActionButton" TargetType="Button" BasedOn="{StaticResource BaseActionButton}">
             <Setter Property="Content" Value="&#xE74D;"/>
-            <Setter Property="Foreground" Value="{StaticResource DangerRedBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource DangerRedBrush}"/>
             <Setter Property="ToolTip" Value="{DynamicResource DeleteEntry}"/>
         </Style>
     </UserControl.Resources>
@@ -220,7 +222,7 @@
             
             <TextBlock Grid.Column="0" Text="&#xE8D4;" FontFamily="Segoe Fluent Icons" 
                        FontSize="18" VerticalAlignment="Center" 
-                       Foreground="{StaticResource AccentGreenBrush}" Margin="0,0,8,0"/>
+                       Foreground="{DynamicResource AccentGreenBrush}" Margin="0,0,8,0"/>
             <TextBlock Grid.Column="1" Text="{DynamicResource RecentIncome}" 
                        Style="{StaticResource IncomeSectionHeader}"/>
         </Grid>
@@ -241,7 +243,7 @@
                             <TextBlock Grid.Column="0" 
                                        Text="&#xE8D4;" 
                                        Style="{StaticResource ModernEntryIcon}"
-                                       Foreground="{StaticResource AccentGreenBrush}"/>
+                                       Foreground="{DynamicResource AccentGreenBrush}"/>
                             
                             <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,16,0">
                                 <TextBlock Text="{Binding Description, Converter={StaticResource TextTruncateConverter}, ConverterParameter=35}" 
@@ -274,7 +276,7 @@
         </ItemsControl>
         
         <!-- Modern Separator -->
-        <Border Height="1" Background="{StaticResource BorderLightBrush}" 
+        <Border Height="1" Background="{DynamicResource BorderLightBrush}" 
                 Margin="0,20,0,16" Opacity="0.6"/>
         
         <!-- Recent Spending Section -->
@@ -286,7 +288,7 @@
             
             <TextBlock Grid.Column="0" Text="&#xE7BF;" FontFamily="Segoe Fluent Icons" 
                        FontSize="18" VerticalAlignment="Center" 
-                       Foreground="{StaticResource DangerRedBrush}" Margin="0,0,8,0"/>
+                       Foreground="{DynamicResource DangerRedBrush}" Margin="0,0,8,0"/>
             <TextBlock Grid.Column="1" Text="{DynamicResource RecentSpending}" 
                        Style="{StaticResource SpendingSectionHeader}"/>
         </Grid>
@@ -307,7 +309,7 @@
                             <TextBlock Grid.Column="0" 
                                        Text="&#xE7BF;" 
                                        Style="{StaticResource ModernEntryIcon}"
-                                       Foreground="{StaticResource DangerRedBrush}"/>
+                                       Foreground="{DynamicResource DangerRedBrush}"/>
                             
                             <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,16,0">
                                 <TextBlock Text="{Binding Description, Converter={StaticResource TextTruncateConverter}, ConverterParameter=30}" 
@@ -344,26 +346,26 @@
         
         <!-- Modern Empty state -->
         <Border Background="{StaticResource SurfaceElevatedBrush}" 
-                BorderBrush="{StaticResource BorderLightBrush}" 
+                BorderBrush="{DynamicResource BorderLightBrush}" 
                 BorderThickness="1" CornerRadius="8" 
                 Padding="32,24" Margin="0,24"
                 Visibility="{Binding HasNoEntries, Converter={StaticResource BooleanToVisibilityConverter}}">
             <StackPanel HorizontalAlignment="Center">
                 <TextBlock Text="&#xE7C3;" FontFamily="Segoe Fluent Icons" 
                            FontSize="32" HorizontalAlignment="Center" 
-                           Foreground="{StaticResource SecondaryTextBrush}" 
+                           Foreground="{DynamicResource SecondaryTextBrush}" 
                            Margin="0,0,0,8"/>
                 <TextBlock Text="{DynamicResource NoRecentEntries}" 
                            HorizontalAlignment="Center"
                            FontFamily="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"
                            FontSize="14" FontWeight="Medium"
-                           Foreground="{StaticResource SecondaryTextBrush}"
+                           Foreground="{DynamicResource SecondaryTextBrush}"
                            TextOptions.TextRenderingMode="ClearType"/>
                 <TextBlock Text="Your recent transactions will appear here" 
                            HorizontalAlignment="Center"
                            FontFamily="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"
                            FontSize="12"
-                           Foreground="{StaticResource SecondaryTextBrush}"
+                           Foreground="{DynamicResource SecondaryTextBrush}"
                            TextOptions.TextRenderingMode="ClearType"
                            Margin="0,4,0,0"/>
             </StackPanel>

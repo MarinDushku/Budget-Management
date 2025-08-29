@@ -8,8 +8,8 @@
         <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
         <!-- Search Result Item Styles -->
         <Style x:Key="SearchResultItemStyle" TargetType="Border">
-            <Setter Property="Background" Value="{StaticResource SurfaceBrush}"/>
-            <Setter Property="BorderBrush" Value="{StaticResource BorderLightBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource SurfaceBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderLightBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="CornerRadius" Value="8"/>
             <Setter Property="Padding" Value="16"/>
@@ -22,8 +22,8 @@
             </Setter>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="{StaticResource SurfaceElevatedBrush}"/>
-                    <Setter Property="BorderBrush" Value="{StaticResource PrimaryBlueBrush}"/>
+                    <Setter Property="Background" Value="{DynamicResource SurfaceElevatedBrush}"/>
+                    <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBlueBrush}"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
@@ -70,10 +70,12 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#1A000000"/>
+                                <Setter TargetName="border" Property="Background" Value="{DynamicResource SurfaceElevatedBrush}"/>
+                                <Setter TargetName="border" Property="Opacity" Value="0.7"/>
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#2A000000"/>
+                                <Setter TargetName="border" Property="Background" Value="{DynamicResource SurfaceElevatedBrush}"/>
+                                <Setter TargetName="border" Property="Opacity" Value="0.5"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -83,13 +85,13 @@
 
         <Style x:Key="EditActionButton" TargetType="Button" BasedOn="{StaticResource BaseActionButton}">
             <Setter Property="Content" Value="&#xE70F;"/>
-            <Setter Property="Foreground" Value="{StaticResource PrimaryBlueBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryBlueBrush}"/>
             <Setter Property="ToolTip" Value="{DynamicResource EditEntry}"/>
         </Style>
 
         <Style x:Key="DeleteActionButton" TargetType="Button" BasedOn="{StaticResource BaseActionButton}">
             <Setter Property="Content" Value="&#xE74D;"/>
-            <Setter Property="Foreground" Value="{StaticResource DangerRedBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource DangerRedBrush}"/>
             <Setter Property="ToolTip" Value="{DynamicResource DeleteEntry}"/>
         </Style>
     </UserControl.Resources>
@@ -103,8 +105,8 @@
 
         <!-- Search Summary Header -->
         <Border Grid.Row="0" 
-                Background="{StaticResource SurfaceElevatedBrush}"
-                BorderBrush="{StaticResource BorderLightBrush}"
+                Background="{DynamicResource SurfaceElevatedBrush}"
+                BorderBrush="{DynamicResource BorderLightBrush}"
                 BorderThickness="0,0,0,1"
                 Padding="16,12"
                 Margin="0,0,0,16">
@@ -119,25 +121,25 @@
                         <TextBlock Text="&#xE71C;" 
                                    FontFamily="Segoe Fluent Icons" 
                                    FontSize="16"
-                                   Foreground="{StaticResource PrimaryBlueBrush}"
+                                   Foreground="{DynamicResource PrimaryBlueBrush}"
                                    VerticalAlignment="Center"
                                    Margin="0,0,8,0"/>
                         <TextBlock Text="{DynamicResource SearchResults}" 
                                    FontWeight="Medium"
                                    FontSize="16"
-                                   Foreground="{StaticResource PrimaryTextBrush}"
+                                   Foreground="{DynamicResource PrimaryTextBrush}"
                                    VerticalAlignment="Center"/>
                         <TextBlock Text=":" 
                                    FontSize="16"
-                                   Foreground="{StaticResource PrimaryTextBrush}"
+                                   Foreground="{DynamicResource PrimaryTextBrush}"
                                    Margin="0,0,8,0"/>
                         <TextBlock Text="{Binding TotalResults}" 
                                    FontWeight="SemiBold"
                                    FontSize="16"
-                                   Foreground="{StaticResource PrimaryBlueBrush}"/>
+                                   Foreground="{DynamicResource PrimaryBlueBrush}"/>
                         <TextBlock Text="{DynamicResource EntriesFound}" 
                                    FontSize="16"
-                                   Foreground="{StaticResource PrimaryTextBrush}"
+                                   Foreground="{DynamicResource PrimaryTextBrush}"
                                    Margin="4,0,0,0"/>
                     </StackPanel>
                     
@@ -145,7 +147,7 @@
                     <StackPanel Grid.Column="1" Orientation="Horizontal">
                         <TextBlock Text="{DynamicResource SortBy}" 
                                    FontSize="14"
-                                   Foreground="{StaticResource SecondaryTextBrush}"
+                                   Foreground="{DynamicResource SecondaryTextBrush}"
                                    VerticalAlignment="Center"
                                    Margin="0,0,8,0"/>
                         <ComboBox x:Name="SortComboBox" 
@@ -169,7 +171,7 @@
                            Visibility="{Binding HasActiveFilters, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <TextBlock Text="{DynamicResource ActiveFilters}" 
                                FontSize="12"
-                               Foreground="{StaticResource SecondaryTextBrush}"
+                               Foreground="{DynamicResource SecondaryTextBrush}"
                                Margin="0,0,8,0"/>
                     <ItemsControl ItemsSource="{Binding ActiveFilters}">
                         <ItemsControl.ItemsPanel>
@@ -179,7 +181,7 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Border Background="{StaticResource PrimaryBlueBrush}"
+                                <Border Background="{DynamicResource PrimaryBlueBrush}"
                                         CornerRadius="12"
                                         Padding="8,4"
                                         Margin="0,0,4,0">
@@ -202,8 +204,8 @@
                 <!-- No Results Message -->
                 <Border x:Name="NoResultsPanel"
                     Visibility="{Binding HasResults, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
-                    Background="{StaticResource SurfaceBrush}"
-                    BorderBrush="{StaticResource BorderLightBrush}"
+                    Background="{DynamicResource SurfaceBrush}"
+                    BorderBrush="{DynamicResource BorderLightBrush}"
                     BorderThickness="1"
                     CornerRadius="8"
                     Padding="32"
@@ -213,18 +215,18 @@
                     <TextBlock Text="&#xE71C;" 
                                FontFamily="Segoe Fluent Icons" 
                                FontSize="48"
-                               Foreground="{StaticResource SecondaryTextBrush}"
+                               Foreground="{DynamicResource SecondaryTextBrush}"
                                HorizontalAlignment="Center"
                                Margin="0,0,0,16"/>
                     <TextBlock Text="{DynamicResource NoResultsFound}" 
                                FontSize="18"
                                FontWeight="Medium"
-                               Foreground="{StaticResource PrimaryTextBrush}"
+                               Foreground="{DynamicResource PrimaryTextBrush}"
                                TextAlignment="Center"
                                Margin="0,0,0,8"/>
                     <TextBlock Text="{DynamicResource TryDifferentFilters}" 
                                FontSize="14"
-                               Foreground="{StaticResource SecondaryTextBrush}"
+                               Foreground="{DynamicResource SecondaryTextBrush}"
                                TextAlignment="Center"/>
                 </StackPanel>
             </Border>
@@ -248,21 +250,21 @@
                                     <TextBlock Text="{Binding Description}" 
                                                FontWeight="Medium" 
                                                FontSize="16"
-                                               Foreground="{StaticResource PrimaryTextBrush}"
+                                               Foreground="{DynamicResource PrimaryTextBrush}"
                                                TextTrimming="CharacterEllipsis"/>
                                     <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
                                         <TextBlock Text="{Binding Date, StringFormat='{}{0:dd/MM/yyyy}'}" 
                                                    FontSize="14"
-                                                   Foreground="{StaticResource SecondaryTextBrush}"/>
+                                                   Foreground="{DynamicResource SecondaryTextBrush}"/>
                                         <!-- Category shown only for spending entries -->
                                         <TextBlock Text="•" 
                                                    FontSize="14"
-                                                   Foreground="{StaticResource SecondaryTextBrush}"
+                                                   Foreground="{DynamicResource SecondaryTextBrush}"
                                                    Margin="8,0"
                                                    Visibility="{Binding Category, Converter={StaticResource NullToVisibilityConverter}}"/>
                                         <TextBlock Text="{Binding Category.Name}" 
                                                    FontSize="14"
-                                                   Foreground="{StaticResource SecondaryTextBrush}"
+                                                   Foreground="{DynamicResource SecondaryTextBrush}"
                                                    Visibility="{Binding Category, Converter={StaticResource NullToVisibilityConverter}}"/>
                                     </StackPanel>
                                 </StackPanel>
@@ -271,7 +273,7 @@
                                            Text="{Binding Amount, StringFormat='€{0:F2}'}" 
                                            FontWeight="SemiBold" 
                                            FontSize="18"
-                                           Foreground="{StaticResource PrimaryBlueBrush}"
+                                           Foreground="{DynamicResource PrimaryBlueBrush}"
                                            VerticalAlignment="Center"
                                            Margin="16,0"/>
                                 
@@ -300,8 +302,8 @@
 
         <!-- Pagination Controls -->
         <Border Grid.Row="2" 
-                Background="{StaticResource SurfaceElevatedBrush}"
-                BorderBrush="{StaticResource BorderLightBrush}"
+                Background="{DynamicResource SurfaceElevatedBrush}"
+                BorderBrush="{DynamicResource BorderLightBrush}"
                 BorderThickness="0,1,0,0"
                 Padding="16,12"
                 Margin="0,16,0,0"
@@ -320,28 +322,28 @@
                            VerticalAlignment="Center">
                     <TextBlock Text="{DynamicResource Showing}" 
                                FontSize="14"
-                               Foreground="{StaticResource SecondaryTextBrush}"/>
+                               Foreground="{DynamicResource SecondaryTextBrush}"/>
                     <TextBlock Text="{Binding StartIndex}" 
                                FontWeight="Medium"
                                FontSize="14"
-                               Foreground="{StaticResource PrimaryTextBrush}"
+                               Foreground="{DynamicResource PrimaryTextBrush}"
                                Margin="4,0"/>
                     <TextBlock Text="-" 
                                FontSize="14"
-                               Foreground="{StaticResource SecondaryTextBrush}"/>
+                               Foreground="{DynamicResource SecondaryTextBrush}"/>
                     <TextBlock Text="{Binding EndIndex}" 
                                FontWeight="Medium"
                                FontSize="14"
-                               Foreground="{StaticResource PrimaryTextBrush}"
+                               Foreground="{DynamicResource PrimaryTextBrush}"
                                Margin="4,0"/>
                     <TextBlock Text="{DynamicResource Of}" 
                                FontSize="14"
-                               Foreground="{StaticResource SecondaryTextBrush}"
+                               Foreground="{DynamicResource SecondaryTextBrush}"
                                Margin="0,0,4,0"/>
                     <TextBlock Text="{Binding TotalResults}" 
                                FontWeight="Medium"
                                FontSize="14"
-                               Foreground="{StaticResource PrimaryTextBrush}"/>
+                               Foreground="{DynamicResource PrimaryTextBrush}"/>
                 </StackPanel>
                 
                 <!-- Pagination Buttons -->
@@ -415,7 +417,7 @@
                            VerticalAlignment="Center">
                     <TextBlock Text="{DynamicResource ItemsPerPage}" 
                                FontSize="14"
-                               Foreground="{StaticResource SecondaryTextBrush}"
+                               Foreground="{DynamicResource SecondaryTextBrush}"
                                VerticalAlignment="Center"
                                Margin="0,0,8,0"/>
                     <ComboBox x:Name="PageSizeComboBox"

@@ -1,9 +1,11 @@
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using BudgetManagement.Models;
+using BudgetManagement.Services;
 using OxyPlot;
 using OxyPlot.Series;
 
@@ -14,9 +16,19 @@ namespace BudgetManagement.Views.UserControls
     /// </summary>
     public partial class SpendingCategoryChartUserControl : UserControl
     {
+        private IThemeService? _themeService;
+
         public SpendingCategoryChartUserControl()
         {
             InitializeComponent();
+            
+            // Get theme service from application resources or DI container
+            if (Application.Current?.Resources.Contains("ThemeService") == true)
+            {
+                _themeService = (IThemeService)Application.Current.Resources["ThemeService"];
+                _themeService.ThemeChanged += OnThemeChanged;
+            }
+            
             InitializeChart();
         }
 
@@ -90,6 +102,13 @@ namespace BudgetManagement.Views.UserControls
             UpdateChart();
         }
 
+        private void OnThemeChanged(object? sender, ThemeChangedEventArgs e)
+        {
+            // Refresh chart with new theme colors
+            InitializeChart();
+            UpdateChart();
+        }
+
         private void UpdateChart()
         {
             System.Diagnostics.Debug.WriteLine($"SpendingCategoryChartUserControl.UpdateChart: Starting with {SpendingEntries?.Count ?? 0} spending entries");
@@ -117,31 +136,20 @@ namespace BudgetManagement.Views.UserControls
 
             var totalAmount = categoryTotals.Sum(c => c.Amount);
 
-            // Create pie series
+            // Create pie series with theme-aware stroke
+            var strokeColor = GetThemeAwareStrokeColor();
             var pieSeries = new PieSeries
             {
                 StrokeThickness = 1.0,
                 InsideLabelPosition = 0.8,
                 AngleSpan = 360,
                 StartAngle = 0,
-                Stroke = OxyColors.White,
+                Stroke = strokeColor,
                 FontSize = 10
             };
 
-            // Color palette for categories
-            var colors = new[]
-            {
-                OxyColor.FromRgb(76, 175, 80),   // Green
-                OxyColor.FromRgb(33, 150, 243),  // Blue
-                OxyColor.FromRgb(255, 152, 0),   // Orange
-                OxyColor.FromRgb(233, 30, 99),   // Pink
-                OxyColor.FromRgb(156, 39, 176),  // Purple
-                OxyColor.FromRgb(255, 193, 7),   // Amber
-                OxyColor.FromRgb(96, 125, 139),  // Blue Grey
-                OxyColor.FromRgb(121, 85, 72),   // Brown
-                OxyColor.FromRgb(158, 158, 158), // Grey
-                OxyColor.FromRgb(255, 87, 34)    // Deep Orange
-            };
+            // Get theme-aware color palette for categories
+            var colors = GetThemeAwareChartColors();
 
             CategorySummaries?.Clear();
             if (CategorySummaries == null)
@@ -174,6 +182,64 @@ namespace BudgetManagement.Views.UserControls
             PieChartModel?.Series.Clear();
             PieChartModel?.Series.Add(pieSeries);
             PieChartModel?.InvalidatePlot(true);
+        }
+
+        private OxyColor GetThemeAwareStrokeColor()
+        {
+            // Get stroke color based on current theme
+            var isDarkTheme = _themeService?.IsDarkTheme ?? false;
+            
+            if (isDarkTheme)
+            {
+                // Dark theme: use darker stroke for contrast
+                return OxyColor.FromRgb(60, 60, 60);
+            }
+            else
+            {
+                // Light theme: use white stroke
+                return OxyColors.White;
+            }
+        }
+
+        private OxyColor[] GetThemeAwareChartColors()
+        {
+            // Use theme service to determine appropriate colors
+            var isDarkTheme = _themeService?.IsDarkTheme ?? false;
+
+            if (isDarkTheme)
+            {
+                // Dark theme: brighter, more vibrant colors for better visibility
+                return new[]
+                {
+                    OxyColor.FromRgb(102, 187, 106), // Light Green
+                    OxyColor.FromRgb(66, 165, 245),  // Light Blue
+                    OxyColor.FromRgb(255, 167, 38),  // Light Orange
+                    OxyColor.FromRgb(240, 98, 146),  // Light Pink
+                    OxyColor.FromRgb(171, 71, 188),  // Light Purple
+                    OxyColor.FromRgb(255, 213, 79),  // Light Amber
+                    OxyColor.FromRgb(120, 144, 156), // Light Blue Grey
+                    OxyColor.FromRgb(141, 110, 99),  // Light Brown
+                    OxyColor.FromRgb(189, 189, 189), // Light Grey
+                    OxyColor.FromRgb(255, 112, 67)   // Light Deep Orange
+                };
+            }
+            else
+            {
+                // Light theme: standard colors
+                return new[]
+                {
+                    OxyColor.FromRgb(76, 175, 80),   // Green
+                    OxyColor.FromRgb(33, 150, 243),  // Blue
+                    OxyColor.FromRgb(255, 152, 0),   // Orange
+                    OxyColor.FromRgb(233, 30, 99),   // Pink
+                    OxyColor.FromRgb(156, 39, 176),  // Purple
+                    OxyColor.FromRgb(255, 193, 7),   // Amber
+                    OxyColor.FromRgb(96, 125, 139),  // Blue Grey
+                    OxyColor.FromRgb(121, 85, 72),   // Brown
+                    OxyColor.FromRgb(158, 158, 158), // Grey
+                    OxyColor.FromRgb(255, 87, 34)    // Deep Orange
+                };
+            }
         }
     }
 

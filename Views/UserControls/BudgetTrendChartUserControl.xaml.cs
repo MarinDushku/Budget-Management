@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using BudgetManagement.Models;
+using BudgetManagement.Services;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
@@ -17,9 +18,19 @@ namespace BudgetManagement.Views.UserControls
     /// </summary>
     public partial class BudgetTrendChartUserControl : UserControl
     {
+        private IThemeService? _themeService;
+
         public BudgetTrendChartUserControl()
         {
             InitializeComponent();
+            
+            // Get theme service from application resources or DI container
+            if (Application.Current?.Resources.Contains("ThemeService") == true)
+            {
+                _themeService = (IThemeService)Application.Current.Resources["ThemeService"];
+                _themeService.ThemeChanged += OnThemeChanged;
+            }
+            
             InitializeChart();
         }
 
@@ -100,22 +111,24 @@ namespace BudgetManagement.Views.UserControls
 
         private void InitializeChart()
         {
+            var themeColors = GetThemeAwareChartColors();
+            
             LineChartModel = new PlotModel
             {
                 Background = OxyColors.Transparent,
-                PlotAreaBorderColor = OxyColors.LightGray,
+                PlotAreaBorderColor = themeColors.BorderColor,
                 PlotAreaBorderThickness = new OxyThickness(1),
                 Padding = new OxyThickness(10, 5, 10, 5)
             };
 
-            // Add axes
+            // Add axes with theme-aware colors
             LineChartModel.Axes.Add(new DateTimeAxis
             {
                 Position = AxisPosition.Bottom,
                 StringFormat = "MM/dd",
                 Title = "",
                 FontSize = 10,
-                TextColor = OxyColor.FromRgb(102, 102, 102),
+                TextColor = themeColors.AxisTextColor,
                 TickStyle = TickStyle.Outside,
                 MajorGridlineStyle = LineStyle.None
             });
@@ -125,11 +138,11 @@ namespace BudgetManagement.Views.UserControls
                 Position = AxisPosition.Left,
                 Title = "",
                 FontSize = 10,
-                TextColor = OxyColor.FromRgb(102, 102, 102),
+                TextColor = themeColors.AxisTextColor,
                 StringFormat = "C0",
                 TickStyle = TickStyle.Outside,
                 MajorGridlineStyle = LineStyle.Dot,
-                MajorGridlineColor = OxyColor.FromRgb(220, 220, 220)
+                MajorGridlineColor = themeColors.GridColor
             });
         }
 
@@ -158,6 +171,13 @@ namespace BudgetManagement.Views.UserControls
             UpdateChart();
         }
 
+        private void OnThemeChanged(object? sender, ThemeChangedEventArgs e)
+        {
+            // Refresh chart with new theme colors
+            InitializeChart();
+            UpdateChart();
+        }
+
         private void UpdateChart()
         {
             System.Diagnostics.Debug.WriteLine($"BudgetTrendChartUserControl.UpdateChart: Starting with {BudgetTrendData?.Count ?? 0} data points");
@@ -172,15 +192,16 @@ namespace BudgetManagement.Views.UserControls
 
             var sortedData = BudgetTrendData.OrderBy(d => d.WeekStartDate).ToList();
 
-            // Create line series
+            // Create line series with theme-aware colors
+            var themeColors = GetThemeAwareChartColors();
             var lineSeries = new LineSeries
             {
-                Color = OxyColor.FromRgb(33, 150, 243),
+                Color = themeColors.PrimaryLineColor,
                 StrokeThickness = 2,
                 MarkerType = MarkerType.Circle,
                 MarkerSize = 4,
-                MarkerStroke = OxyColor.FromRgb(33, 150, 243),
-                MarkerFill = OxyColors.White
+                MarkerStroke = themeColors.PrimaryLineColor,
+                MarkerFill = themeColors.MarkerFillColor
             };
 
             foreach (var data in sortedData)
@@ -243,5 +264,45 @@ namespace BudgetManagement.Views.UserControls
                 TrendColor = new SolidColorBrush(Colors.Blue);
             }
         }
+
+        private BudgetTrendChartColors GetThemeAwareChartColors()
+        {
+            var isDarkTheme = _themeService?.IsDarkTheme ?? false;
+
+            if (isDarkTheme)
+            {
+                return new BudgetTrendChartColors
+                {
+                    BorderColor = OxyColor.FromRgb(96, 96, 96),      // Lighter border for dark theme
+                    AxisTextColor = OxyColor.FromRgb(200, 200, 200), // Light text for dark theme
+                    GridColor = OxyColor.FromRgb(64, 64, 64),        // Subtle grid for dark theme
+                    PrimaryLineColor = OxyColor.FromRgb(66, 165, 245), // Brighter blue for dark theme
+                    MarkerFillColor = OxyColor.FromRgb(30, 30, 30)   // Dark marker fill
+                };
+            }
+            else
+            {
+                return new BudgetTrendChartColors
+                {
+                    BorderColor = OxyColors.LightGray,               // Standard border for light theme
+                    AxisTextColor = OxyColor.FromRgb(102, 102, 102), // Standard text color
+                    GridColor = OxyColor.FromRgb(220, 220, 220),     // Light grid color
+                    PrimaryLineColor = OxyColor.FromRgb(33, 150, 243), // Standard blue
+                    MarkerFillColor = OxyColors.White                // White marker fill
+                };
+            }
+        }
+    }
+
+    /// <summary>
+    /// Theme-aware color configuration for budget trend charts
+    /// </summary>
+    public class BudgetTrendChartColors
+    {
+        public OxyColor BorderColor { get; set; }
+        public OxyColor AxisTextColor { get; set; }
+        public OxyColor GridColor { get; set; }
+        public OxyColor PrimaryLineColor { get; set; }
+        public OxyColor MarkerFillColor { get; set; }
     }
 }

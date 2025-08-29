@@ -75,7 +75,7 @@
         <Setter Property="FontFamily" Value="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"/>
         <Setter Property="FontSize" Value="32"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
-        <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
         <Setter Property="TextOptions.TextRenderingMode" Value="ClearType"/>
         <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
     </Style>
@@ -85,7 +85,7 @@
         <Setter Property="FontFamily" Value="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"/>
         <Setter Property="FontSize" Value="24"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
-        <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
         <Setter Property="Margin" Value="0,0,0,16"/>
         <Setter Property="TextOptions.TextRenderingMode" Value="ClearType"/>
     </Style>
@@ -95,7 +95,7 @@
         <Setter Property="FontFamily" Value="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"/>
         <Setter Property="FontSize" Value="18"/>
         <Setter Property="FontWeight" Value="Medium"/>
-        <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
         <Setter Property="Margin" Value="0,0,0,12"/>
     </Style>
     
@@ -104,7 +104,7 @@
         <Setter Property="FontFamily" Value="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"/>
         <Setter Property="FontSize" Value="16"/>
         <Setter Property="FontWeight" Value="Normal"/>
-        <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
         <Setter Property="LineHeight" Value="22"/>
     </Style>
     
@@ -112,21 +112,21 @@
     <Style x:Key="SecondaryTextStyle" TargetType="TextBlock">
         <Setter Property="FontFamily" Value="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"/>
         <Setter Property="FontSize" Value="14"/>
-        <Setter Property="Foreground" Value="{StaticResource SecondaryTextBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource SecondaryTextBrush}"/>
     </Style>
     
     <!-- Caption Text -->
     <Style x:Key="CaptionTextStyle" TargetType="TextBlock">
         <Setter Property="FontFamily" Value="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"/>
         <Setter Property="FontSize" Value="12"/>
-        <Setter Property="Foreground" Value="{StaticResource SecondaryTextBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource SecondaryTextBrush}"/>
     </Style>
     
     <!-- ===== MODERN BUTTON STYLES ===== -->
     
     <!-- Primary Button -->
     <Style x:Key="ModernPrimaryButtonStyle" TargetType="Button">
-        <Setter Property="Background" Value="{StaticResource PrimaryBlueBrush}"/>
+        <Setter Property="Background" Value="{DynamicResource PrimaryBlueBrush}"/>
         <Setter Property="Foreground" Value="White"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Padding" Value="16,12"/>
@@ -175,7 +175,7 @@
                             <Setter Property="Background" TargetName="border" Value="#0969C3"/>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter Property="Background" TargetName="border" Value="{StaticResource DisabledTextBrush}"/>
+                            <Setter Property="Background" TargetName="border" Value="{DynamicResource DisabledTextBrush}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -185,7 +185,7 @@
     
     <!-- Success Button -->
     <Style x:Key="ModernSuccessButtonStyle" TargetType="Button">
-        <Setter Property="Background" Value="{StaticResource AccentGreenBrush}"/>
+        <Setter Property="Background" Value="{DynamicResource AccentGreenBrush}"/>
         <Setter Property="Foreground" Value="White"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Padding" Value="16,12"/>
@@ -239,9 +239,9 @@
     
     <!-- Secondary Button -->
     <Style x:Key="ModernSecondaryButtonStyle" TargetType="Button">
-        <Setter Property="Background" Value="{StaticResource SurfaceBrush}"/>
-        <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
-        <Setter Property="BorderBrush" Value="{StaticResource BorderMediumBrush}"/>
+        <Setter Property="Background" Value="{DynamicResource SurfaceBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderMediumBrush}"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="Padding" Value="16,12"/>
         <Setter Property="FontFamily" Value="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"/>
@@ -291,7 +291,7 @@
                             </Trigger.ExitActions>
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter Property="Background" TargetName="border" Value="{StaticResource BorderLightBrush}"/>
+                            <Setter Property="Background" TargetName="border" Value="{DynamicResource BorderLightBrush}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -357,7 +357,7 @@
     
     <!-- Standard Modern Card -->
     <Style x:Key="ModernCardStyle" TargetType="Border">
-        <Setter Property="Background" Value="{StaticResource SurfaceBrush}"/>
+        <Setter Property="Background" Value="{DynamicResource SurfaceBrush}"/>
         <Setter Property="CornerRadius" Value="8"/>
         <Setter Property="Padding" Value="24"/>
         <Setter Property="Margin" Value="0,0,0,16"/>
@@ -396,7 +396,7 @@
     
     <!-- Elevated Modern Card -->
     <Style x:Key="ElevatedCardStyle" TargetType="Border">
-        <Setter Property="Background" Value="{StaticResource SurfaceBrush}"/>
+        <Setter Property="Background" Value="{DynamicResource SurfaceBrush}"/>
         <Setter Property="CornerRadius" Value="12"/>
         <Setter Property="Padding" Value="32"/>
         <Setter Property="Margin" Value="0,0,0,20"/>
@@ -405,13 +405,13 @@
     
     <!-- Summary Card (for financial data) -->
     <Style x:Key="SummaryCardStyle" TargetType="Border">
-        <Setter Property="Background" Value="{StaticResource SurfaceBrush}"/>
+        <Setter Property="Background" Value="{DynamicResource SurfaceBrush}"/>
         <Setter Property="CornerRadius" Value="12"/>
         <Setter Property="Padding" Value="20"/>
         <Setter Property="Margin" Value="8"/>
         <Setter Property="MinHeight" Value="120"/>
         <Setter Property="Effect" Value="{StaticResource ModernCardShadow}"/>
-        <Setter Property="BorderBrush" Value="{StaticResource BorderLightBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderLightBrush}"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="RenderTransform">
             <Setter.Value>
@@ -452,10 +452,10 @@
         <Setter Property="FontFamily" Value="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"/>
         <Setter Property="FontSize" Value="16"/>
         <Setter Property="Padding" Value="12"/>
-        <Setter Property="BorderBrush" Value="{StaticResource BorderLightBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderLightBrush}"/>
         <Setter Property="BorderThickness" Value="2"/>
-        <Setter Property="Background" Value="{StaticResource SurfaceBrush}"/>
-        <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
+        <Setter Property="Background" Value="{DynamicResource SurfaceBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
         <Setter Property="MinHeight" Value="44"/>
         <Setter Property="Template">
             <Setter.Value>
@@ -520,10 +520,10 @@
         <Setter Property="FontFamily" Value="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"/>
         <Setter Property="FontSize" Value="16"/>
         <Setter Property="Padding" Value="12"/>
-        <Setter Property="BorderBrush" Value="{StaticResource BorderLightBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderLightBrush}"/>
         <Setter Property="BorderThickness" Value="2"/>
-        <Setter Property="Background" Value="{StaticResource SurfaceBrush}"/>
-        <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
+        <Setter Property="Background" Value="{DynamicResource SurfaceBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
         <Setter Property="MinHeight" Value="44"/>
     </Style>
     
@@ -532,10 +532,10 @@
         <Setter Property="FontFamily" Value="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"/>
         <Setter Property="FontSize" Value="16"/>
         <Setter Property="Padding" Value="12"/>
-        <Setter Property="BorderBrush" Value="{StaticResource BorderLightBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderLightBrush}"/>
         <Setter Property="BorderThickness" Value="2"/>
-        <Setter Property="Background" Value="{StaticResource SurfaceBrush}"/>
-        <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
+        <Setter Property="Background" Value="{DynamicResource SurfaceBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
         <Setter Property="MinHeight" Value="44"/>
     </Style>
     
@@ -543,14 +543,14 @@
     
     <!-- Main Content Panel -->
     <Style x:Key="MainContentPanelStyle" TargetType="Border">
-        <Setter Property="Background" Value="{StaticResource BackgroundBrush}"/>
+        <Setter Property="Background" Value="{DynamicResource BackgroundBrush}"/>
         <Setter Property="Padding" Value="20"/>
     </Style>
     
     <!-- Side Panel -->
     <Style x:Key="ModernSidePanelStyle" TargetType="Border">
-        <Setter Property="Background" Value="{StaticResource SurfaceBrush}"/>
-        <Setter Property="BorderBrush" Value="{StaticResource BorderLightBrush}"/>
+        <Setter Property="Background" Value="{DynamicResource SurfaceBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderLightBrush}"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="CornerRadius" Value="12"/>
         <Setter Property="Margin" Value="8"/>
@@ -560,7 +560,7 @@
     
     <!-- Header Panel -->
     <Style x:Key="HeaderPanelStyle" TargetType="Border">
-        <Setter Property="Background" Value="{StaticResource HeaderGradientBrush}"/>
+        <Setter Property="Background" Value="{DynamicResource HeaderGradientBrush}"/>
         <Setter Property="Padding" Value="24,16"/>
         <Setter Property="CornerRadius" Value="0,0,12,12"/>
     </Style>
@@ -571,7 +571,7 @@
         <Setter Property="Control.Template">
             <Setter.Value>
                 <ControlTemplate>
-                    <Rectangle Stroke="{StaticResource PrimaryBlueBrush}" 
+                    <Rectangle Stroke="{DynamicResource PrimaryBlueBrush}" 
                                StrokeThickness="2" 
                                StrokeDashArray="3 2" 
                                SnapsToDevicePixels="True"
@@ -590,7 +590,7 @@
     
     <Style x:Key="ModernScrollBarStyle" TargetType="ScrollBar">
         <Setter Property="Background" Value="Transparent"/>
-        <Setter Property="Foreground" Value="{StaticResource BorderMediumBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource BorderMediumBrush}"/>
         <Setter Property="Width" Value="12"/>
         <Setter Property="MinWidth" Value="12"/>
         <Setter Property="Template">
@@ -612,7 +612,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Thumb">
-                    <Border Background="{StaticResource BorderMediumBrush}" 
+                    <Border Background="{DynamicResource BorderMediumBrush}" 
                             CornerRadius="6" Margin="2"/>
                 </ControlTemplate>
             </Setter.Value>
@@ -623,8 +623,8 @@
     
     <!-- Navigation Rail Container -->
     <Style x:Key="NavigationRailStyle" TargetType="Border">
-        <Setter Property="Background" Value="{StaticResource SurfaceBrush}"/>
-        <Setter Property="BorderBrush" Value="{StaticResource BorderLightBrush}"/>
+        <Setter Property="Background" Value="{DynamicResource SurfaceBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderLightBrush}"/>
         <Setter Property="BorderThickness" Value="0,0,1,0"/>
         <Setter Property="Width" Value="280"/>
         <Setter Property="MinWidth" Value="60"/>
@@ -633,7 +633,7 @@
     <!-- Navigation Item Style -->
     <Style x:Key="NavigationItemStyle" TargetType="Button">
         <Setter Property="Background" Value="Transparent"/>
-        <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Padding" Value="16,12"/>
         <Setter Property="Margin" Value="8,2"/>
@@ -657,7 +657,7 @@
                             
                             <!-- Selection Indicator -->
                             <Border x:Name="SelectionIndicator" Grid.Column="0" Grid.ColumnSpan="3" 
-                                    Background="{StaticResource PrimaryBlueBrush}" CornerRadius="6" 
+                                    Background="{DynamicResource PrimaryBlueBrush}" CornerRadius="6" 
                                     Opacity="0"/>
                             
                             <!-- Icon -->
@@ -702,7 +702,7 @@
     
     <!-- Selected Navigation Item Style -->
     <Style x:Key="SelectedNavigationItemStyle" TargetType="Button" BasedOn="{StaticResource NavigationItemStyle}">
-        <Setter Property="Background" Value="{StaticResource PrimaryBlueBrush}"/>
+        <Setter Property="Background" Value="{DynamicResource PrimaryBlueBrush}"/>
         <Setter Property="Foreground" Value="White"/>
     </Style>
     
@@ -711,13 +711,13 @@
         <Setter Property="FontFamily" Value="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"/>
         <Setter Property="FontSize" Value="12"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
-        <Setter Property="Foreground" Value="{StaticResource SecondaryTextBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource SecondaryTextBrush}"/>
         <Setter Property="Margin" Value="16,16,16,8"/>
     </Style>
     
     <!-- Main Content Container (to accommodate navigation) -->
     <Style x:Key="MainContentContainerStyle" TargetType="Grid">
-        <Setter Property="Background" Value="{StaticResource BackgroundBrush}"/>
+        <Setter Property="Background" Value="{DynamicResource BackgroundBrush}"/>
         <Setter Property="Margin" Value="0"/>
     </Style>
     
@@ -875,7 +875,7 @@
         <Setter Property="FontFamily" Value="Segoe Fluent Icons"/>
         <Setter Property="FontSize" Value="24"/>
         <Setter Property="Text" Value="&#xE1CD;"/>
-        <Setter Property="Foreground" Value="{StaticResource PrimaryBlueBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryBlueBrush}"/>
         <Setter Property="HorizontalAlignment" Value="Center"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
         <Setter Property="RenderTransform">
@@ -895,7 +895,7 @@
     
     <!-- Skeleton Loading Style -->
     <Style x:Key="SkeletonLoadingStyle" TargetType="Border">
-        <Setter Property="Background" Value="{StaticResource SurfaceElevatedBrush}"/>
+        <Setter Property="Background" Value="{DynamicResource SurfaceElevatedBrush}"/>
         <Setter Property="CornerRadius" Value="4"/>
         <Setter Property="Height" Value="16"/>
         <Setter Property="Margin" Value="0,2"/>
@@ -912,7 +912,7 @@
     
     <!-- Success Notification Style -->
     <Style x:Key="SuccessNotificationStyle" TargetType="Border">
-        <Setter Property="Background" Value="{StaticResource AccentGreenBrush}"/>
+        <Setter Property="Background" Value="{DynamicResource AccentGreenBrush}"/>
         <Setter Property="CornerRadius" Value="6"/>
         <Setter Property="Padding" Value="16,12"/>
         <Setter Property="Margin" Value="0,8"/>
@@ -948,7 +948,7 @@
     
     <!-- Info Notification Style -->
     <Style x:Key="InfoNotificationStyle" TargetType="Border">
-        <Setter Property="Background" Value="{StaticResource PrimaryBlueBrush}"/>
+        <Setter Property="Background" Value="{DynamicResource PrimaryBlueBrush}"/>
         <Setter Property="CornerRadius" Value="6"/>
         <Setter Property="Padding" Value="16,12"/>
         <Setter Property="Margin" Value="0,8"/>

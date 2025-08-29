@@ -9,7 +9,7 @@
         ResizeMode="CanResize"
         FontFamily="Segoe UI"
         FontSize="16"
-        Background="{StaticResource BackgroundBrush}"
+        Background="{DynamicResource BackgroundBrush}"
         ShowInTaskbar="False">
 
     <Window.Resources>
@@ -21,20 +21,20 @@
         <Style x:Key="HeaderStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="22"/>
             <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
             <Setter Property="Margin" Value="0,0,0,20"/>
         </Style>
         
         <Style x:Key="SectionHeaderStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="16"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
             <Setter Property="Margin" Value="0,15,0,10"/>
         </Style>
         
         <Style x:Key="CategoryCardStyle" TargetType="Border">
-            <Setter Property="Background" Value="{StaticResource SurfaceBrush}"/>
-            <Setter Property="BorderBrush" Value="{StaticResource BorderLightBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource SurfaceBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderLightBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="CornerRadius" Value="6"/>
             <Setter Property="Padding" Value="15"/>
@@ -85,13 +85,13 @@
         </Grid.RowDefinitions>
 
         <!-- Header -->
-        <Border Grid.Row="0" Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderLightBrush}" BorderThickness="1" 
+        <Border Grid.Row="0" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderLightBrush}" BorderThickness="1" 
                 CornerRadius="6" Padding="20" Margin="0,0,0,25">
             <StackPanel>
                 <TextBlock Text="{DynamicResource ManageSpendingCategoriesHeader}" Style="{StaticResource HeaderStyle}" 
                            HorizontalAlignment="Center"/>
                 <TextBlock Text="{DynamicResource ManageCategoriesDescription}" 
-                           FontSize="14" Foreground="{StaticResource SecondaryTextBrush}" HorizontalAlignment="Center"/>
+                           FontSize="14" Foreground="{DynamicResource SecondaryTextBrush}" HorizontalAlignment="Center"/>
             </StackPanel>
         </Border>
 
@@ -123,7 +123,7 @@
             <StackPanel>
                 <TextBlock Text="{DynamicResource CurrentCategoriesHeader}" Style="{StaticResource SectionHeaderStyle}"/>
                 <TextBlock Text="{DynamicResource CategoriesOrderDescription}" 
-                           FontSize="12" Foreground="{StaticResource SecondaryTextBrush}" Margin="0,0,0,15"/>
+                           FontSize="12" Foreground="{DynamicResource SecondaryTextBrush}" Margin="0,0,0,15"/>
                 
                 <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="300">
                     <ListBox x:Name="CategoriesListBox" BorderThickness="0" Background="Transparent"
@@ -131,7 +131,7 @@
                              ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <Border Background="{StaticResource SurfaceElevatedBrush}" BorderBrush="{StaticResource BorderLightBrush}" BorderThickness="1" 
+                                <Border Background="{DynamicResource SurfaceElevatedBrush}" BorderBrush="{DynamicResource BorderLightBrush}" BorderThickness="1" 
                                         CornerRadius="4" Padding="15" Margin="0,0,0,6">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
@@ -141,7 +141,7 @@
                                         </Grid.ColumnDefinitions>
                                         
                                         <!-- Display Order -->
-                                        <Border Grid.Column="0" Background="{StaticResource PrimaryBlueBrush}" CornerRadius="12" 
+                                        <Border Grid.Column="0" Background="{DynamicResource PrimaryBlueBrush}" CornerRadius="12" 
                                                 Width="24" Height="24" Margin="0,0,15,0">
                                             <TextBlock Text="{Binding DisplayOrder}" Foreground="White" 
                                                        FontSize="12" FontWeight="Bold" 
@@ -151,9 +151,9 @@
                                         <!-- Category Name -->
                                         <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                             <TextBlock Text="{Binding Name}" FontSize="16" FontWeight="Medium"
-                                                       Foreground="{StaticResource PrimaryTextBrush}"/>
+                                                       Foreground="{DynamicResource PrimaryTextBrush}"/>
                                             <TextBlock Text="{Binding IsActive, Converter={x:Static local:BooleanToStatusConverter.Instance}}" 
-                                                       FontSize="12" Foreground="{StaticResource SecondaryTextBrush}"/>
+                                                       FontSize="12" Foreground="{DynamicResource SecondaryTextBrush}"/>
                                         </StackPanel>
                                         
                                         <!-- Action Buttons -->
@@ -181,7 +181,7 @@
         </Border>
 
         <!-- Dialog Action Buttons -->
-        <Border Grid.Row="3" Background="{StaticResource SurfaceElevatedBrush}" BorderBrush="{StaticResource BorderLightBrush}" BorderThickness="1" 
+        <Border Grid.Row="3" Background="{DynamicResource SurfaceElevatedBrush}" BorderBrush="{DynamicResource BorderLightBrush}" BorderThickness="1" 
                 CornerRadius="6" Padding="20" Margin="0,20,0,0">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button Content="🔄 Reset to Default" Style="{StaticResource SecondaryButtonStyle}" 

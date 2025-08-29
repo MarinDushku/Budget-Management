@@ -14,7 +14,7 @@
             <Setter Property="FontFamily" Value="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"/>
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Foreground" Value="{StaticResource SecondaryTextBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource SecondaryTextBrush}"/>
             <Setter Property="HorizontalAlignment" Value="Center"/>
             <Setter Property="Margin" Value="0,0,0,8"/>
             <Setter Property="TextWrapping" Value="Wrap"/>
@@ -27,7 +27,7 @@
             <Setter Property="FontSize" Value="24"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="HorizontalAlignment" Value="Center"/>
-            <Setter Property="Foreground" Value="{StaticResource PrimaryBlueBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryBlueBrush}"/>
             <Setter Property="TextWrapping" Value="Wrap"/>
             <Setter Property="TextOptions.TextRenderingMode" Value="ClearType"/>
             <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
@@ -35,25 +35,25 @@
 
         <!-- Positive value style with modern colors -->
         <Style x:Key="ModernPositiveValue" TargetType="TextBlock" BasedOn="{StaticResource ModernCardValue}">
-            <Setter Property="Foreground" Value="{StaticResource AccentGreenBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource AccentGreenBrush}"/>
         </Style>
 
         <!-- Negative value style with modern colors -->
         <Style x:Key="ModernNegativeValue" TargetType="TextBlock" BasedOn="{StaticResource ModernCardValue}">
-            <Setter Property="Foreground" Value="{StaticResource DangerRedBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource DangerRedBrush}"/>
         </Style>
 
         <!-- Dynamic value style that changes based on number sign -->
         <Style x:Key="ModernDynamicValue" TargetType="TextBlock" BasedOn="{StaticResource ModernCardValue}">
             <Style.Triggers>
                 <DataTrigger Binding="{Binding Value, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource NumberToSignConverter}}" Value="Positive">
-                    <Setter Property="Foreground" Value="{StaticResource AccentGreenBrush}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource AccentGreenBrush}"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding Value, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource NumberToSignConverter}}" Value="Negative">
-                    <Setter Property="Foreground" Value="{StaticResource DangerRedBrush}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource DangerRedBrush}"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding Value, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource NumberToSignConverter}}" Value="Zero">
-                    <Setter Property="Foreground" Value="{StaticResource WarningOrangeBrush}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource WarningOrangeBrush}"/>
                 </DataTrigger>
             </Style.Triggers>
         </Style>
@@ -64,7 +64,7 @@
             <Setter Property="FontSize" Value="24"/>
             <Setter Property="HorizontalAlignment" Value="Center"/>
             <Setter Property="Margin" Value="0,0,0,8"/>
-            <Setter Property="Foreground" Value="{StaticResource PrimaryBlueBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryBlueBrush}"/>
             <Setter Property="TextOptions.TextRenderingMode" Value="ClearType"/>
         </Style>
 
@@ -83,7 +83,7 @@
             <Setter Property="FontFamily" Value="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"/>
             <Setter Property="FontSize" Value="12"/>
             <Setter Property="FontWeight" Value="Normal"/>
-            <Setter Property="Foreground" Value="{StaticResource SecondaryTextBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource SecondaryTextBrush}"/>
             <Setter Property="HorizontalAlignment" Value="Center"/>
             <Setter Property="Margin" Value="0,8,0,0"/>
             <Setter Property="TextWrapping" Value="Wrap"/>
@@ -123,10 +123,10 @@
                     <Style TargetType="TextBlock" BasedOn="{StaticResource ModernChangeIndicator}">
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding ChangeValue, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource NumberToSignConverter}}" Value="Positive">
-                                <Setter Property="Foreground" Value="{StaticResource AccentGreenBrush}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource AccentGreenBrush}"/>
                             </DataTrigger>
                             <DataTrigger Binding="{Binding ChangeValue, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource NumberToSignConverter}}" Value="Negative">
-                                <Setter Property="Foreground" Value="{StaticResource DangerRedBrush}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource DangerRedBrush}"/>
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>

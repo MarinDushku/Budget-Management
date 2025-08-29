@@ -81,14 +81,6 @@ namespace BudgetManagement.Views
             // Initialize budget settings controls
             InitializeBudgetSettingsControls();
             
-            // Initialize theme service if available
-            var app = Application.Current as App;
-            var themeService = app?.GetService<IThemeService>();
-            if (themeService != null)
-            {
-                await themeService.InitializeAsync();
-            }
-            
             System.Diagnostics.Debug.WriteLine("=== MAINWINDOW WINDOW_LOADED END ===");
         }
 
@@ -320,9 +312,9 @@ namespace BudgetManagement.Views
                     resources.MergedDictionaries.Remove(highContrastDict);
                 }
                 
-                // Restore normal window styling
-                this.Background = new SolidColorBrush(Color.FromRgb(248, 249, 250));
-                this.Foreground = new SolidColorBrush(Color.FromRgb(33, 37, 41));
+                // Restore normal window styling using theme resources
+                this.Background = (SolidColorBrush)Application.Current.Resources["BackgroundBrush"];
+                this.Foreground = (SolidColorBrush)Application.Current.Resources["PrimaryTextBrush"];
                 
                 // Update control styles back to normal
                 UpdateControlStyles(null, false);
@@ -658,25 +650,34 @@ namespace BudgetManagement.Views
 
         private void UpdateFontSizeButtons(string activeSize)
         {
-            // Reset all button backgrounds
-            FontSizeSmallBtn.Background = SystemColors.ControlBrush;
-            FontSizeMediumBtn.Background = SystemColors.ControlBrush;
-            FontSizeLargeBtn.Background = SystemColors.ControlBrush;
+            // Get theme-aware colors
+            var normalBackground = (SolidColorBrush)Application.Current.Resources["SurfaceBrush"];
+            var normalForeground = (SolidColorBrush)Application.Current.Resources["PrimaryTextBrush"];
+            var activeBackground = (SolidColorBrush)Application.Current.Resources["PrimaryBlueBrush"];
+            var activeForeground = (SolidColorBrush)Application.Current.Resources["SurfaceBrush"];
             
-            // Highlight the active button
+            // Reset all button backgrounds to theme-aware colors
+            FontSizeSmallBtn.Background = normalBackground;
+            FontSizeSmallBtn.Foreground = normalForeground;
+            FontSizeMediumBtn.Background = normalBackground;
+            FontSizeMediumBtn.Foreground = normalForeground;
+            FontSizeLargeBtn.Background = normalBackground;
+            FontSizeLargeBtn.Foreground = normalForeground;
+            
+            // Highlight the active button with theme-aware colors
             switch (activeSize)
             {
                 case "small":
-                    FontSizeSmallBtn.Background = new SolidColorBrush(Color.FromRgb(33, 150, 243));
-                    FontSizeSmallBtn.Foreground = new SolidColorBrush(Colors.White);
+                    FontSizeSmallBtn.Background = activeBackground;
+                    FontSizeSmallBtn.Foreground = activeForeground;
                     break;
                 case "medium":
-                    FontSizeMediumBtn.Background = new SolidColorBrush(Color.FromRgb(33, 150, 243));
-                    FontSizeMediumBtn.Foreground = new SolidColorBrush(Colors.White);
+                    FontSizeMediumBtn.Background = activeBackground;
+                    FontSizeMediumBtn.Foreground = activeForeground;
                     break;
                 case "large":
-                    FontSizeLargeBtn.Background = new SolidColorBrush(Color.FromRgb(33, 150, 243));
-                    FontSizeLargeBtn.Foreground = new SolidColorBrush(Colors.White);
+                    FontSizeLargeBtn.Background = activeBackground;
+                    FontSizeLargeBtn.Foreground = activeForeground;
                     break;
             }
         }
@@ -689,24 +690,32 @@ namespace BudgetManagement.Views
         {
             try
             {
+                System.Diagnostics.Debug.WriteLine($"MainWindow: DarkModeToggle_Click - IsChecked: {DarkModeToggle.IsChecked}");
+                
                 // Add button press animation feedback
                 if (sender is FrameworkElement element)
                     AnimateButtonPress(element);
 
-                var app = Application.Current as App;
-                var themeService = app?.GetService<IThemeService>();
-                
-                if (themeService != null)
+                if (Application.Current?.Resources.Contains("ThemeService") == true)
                 {
+                    var themeService = (IThemeService)Application.Current.Resources["ThemeService"];
+                    
                     var newTheme = DarkModeToggle.IsChecked == true ? "Dark" : "Light";
+                    System.Diagnostics.Debug.WriteLine($"MainWindow: Setting theme to: {newTheme}");
                     await themeService.SetThemeAsync(newTheme);
+                    System.Diagnostics.Debug.WriteLine($"MainWindow: Theme set completed. Current theme: {themeService.CurrentTheme}, IsDarkTheme: {themeService.IsDarkTheme}");
                     
                     // Update the theme combobox to match
                     UpdateThemeComboBoxSelection(newTheme);
                 }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("MainWindow: ThemeService not found in DarkModeToggle_Click");
+                }
             }
-            catch
+            catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine($"MainWindow: Error in DarkModeToggle_Click: {ex.Message}");
                 // Reset toggle if theme change fails
                 DarkModeToggle.IsChecked = !DarkModeToggle.IsChecked;
             }
@@ -719,11 +728,10 @@ namespace BudgetManagement.Views
                 if (ThemeComboBox.SelectedItem is ComboBoxItem selectedItem &&
                     selectedItem.Tag?.ToString() is string themeName)
                 {
-                    var app = Application.Current as App;
-                    var themeService = app?.GetService<IThemeService>();
-                    
-                    if (themeService != null)
+                    if (Application.Current?.Resources.Contains("ThemeService") == true)
                     {
+                        var themeService = (IThemeService)Application.Current.Resources["ThemeService"];
+                        
                         await themeService.SetThemeAsync(themeName);
                         
                         // Update the toggle to match
@@ -758,11 +766,14 @@ namespace BudgetManagement.Views
         {
             try
             {
-                var app = Application.Current as App;
-                var themeService = app?.GetService<IThemeService>();
+                System.Diagnostics.Debug.WriteLine("MainWindow: InitializeThemeControls called");
                 
-                if (themeService != null)
+                // Get theme service from Application.Resources (same as UserControls)
+                if (Application.Current?.Resources.Contains("ThemeService") == true)
                 {
+                    var themeService = (IThemeService)Application.Current.Resources["ThemeService"];
+                    System.Diagnostics.Debug.WriteLine($"MainWindow: ThemeService found. Current theme: {themeService.CurrentTheme}, IsDarkTheme: {themeService.IsDarkTheme}");
+                    
                     // Set initial theme combobox selection
                     UpdateThemeComboBoxSelection(themeService.CurrentTheme);
                     
@@ -771,11 +782,16 @@ namespace BudgetManagement.Views
                     
                     // Listen for theme changes
                     themeService.ThemeChanged += OnThemeChanged;
+                    System.Diagnostics.Debug.WriteLine("MainWindow: Theme controls initialized successfully");
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("MainWindow: ThemeService not found in Application.Resources");
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                // Use default theme settings if initialization fails
+                System.Diagnostics.Debug.WriteLine($"MainWindow: Error initializing theme controls: {ex.Message}");
             }
         }
 

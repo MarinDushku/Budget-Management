@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using BudgetManagement.Models;
+using BudgetManagement.Services;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
@@ -16,9 +17,19 @@ namespace BudgetManagement.Views.UserControls
     /// </summary>
     public partial class BudgetBalanceChartUserControl : UserControl
     {
+        private IThemeService? _themeService;
+
         public BudgetBalanceChartUserControl()
         {
             InitializeComponent();
+            
+            // Get theme service from application resources or DI container
+            if (Application.Current?.Resources.Contains("ThemeService") == true)
+            {
+                _themeService = (IThemeService)Application.Current.Resources["ThemeService"];
+                _themeService.ThemeChanged += OnThemeChanged;
+            }
+            
             InitializeChart();
         }
 
@@ -89,22 +100,24 @@ namespace BudgetManagement.Views.UserControls
 
         private void InitializeChart()
         {
+            var themeColors = GetThemeAwareChartColors();
+            
             LineChartModel = new PlotModel
             {
                 Background = OxyColors.Transparent,
-                PlotAreaBorderColor = OxyColors.LightGray,
+                PlotAreaBorderColor = themeColors.BorderColor,
                 PlotAreaBorderThickness = new OxyThickness(1),
                 Padding = new OxyThickness(10, 5, 10, 5)
             };
 
-            // Add axes
+            // Add axes with theme-aware colors
             LineChartModel.Axes.Add(new DateTimeAxis
             {
                 Position = AxisPosition.Bottom,
                 StringFormat = "MM/dd",
                 Title = "",
                 FontSize = 10,
-                TextColor = OxyColor.FromRgb(102, 102, 102),
+                TextColor = themeColors.AxisTextColor,
                 TickStyle = TickStyle.Outside,
                 MajorGridlineStyle = LineStyle.None
             });
@@ -114,11 +127,11 @@ namespace BudgetManagement.Views.UserControls
                 Position = AxisPosition.Left,
                 Title = "",
                 FontSize = 10,
-                TextColor = OxyColor.FromRgb(102, 102, 102),
+                TextColor = themeColors.AxisTextColor,
                 StringFormat = "C0",
                 TickStyle = TickStyle.Outside,
                 MajorGridlineStyle = LineStyle.Dot,
-                MajorGridlineColor = OxyColor.FromRgb(220, 220, 220)
+                MajorGridlineColor = themeColors.GridColor
             });
 
             // Add zero line for reference
@@ -133,7 +146,7 @@ namespace BudgetManagement.Views.UserControls
 
             var zeroLine = new LineSeries
             {
-                Color = OxyColors.Gray,
+                Color = themeColors.ZeroLineColor,
                 StrokeThickness = 1,
                 LineStyle = LineStyle.Dash,
                 Title = "Break Even"
@@ -166,6 +179,13 @@ namespace BudgetManagement.Views.UserControls
             UpdateChart();
         }
 
+        private void OnThemeChanged(object? sender, ThemeChangedEventArgs e)
+        {
+            // Refresh chart with new theme colors
+            InitializeChart();
+            UpdateChart();
+        }
+
         private void UpdateChart()
         {
             System.Diagnostics.Debug.WriteLine($"BudgetBalanceChartUserControl.UpdateChart: Starting with {BudgetBalanceData?.Count ?? 0} data points");
@@ -183,10 +203,11 @@ namespace BudgetManagement.Views.UserControls
             // Clear existing series (except zero line)
             LineChartModel?.Series.Clear();
 
-            // Add zero line for reference
+            // Add zero line for reference  
+            var themeColors = GetThemeAwareChartColors();
             var zeroLine = new LineSeries
             {
-                Color = OxyColors.Gray,
+                Color = themeColors.ZeroLineColor,
                 StrokeThickness = 1,
                 LineStyle = LineStyle.Dash
             };
@@ -194,35 +215,35 @@ namespace BudgetManagement.Views.UserControls
             // Create cumulative balance line series
             var cumulativeLineSeries = new LineSeries
             {
-                Color = OxyColor.FromRgb(33, 150, 243), // Blue
+                Color = themeColors.CumulativeLineColor,
                 StrokeThickness = 3,
                 MarkerType = MarkerType.Circle,
                 MarkerSize = 4,
-                MarkerStroke = OxyColor.FromRgb(33, 150, 243),
-                MarkerFill = OxyColors.White,
+                MarkerStroke = themeColors.CumulativeLineColor,
+                MarkerFill = themeColors.MarkerFillColor,
                 Title = "Cumulative Balance"
             };
 
             // Create daily balance line series (positive/negative)
             var positiveSeries = new LineSeries
             {
-                Color = OxyColor.FromRgb(76, 175, 80), // Green
+                Color = themeColors.PositiveColor,
                 StrokeThickness = 2,
                 MarkerType = MarkerType.Circle,
                 MarkerSize = 3,
-                MarkerStroke = OxyColor.FromRgb(76, 175, 80),
-                MarkerFill = OxyColor.FromRgb(76, 175, 80),
+                MarkerStroke = themeColors.PositiveColor,
+                MarkerFill = themeColors.PositiveColor,
                 Title = "Positive Days"
             };
 
             var negativeSeries = new LineSeries
             {
-                Color = OxyColor.FromRgb(244, 67, 54), // Red
+                Color = themeColors.NegativeColor,
                 StrokeThickness = 2,
                 MarkerType = MarkerType.Circle,
                 MarkerSize = 3,
-                MarkerStroke = OxyColor.FromRgb(244, 67, 54),
-                MarkerFill = OxyColor.FromRgb(244, 67, 54),
+                MarkerStroke = themeColors.NegativeColor,
+                MarkerFill = themeColors.NegativeColor,
                 Title = "Negative Days"
             };
 
@@ -251,8 +272,15 @@ namespace BudgetManagement.Views.UserControls
             WorstDayBalance = dailyBalances.Any() ? dailyBalances.Min() : 0m;
             CurrentBalance = sortedData.LastOrDefault()?.CumulativeBalance ?? 0m;
 
-            // Set current balance color
-            CurrentBalanceColor = new SolidColorBrush(CurrentBalance >= 0 ? Colors.Green : Colors.Red);
+            // Set current balance color using theme-aware colors
+            if (CurrentBalance >= 0)
+            {
+                CurrentBalanceColor = new SolidColorBrush(Color.FromRgb(themeColors.PositiveColor.R, themeColors.PositiveColor.G, themeColors.PositiveColor.B));
+            }
+            else
+            {
+                CurrentBalanceColor = new SolidColorBrush(Color.FromRgb(themeColors.NegativeColor.R, themeColors.NegativeColor.G, themeColors.NegativeColor.B));
+            }
 
             // Add zero line first (background)
             LineChartModel?.Series.Add(zeroLine);
@@ -268,5 +296,54 @@ namespace BudgetManagement.Views.UserControls
 
             LineChartModel?.InvalidatePlot(true);
         }
+
+        private BudgetBalanceChartColors GetThemeAwareChartColors()
+        {
+            var isDarkTheme = _themeService?.IsDarkTheme ?? false;
+
+            if (isDarkTheme)
+            {
+                return new BudgetBalanceChartColors
+                {
+                    BorderColor = OxyColor.FromRgb(96, 96, 96),      // Lighter border for dark theme
+                    AxisTextColor = OxyColor.FromRgb(200, 200, 200), // Light text for dark theme
+                    GridColor = OxyColor.FromRgb(64, 64, 64),        // Subtle grid for dark theme
+                    CumulativeLineColor = OxyColor.FromRgb(66, 165, 245), // Light blue for dark theme
+                    PositiveColor = OxyColor.FromRgb(102, 187, 106),  // Light green for dark theme
+                    NegativeColor = OxyColor.FromRgb(239, 83, 80),    // Light red for dark theme
+                    ZeroLineColor = OxyColor.FromRgb(158, 158, 158),  // Light gray for dark theme
+                    MarkerFillColor = OxyColor.FromRgb(30, 30, 30)    // Dark marker fill
+                };
+            }
+            else
+            {
+                return new BudgetBalanceChartColors
+                {
+                    BorderColor = OxyColors.LightGray,               // Standard border for light theme
+                    AxisTextColor = OxyColor.FromRgb(102, 102, 102), // Standard text color
+                    GridColor = OxyColor.FromRgb(220, 220, 220),     // Light grid color
+                    CumulativeLineColor = OxyColor.FromRgb(33, 150, 243), // Standard blue
+                    PositiveColor = OxyColor.FromRgb(76, 175, 80),    // Standard green
+                    NegativeColor = OxyColor.FromRgb(244, 67, 54),    // Standard red
+                    ZeroLineColor = OxyColors.Gray,                   // Standard gray
+                    MarkerFillColor = OxyColors.White                 // White marker fill
+                };
+            }
+        }
+    }
+
+    /// <summary>
+    /// Theme-aware color configuration for budget balance charts
+    /// </summary>
+    public class BudgetBalanceChartColors
+    {
+        public OxyColor BorderColor { get; set; }
+        public OxyColor AxisTextColor { get; set; }
+        public OxyColor GridColor { get; set; }
+        public OxyColor CumulativeLineColor { get; set; }
+        public OxyColor PositiveColor { get; set; }
+        public OxyColor NegativeColor { get; set; }
+        public OxyColor ZeroLineColor { get; set; }
+        public OxyColor MarkerFillColor { get; set; }
     }
 }
