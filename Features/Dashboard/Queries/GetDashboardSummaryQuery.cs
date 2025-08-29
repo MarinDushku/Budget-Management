@@ -99,7 +99,7 @@ namespace BudgetManagement.Features.Dashboard.Queries
         /// <summary>
         /// Weekly budget trend data for analytics
         /// </summary>
-        public IReadOnlyList<WeeklyBudgetData> BudgetTrendData { get; set; } = new List<WeeklyBudgetData>();
+        public IReadOnlyList<Models.WeeklyBudgetData> BudgetTrendData { get; set; } = new List<Models.WeeklyBudgetData>();
 
         /// <summary>
         /// Whether there are no recent entries
@@ -120,18 +120,5 @@ namespace BudgetManagement.Features.Dashboard.Queries
         /// Period description for display
         /// </summary>
         public string PeriodDescription { get; set; } = string.Empty;
-    }
-
-    /// <summary>
-    /// Weekly budget data for trend analysis
-    /// </summary>
-    public class WeeklyBudgetData
-    {
-        public DateTime WeekStart { get; set; }
-        public DateTime WeekEnd { get; set; }
-        public decimal Income { get; set; }
-        public decimal Spending { get; set; }
-        public decimal NetAmount => Income - Spending;
-        public string WeekLabel => $"{WeekStart:MMM dd} - {WeekEnd:MMM dd}";
     }
 }

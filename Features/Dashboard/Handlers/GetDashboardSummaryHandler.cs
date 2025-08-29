@@ -69,7 +69,7 @@ namespace BudgetManagement.Features.Dashboard.Handlers
                 var bankStatementSummaryTask = (Task<Result<Models.BankStatementSummary>>)tasks[1];
                 var recentIncomeTask = (Task<Result<IEnumerable<Models.Income>>>)tasks[2];
                 var recentSpendingTask = (Task<Result<IEnumerable<Models.SpendingWithCategory>>>)tasks[3];
-                var trendDataTask = (Task<Result<IEnumerable<WeeklyBudgetData>>>)tasks[4];
+                var trendDataTask = (Task<Result<IEnumerable<Models.WeeklyBudgetData>>>)tasks[4];
 
                 // Check if any operation failed
                 var results = new IResult[] { 
@@ -188,11 +188,11 @@ namespace BudgetManagement.Features.Dashboard.Handlers
             }
         }
 
-        private async Task<Result<IEnumerable<WeeklyBudgetData>>> GetBudgetTrendDataAsync(DateTime startDate, DateTime endDate)
+        private async Task<Result<IEnumerable<Models.WeeklyBudgetData>>> GetBudgetTrendDataAsync(DateTime startDate, DateTime endDate)
         {
             try
             {
-                var trendData = new List<WeeklyBudgetData>();
+                var trendData = new List<Models.WeeklyBudgetData>();
                 var current = startDate;
 
                 while (current <= endDate)
@@ -203,24 +203,23 @@ namespace BudgetManagement.Features.Dashboard.Handlers
                     var weekIncomeEntries = await _budgetService.GetIncomeAsync(current, weekEnd);
                     var weekSpendingEntries = await _budgetService.GetSpendingAsync(current, weekEnd);
 
-                    var weekData = new WeeklyBudgetData
+                    var weekData = new Models.WeeklyBudgetData
                     {
-                        WeekStart = current,
-                        WeekEnd = weekEnd,
-                        Income = weekIncomeEntries.Sum(i => i.Amount),
-                        Spending = weekSpendingEntries.Sum(s => s.Amount)
+                        WeekStartDate = current,
+                        TotalIncome = weekIncomeEntries.Sum(i => i.Amount),
+                        TotalSpending = weekSpendingEntries.Sum(s => s.Amount)
                     };
 
                     trendData.Add(weekData);
                     current = current.AddDays(7);
                 }
 
-                return Result<IEnumerable<WeeklyBudgetData>>.Success(trendData);
+                return Result<IEnumerable<Models.WeeklyBudgetData>>.Success(trendData);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error fetching budget trend data");
-                return Result<IEnumerable<WeeklyBudgetData>>.Failure(
+                return Result<IEnumerable<Models.WeeklyBudgetData>>.Failure(
                     Error.System(Error.Codes.SYSTEM_ERROR, "Failed to fetch budget trend data"));
             }
         }

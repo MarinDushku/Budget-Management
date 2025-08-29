@@ -16,7 +16,7 @@
 
         <!-- Line Chart -->
         <oxy:PlotView Grid.Row="1" 
-                      Model="{Binding LineChartModel}" 
+                      Model="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=LineChartModel}" 
                       Height="180"
                       MinHeight="160"
                       Background="Transparent"
@@ -45,7 +45,7 @@
                                    Foreground="{StaticResource SecondaryTextBrush}"
                                    HorizontalAlignment="Center"
                                    TextOptions.TextRenderingMode="ClearType"/>
-                        <TextBlock Text="{Binding BestWeekAmount, StringFormat=C}" 
+                        <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=BestWeekAmount, StringFormat=C}" 
                                    FontFamily="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"
                                    FontSize="16"
                                    FontWeight="SemiBold"
@@ -71,7 +71,7 @@
                                    Foreground="{StaticResource SecondaryTextBrush}"
                                    HorizontalAlignment="Center"
                                    TextOptions.TextRenderingMode="ClearType"/>
-                        <TextBlock Text="{Binding WorstWeekAmount, StringFormat=C}" 
+                        <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=WorstWeekAmount, StringFormat=C}" 
                                    FontFamily="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"
                                    FontSize="16"
                                    FontWeight="SemiBold"

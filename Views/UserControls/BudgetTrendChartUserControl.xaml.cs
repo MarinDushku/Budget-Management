@@ -244,16 +244,4 @@ namespace BudgetManagement.Views.UserControls
             }
         }
     }
-
-    /// <summary>
-    /// Weekly budget data for trend analysis
-    /// </summary>
-    public class WeeklyBudgetData
-    {
-        public DateTime WeekStartDate { get; set; }
-        public decimal TotalIncome { get; set; }
-        public decimal TotalSpending { get; set; }
-        public decimal RemainingBudget => TotalIncome - TotalSpending;
-        public string WeekLabel => WeekStartDate.ToString("MMM dd", CultureInfo.InvariantCulture);
-    }
 }

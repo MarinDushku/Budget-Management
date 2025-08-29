@@ -41,7 +41,7 @@ namespace BudgetManagement.ViewModels
         public ObservableCollection<SpendingWithCategory> RecentSpendingEntries { get; } = new();
 
         // Budget trend data for analytics
-        public ObservableCollection<BudgetManagement.Views.UserControls.WeeklyBudgetData> BudgetTrendData { get; } = new();
+        public ObservableCollection<WeeklyBudgetData> BudgetTrendData { get; } = new();
 
         // Collection views for filtering and sorting
         public ICollectionView IncomeView { get; }
@@ -323,7 +323,7 @@ namespace BudgetManagement.ViewModels
                         .Where(s => s.Date >= weekStart && s.Date <= weekEnd)
                         .Sum(s => s.Amount);
 
-                    var weeklyData = new BudgetManagement.Views.UserControls.WeeklyBudgetData
+                    var weeklyData = new WeeklyBudgetData
                     {
                         WeekStartDate = weekStart,
                         TotalIncome = weeklyIncome,

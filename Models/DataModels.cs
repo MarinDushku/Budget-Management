@@ -144,4 +144,25 @@ namespace BudgetManagement.Models
         public string? CategoryName { get; set; }
         public decimal TotalAmount { get; set; }
     }
+
+    /// <summary>
+    /// Weekly budget data for trend analysis and chart display
+    /// </summary>
+    public class WeeklyBudgetData
+    {
+        public DateTime WeekStartDate { get; set; }
+        public decimal TotalIncome { get; set; }
+        public decimal TotalSpending { get; set; }
+        public decimal RemainingBudget => TotalIncome - TotalSpending;
+        
+        /// <summary>
+        /// Display-friendly week label for charts
+        /// </summary>
+        public string WeekLabel => WeekStartDate.ToString("MMM dd", System.Globalization.CultureInfo.InvariantCulture);
+        
+        /// <summary>
+        /// Week end date (6 days after start date)
+        /// </summary>
+        public DateTime WeekEndDate => WeekStartDate.AddDays(6);
+    }
 }

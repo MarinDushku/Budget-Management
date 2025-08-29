@@ -16,7 +16,7 @@
 
         <!-- Pie Chart -->
         <oxy:PlotView Grid.Row="1" 
-                      Model="{Binding PieChartModel}" 
+                      Model="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=PieChartModel}" 
                       Height="220"
                       MinHeight="200"
                       Background="Transparent"
@@ -32,7 +32,7 @@
                        Margin="0,0,0,8"
                        TextOptions.TextRenderingMode="ClearType"/>
             
-            <ItemsControl ItemsSource="{Binding CategorySummaries}">
+            <ItemsControl ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=CategorySummaries}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Border Background="{StaticResource SurfaceElevatedBrush}" 

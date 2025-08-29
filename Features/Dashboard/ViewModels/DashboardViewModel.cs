@@ -49,7 +49,7 @@ namespace BudgetManagement.Features.Dashboard.ViewModels
             // Initialize collections
             RecentIncomeEntries = new ObservableCollection<Models.Income>();
             RecentSpendingEntries = new ObservableCollection<Models.SpendingWithCategory>();
-            BudgetTrendData = new ObservableCollection<WeeklyBudgetData>();
+            BudgetTrendData = new ObservableCollection<Models.WeeklyBudgetData>();
         }
 
         #region Properties
@@ -164,7 +164,7 @@ namespace BudgetManagement.Features.Dashboard.ViewModels
         /// <summary>
         /// Budget trend data for analytics charts
         /// </summary>
-        public ObservableCollection<WeeklyBudgetData> BudgetTrendData { get; }
+        public ObservableCollection<Models.WeeklyBudgetData> BudgetTrendData { get; }
 
         #endregion
 
