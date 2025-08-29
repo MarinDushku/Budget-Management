@@ -437,4 +437,65 @@ namespace BudgetManagement.Features.Income.Handlers
             }
         }
     }
+
+    /// <summary>
+    /// Handler for advanced income search with multiple criteria and pagination
+    /// </summary>
+    public class AdvancedIncomeSearchHandler : IRequestHandler<AdvancedIncomeSearchQuery, Result<AdvancedIncomeSearchResult>>
+    {
+        private readonly BudgetManagement.Services.IBudgetService _budgetService;
+        private readonly ILogger<AdvancedIncomeSearchHandler> _logger;
+
+        public AdvancedIncomeSearchHandler(
+            BudgetManagement.Services.IBudgetService budgetService,
+            ILogger<AdvancedIncomeSearchHandler> logger)
+        {
+            _budgetService = budgetService ?? throw new ArgumentNullException(nameof(budgetService));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        }
+
+        public async Task<Result<AdvancedIncomeSearchResult>> Handle(AdvancedIncomeSearchQuery request, CancellationToken cancellationToken)
+        {
+            try
+            {
+                _logger.LogDebug("Executing advanced income search with criteria: Pattern='{Pattern}', StartDate={StartDate}, EndDate={EndDate}, MinAmount={MinAmount}, MaxAmount={MaxAmount}, Skip={Skip}, Take={Take}",
+                    request.DescriptionPattern, request.StartDate, request.EndDate, request.MinAmount, request.MaxAmount, request.Skip, request.Take);
+
+                var result = await _budgetService.AdvancedIncomeSearchAsync(
+                    request.DescriptionPattern,
+                    request.StartDate,
+                    request.EndDate,
+                    request.MinAmount,
+                    request.MaxAmount,
+                    request.Skip,
+                    request.Take,
+                    request.SortBy,
+                    request.SortDirection);
+
+                _logger.LogDebug("Advanced income search completed successfully. Found {TotalCount} total entries, returning {CurrentCount} entries",
+                    result.TotalCount, result.Incomes.Count());
+
+                return Result<AdvancedIncomeSearchResult>.Success(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error during advanced income search");
+                return Result<AdvancedIncomeSearchResult>.Failure(Error.System(
+                    Error.Codes.SYSTEM_ERROR, 
+                    "Failed to execute advanced income search", 
+                    new Dictionary<string, object>
+                    {
+                        ["DescriptionPattern"] = request.DescriptionPattern ?? "null",
+                        ["StartDate"] = request.StartDate?.ToString("yyyy-MM-dd") ?? "null",
+                        ["EndDate"] = request.EndDate?.ToString("yyyy-MM-dd") ?? "null",
+                        ["MinAmount"] = request.MinAmount?.ToString() ?? "null",
+                        ["MaxAmount"] = request.MaxAmount?.ToString() ?? "null",
+                        ["Skip"] = request.Skip,
+                        ["Take"] = request.Take,
+                        ["SortBy"] = request.SortBy.ToString(),
+                        ["SortDirection"] = request.SortDirection.ToString()
+                    }));
+            }
+        }
+    }
 }

@@ -107,8 +107,17 @@
     <sys:String x:Key="TotalAmount">Totali: {0}</sys:String>
     <sys:String x:Key="NoResultsFound">Nuk u gjetën rezultate</sys:String>
     <sys:String x:Key="NoResultsMessage">Provo të ndryshosh kriteret e kërkimit</sys:String>
+    <sys:String x:Key="TryDifferentFilters">Provo të ndryshosh kriteret e kërkimit</sys:String>
     <sys:String x:Key="LoadMore">Ngarko më shumë</sys:String>
     <sys:String x:Key="ShowingResults">Duke treguar {0} - {1} nga {2} rezultate</sys:String>
+    <sys:String x:Key="Showing">Duke treguar</sys:String>
+    <sys:String x:Key="Of">nga</sys:String>
+    <sys:String x:Key="ActiveFilters">Filtrat Aktive</sys:String>
+    <sys:String x:Key="FirstPage">Faqja e Parë</sys:String>
+    <sys:String x:Key="PreviousPage">Faqja e Mëparshme</sys:String>
+    <sys:String x:Key="NextPage">Faqja Tjetër</sys:String>
+    <sys:String x:Key="LastPage">Faqja e Fundit</sys:String>
+    <sys:String x:Key="ItemsPerPage">Shënime për faqe</sys:String>
     
     <!-- Date Presets -->
     <sys:String x:Key="DatePresets">Zgjedhje të Shpejta</sys:String>

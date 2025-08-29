@@ -81,8 +81,9 @@ namespace BudgetManagement.Features.Spending
         /// <returns>Service collection for chaining</returns>
         public static IServiceCollection AddSpendingFeature(this IServiceCollection services)
         {
-            // Register the ViewModel with proper lifetime
+            // Register the ViewModels with proper lifetime
             services.AddTransient<SpendingViewModel>();
+            services.AddTransient<BudgetManagement.Features.Spending.ViewModels.SpendingSearchViewModel>();
 
             // Register feature-specific services that require manual configuration
             services.AddSingleton<ISpendingDialogService, SpendingDialogService>();

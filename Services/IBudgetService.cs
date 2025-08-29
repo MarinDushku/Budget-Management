@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BudgetManagement.Models;
+using BudgetManagement.Features.Income.Queries;
+using BudgetManagement.Features.Spending.Queries;
 
 namespace BudgetManagement.Services
 {
@@ -58,6 +60,30 @@ namespace BudgetManagement.Services
         Task InitializeDatabaseAsync();
         Task BackupDatabaseAsync(string backupPath);
         Task RestoreDatabaseAsync(string backupPath);
+
+        // Advanced search operations
+        Task<AdvancedIncomeSearchResult> AdvancedIncomeSearchAsync(
+            string? descriptionPattern = null,
+            DateTime? startDate = null,
+            DateTime? endDate = null,
+            decimal? minAmount = null,
+            decimal? maxAmount = null,
+            int skip = 0,
+            int take = 50,
+            IncomeSortBy sortBy = IncomeSortBy.Date,
+            BudgetManagement.Features.Income.Queries.SortDirection sortDirection = BudgetManagement.Features.Income.Queries.SortDirection.Descending);
+
+        Task<AdvancedSpendingSearchResult> AdvancedSpendingSearchAsync(
+            string? descriptionPattern = null,
+            DateTime? startDate = null,
+            DateTime? endDate = null,
+            decimal? minAmount = null,
+            decimal? maxAmount = null,
+            List<int>? categoryIds = null,
+            int skip = 0,
+            int take = 50,
+            SpendingSortBy sortBy = SpendingSortBy.Date,
+            BudgetManagement.Features.Spending.Queries.SortDirection sortDirection = BudgetManagement.Features.Spending.Queries.SortDirection.Descending);
     }
 
     /// <summary>

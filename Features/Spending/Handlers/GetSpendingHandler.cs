@@ -373,4 +373,68 @@ namespace BudgetManagement.Features.Spending.Handlers
             }
         }
     }
+
+    /// <summary>
+    /// Handler for advanced spending search with multiple criteria and pagination
+    /// </summary>
+    public class AdvancedSpendingSearchHandler : IRequestHandler<AdvancedSpendingSearchQuery, Result<AdvancedSpendingSearchResult>>
+    {
+        private readonly BudgetManagement.Services.IBudgetService _budgetService;
+        private readonly ILogger<AdvancedSpendingSearchHandler> _logger;
+
+        public AdvancedSpendingSearchHandler(
+            BudgetManagement.Services.IBudgetService budgetService,
+            ILogger<AdvancedSpendingSearchHandler> logger)
+        {
+            _budgetService = budgetService ?? throw new ArgumentNullException(nameof(budgetService));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        }
+
+        public async Task<Result<AdvancedSpendingSearchResult>> Handle(AdvancedSpendingSearchQuery request, CancellationToken cancellationToken)
+        {
+            try
+            {
+                _logger.LogDebug("Executing advanced spending search with criteria: Pattern='{Pattern}', StartDate={StartDate}, EndDate={EndDate}, MinAmount={MinAmount}, MaxAmount={MaxAmount}, CategoryIds=[{CategoryIds}], Skip={Skip}, Take={Take}",
+                    request.DescriptionPattern, request.StartDate, request.EndDate, request.MinAmount, request.MaxAmount, 
+                    request.CategoryIds != null ? string.Join(",", request.CategoryIds) : "null", request.Skip, request.Take);
+
+                var result = await _budgetService.AdvancedSpendingSearchAsync(
+                    request.DescriptionPattern,
+                    request.StartDate,
+                    request.EndDate,
+                    request.MinAmount,
+                    request.MaxAmount,
+                    request.CategoryIds,
+                    request.Skip,
+                    request.Take,
+                    request.SortBy,
+                    request.SortDirection);
+
+                _logger.LogDebug("Advanced spending search completed successfully. Found {TotalCount} total entries, returning {CurrentCount} entries, TotalAmount={TotalAmount}",
+                    result.TotalCount, result.Spendings.Count(), result.TotalAmount);
+
+                return Result<AdvancedSpendingSearchResult>.Success(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error during advanced spending search");
+                return Result<AdvancedSpendingSearchResult>.Failure(Error.System(
+                    Error.Codes.SYSTEM_ERROR, 
+                    "Failed to execute advanced spending search", 
+                    new Dictionary<string, object>
+                    {
+                        ["DescriptionPattern"] = request.DescriptionPattern ?? "null",
+                        ["StartDate"] = request.StartDate?.ToString("yyyy-MM-dd") ?? "null",
+                        ["EndDate"] = request.EndDate?.ToString("yyyy-MM-dd") ?? "null",
+                        ["MinAmount"] = request.MinAmount?.ToString() ?? "null",
+                        ["MaxAmount"] = request.MaxAmount?.ToString() ?? "null",
+                        ["CategoryIds"] = request.CategoryIds != null ? string.Join(",", request.CategoryIds) : "null",
+                        ["Skip"] = request.Skip,
+                        ["Take"] = request.Take,
+                        ["SortBy"] = request.SortBy.ToString(),
+                        ["SortDirection"] = request.SortDirection.ToString()
+                    }));
+            }
+        }
+    }
 }

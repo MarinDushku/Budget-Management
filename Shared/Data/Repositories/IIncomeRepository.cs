@@ -3,6 +3,7 @@
 
 using BudgetManagement.Models;
 using BudgetManagement.Shared.Core;
+using BudgetManagement.Features.Income.Queries;
 
 namespace BudgetManagement.Shared.Data.Repositories
 {
@@ -111,6 +112,32 @@ namespace BudgetManagement.Shared.Data.Repositories
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>True if entries exist for the date</returns>
         Task<Result<bool>> HasEntriesForDateAsync(DateTime date, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Performs advanced income search with multiple criteria and pagination
+        /// </summary>
+        /// <param name="descriptionPattern">Optional description pattern to search for</param>
+        /// <param name="startDate">Optional start date filter (inclusive)</param>
+        /// <param name="endDate">Optional end date filter (inclusive)</param>
+        /// <param name="minAmount">Optional minimum amount filter (inclusive)</param>
+        /// <param name="maxAmount">Optional maximum amount filter (inclusive)</param>
+        /// <param name="skip">Number of records to skip for pagination</param>
+        /// <param name="take">Number of records to take for pagination</param>
+        /// <param name="sortBy">Field to sort by</param>
+        /// <param name="sortDirection">Sort direction (ascending or descending)</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Advanced search result with income entries and pagination info</returns>
+        Task<Result<AdvancedIncomeSearchResult>> GetAdvancedSearchAsync(
+            string? descriptionPattern = null,
+            DateTime? startDate = null,
+            DateTime? endDate = null,
+            decimal? minAmount = null,
+            decimal? maxAmount = null,
+            int skip = 0,
+            int take = 50,
+            IncomeSortBy sortBy = IncomeSortBy.Date,
+            SortDirection sortDirection = SortDirection.Descending,
+            CancellationToken cancellationToken = default);
     }
 
     /// <summary>

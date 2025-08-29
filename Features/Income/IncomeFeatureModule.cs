@@ -69,8 +69,9 @@ namespace BudgetManagement.Features.Income
         /// <returns>Service collection for chaining</returns>
         public static IServiceCollection AddIncomeFeature(this IServiceCollection services)
         {
-            // Register the ViewModel with proper lifetime
+            // Register the ViewModels with proper lifetime
             services.AddTransient<IncomeViewModel>();
+            services.AddTransient<BudgetManagement.Features.Income.ViewModels.IncomeSearchViewModel>();
 
             // Register feature-specific services that require manual configuration
             services.AddSingleton<IIncomeDialogService, IncomeDialogService>();

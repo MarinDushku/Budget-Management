@@ -10,6 +10,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
 using BudgetManagement.Models;
+using BudgetManagement.Features.Income.Queries;
+using BudgetManagement.Features.Spending.Queries;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 
@@ -1084,6 +1086,308 @@ namespace BudgetManagement.Services
             // Simple restore using file copy approach
             var destinationFile = _connectionString.Replace("Data Source=", "").Split(';')[0];
             File.Copy(backupPath, destinationFile, true);
+        }
+
+        #endregion
+
+        #region Advanced Search Operations
+
+        public async Task<AdvancedIncomeSearchResult> AdvancedIncomeSearchAsync(
+            string? descriptionPattern = null,
+            DateTime? startDate = null,
+            DateTime? endDate = null,
+            decimal? minAmount = null,
+            decimal? maxAmount = null,
+            int skip = 0,
+            int take = 50,
+            IncomeSortBy sortBy = IncomeSortBy.Date,
+            BudgetManagement.Features.Income.Queries.SortDirection sortDirection = BudgetManagement.Features.Income.Queries.SortDirection.Descending)
+        {
+            using var connection = new SqliteConnection(_connectionString);
+            await connection.OpenAsync();
+
+            var conditions = new List<string>();
+            var parameters = new List<SqliteParameter>();
+
+            // Build WHERE clause dynamically
+            if (!string.IsNullOrWhiteSpace(descriptionPattern))
+            {
+                conditions.Add("Description LIKE @descriptionPattern");
+                parameters.Add(new SqliteParameter("@descriptionPattern", $"%{descriptionPattern}%"));
+            }
+
+            if (startDate.HasValue)
+            {
+                conditions.Add("Date >= @startDate");
+                parameters.Add(new SqliteParameter("@startDate", startDate.Value.ToString("yyyy-MM-dd")));
+            }
+
+            if (endDate.HasValue)
+            {
+                conditions.Add("Date <= @endDate");
+                parameters.Add(new SqliteParameter("@endDate", endDate.Value.ToString("yyyy-MM-dd")));
+            }
+
+            if (minAmount.HasValue)
+            {
+                conditions.Add("Amount >= @minAmount");
+                parameters.Add(new SqliteParameter("@minAmount", minAmount.Value));
+            }
+
+            if (maxAmount.HasValue)
+            {
+                conditions.Add("Amount <= @maxAmount");
+                parameters.Add(new SqliteParameter("@maxAmount", maxAmount.Value));
+            }
+
+            var whereClause = conditions.Any() ? "WHERE " + string.Join(" AND ", conditions) : "";
+            
+            // Build ORDER BY clause
+            var orderByField = sortBy switch
+            {
+                IncomeSortBy.Date => "Date",
+                IncomeSortBy.Amount => "Amount",
+                IncomeSortBy.Description => "Description",
+                IncomeSortBy.CreatedAt => "CreatedAt",
+                _ => "Date"
+            };
+            var orderByDirection = sortDirection == BudgetManagement.Features.Income.Queries.SortDirection.Ascending ? "ASC" : "DESC";
+            var orderByClause = $"ORDER BY {orderByField} {orderByDirection}";
+
+            // Get total count for pagination
+            var countSql = $@"
+                SELECT COUNT(*), COALESCE(SUM(Amount), 0) as TotalAmount
+                FROM Income 
+                {whereClause}";
+
+            int totalCount = 0;
+            decimal totalAmount = 0;
+            using (var countCommand = new SqliteCommand(countSql, connection))
+            {
+                foreach (var param in parameters)
+                {
+                    countCommand.Parameters.Add(new SqliteParameter(param.ParameterName, param.Value));
+                }
+                
+                using var reader = await countCommand.ExecuteReaderAsync();
+                if (await reader.ReadAsync())
+                {
+                    totalCount = reader.GetInt32(0);
+                    totalAmount = reader.GetDecimal(1);
+                }
+            }
+
+            // Get paginated results
+            var dataSql = $@"
+                SELECT Id, Description, Amount, Date, CreatedAt
+                FROM Income 
+                {whereClause}
+                {orderByClause}
+                LIMIT @take OFFSET @skip";
+
+            parameters.Add(new SqliteParameter("@take", take));
+            parameters.Add(new SqliteParameter("@skip", skip));
+
+            var incomes = new List<Income>();
+            using (var dataCommand = new SqliteCommand(dataSql, connection))
+            {
+                foreach (var param in parameters)
+                {
+                    dataCommand.Parameters.Add(new SqliteParameter(param.ParameterName, param.Value));
+                }
+                
+                using var reader = await dataCommand.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
+                {
+                    incomes.Add(new Income
+                    {
+                        Id = reader.GetInt32("Id"),
+                        Description = reader.GetString("Description"),
+                        Amount = reader.GetDecimal("Amount"),
+                        Date = DateTime.Parse(reader.GetString("Date")),
+                        CreatedAt = DateTime.Parse(reader.GetString("CreatedAt"))
+                    });
+                }
+            }
+
+            return new AdvancedIncomeSearchResult
+            {
+                Incomes = incomes,
+                TotalCount = totalCount,
+                TotalAmount = totalAmount,
+                HasMore = (skip + take) < totalCount
+            };
+        }
+
+        public async Task<AdvancedSpendingSearchResult> AdvancedSpendingSearchAsync(
+            string? descriptionPattern = null,
+            DateTime? startDate = null,
+            DateTime? endDate = null,
+            decimal? minAmount = null,
+            decimal? maxAmount = null,
+            List<int>? categoryIds = null,
+            int skip = 0,
+            int take = 50,
+            SpendingSortBy sortBy = SpendingSortBy.Date,
+            BudgetManagement.Features.Spending.Queries.SortDirection sortDirection = BudgetManagement.Features.Spending.Queries.SortDirection.Descending)
+        {
+            using var connection = new SqliteConnection(_connectionString);
+            await connection.OpenAsync();
+
+            var conditions = new List<string>();
+            var parameters = new List<SqliteParameter>();
+
+            // Build WHERE clause dynamically
+            if (!string.IsNullOrWhiteSpace(descriptionPattern))
+            {
+                conditions.Add("s.Description LIKE @descriptionPattern");
+                parameters.Add(new SqliteParameter("@descriptionPattern", $"%{descriptionPattern}%"));
+            }
+
+            if (startDate.HasValue)
+            {
+                conditions.Add("s.Date >= @startDate");
+                parameters.Add(new SqliteParameter("@startDate", startDate.Value.ToString("yyyy-MM-dd")));
+            }
+
+            if (endDate.HasValue)
+            {
+                conditions.Add("s.Date <= @endDate");
+                parameters.Add(new SqliteParameter("@endDate", endDate.Value.ToString("yyyy-MM-dd")));
+            }
+
+            if (minAmount.HasValue)
+            {
+                conditions.Add("s.Amount >= @minAmount");
+                parameters.Add(new SqliteParameter("@minAmount", minAmount.Value));
+            }
+
+            if (maxAmount.HasValue)
+            {
+                conditions.Add("s.Amount <= @maxAmount");
+                parameters.Add(new SqliteParameter("@maxAmount", maxAmount.Value));
+            }
+
+            if (categoryIds != null && categoryIds.Any())
+            {
+                var categoryPlaceholders = string.Join(",", categoryIds.Select((_, i) => $"@categoryId{i}"));
+                conditions.Add($"s.CategoryId IN ({categoryPlaceholders})");
+                
+                for (int i = 0; i < categoryIds.Count; i++)
+                {
+                    parameters.Add(new SqliteParameter($"@categoryId{i}", categoryIds[i]));
+                }
+            }
+
+            var whereClause = conditions.Any() ? "WHERE " + string.Join(" AND ", conditions) : "";
+            
+            // Build ORDER BY clause
+            var orderByField = sortBy switch
+            {
+                SpendingSortBy.Date => "s.Date",
+                SpendingSortBy.Amount => "s.Amount",
+                SpendingSortBy.Description => "s.Description",
+                SpendingSortBy.Category => "c.Name",
+                SpendingSortBy.CreatedAt => "s.CreatedAt",
+                _ => "s.Date"
+            };
+            var orderByDirection = sortDirection == BudgetManagement.Features.Spending.Queries.SortDirection.Ascending ? "ASC" : "DESC";
+            var orderByClause = $"ORDER BY {orderByField} {orderByDirection}";
+
+            // Get total count and amount for pagination, plus category totals
+            var countSql = $@"
+                SELECT COUNT(*), COALESCE(SUM(s.Amount), 0) as TotalAmount
+                FROM Spending s 
+                JOIN Categories c ON s.CategoryId = c.Id 
+                {whereClause}";
+
+            int totalCount = 0;
+            decimal totalAmount = 0;
+            using (var countCommand = new SqliteCommand(countSql, connection))
+            {
+                foreach (var param in parameters)
+                {
+                    countCommand.Parameters.Add(new SqliteParameter(param.ParameterName, param.Value));
+                }
+                
+                using var reader = await countCommand.ExecuteReaderAsync();
+                if (await reader.ReadAsync())
+                {
+                    totalCount = reader.GetInt32(0);
+                    totalAmount = reader.GetDecimal(1);
+                }
+            }
+
+            // Get category totals
+            var categoryTotalsSql = $@"
+                SELECT s.CategoryId, COALESCE(SUM(s.Amount), 0) as CategoryTotal
+                FROM Spending s 
+                JOIN Categories c ON s.CategoryId = c.Id 
+                {whereClause}
+                GROUP BY s.CategoryId";
+
+            var categoryTotals = new Dictionary<int, decimal>();
+            using (var categoryCommand = new SqliteCommand(categoryTotalsSql, connection))
+            {
+                foreach (var param in parameters)
+                {
+                    categoryCommand.Parameters.Add(new SqliteParameter(param.ParameterName, param.Value));
+                }
+                
+                using var reader = await categoryCommand.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
+                {
+                    var categoryId = reader.GetInt32("CategoryId");
+                    var categoryTotal = reader.GetDecimal("CategoryTotal");
+                    categoryTotals[categoryId] = categoryTotal;
+                }
+            }
+
+            // Get paginated results
+            var dataSql = $@"
+                SELECT s.Id, s.Date, s.Amount, s.Description, s.CategoryId, 
+                       c.Name as CategoryName, s.CreatedAt
+                FROM Spending s 
+                JOIN Categories c ON s.CategoryId = c.Id 
+                {whereClause}
+                {orderByClause}
+                LIMIT @take OFFSET @skip";
+
+            parameters.Add(new SqliteParameter("@take", take));
+            parameters.Add(new SqliteParameter("@skip", skip));
+
+            var spendings = new List<SpendingWithCategory>();
+            using (var dataCommand = new SqliteCommand(dataSql, connection))
+            {
+                foreach (var param in parameters)
+                {
+                    dataCommand.Parameters.Add(new SqliteParameter(param.ParameterName, param.Value));
+                }
+                
+                using var reader = await dataCommand.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
+                {
+                    spendings.Add(new SpendingWithCategory
+                    {
+                        Id = reader.GetInt32("Id"),
+                        Date = DateTime.Parse(reader.GetString("Date")),
+                        Amount = reader.GetDecimal("Amount"),
+                        Description = reader.GetString("Description"),
+                        CategoryId = reader.GetInt32("CategoryId"),
+                        CategoryName = reader.GetString("CategoryName"),
+                        CreatedAt = DateTime.Parse(reader.GetString("CreatedAt"))
+                    });
+                }
+            }
+
+            return new AdvancedSpendingSearchResult
+            {
+                Spendings = spendings,
+                TotalCount = totalCount,
+                TotalAmount = totalAmount,
+                CategoryTotals = categoryTotals,
+                HasMore = (skip + take) < totalCount
+            };
         }
 
         #endregion

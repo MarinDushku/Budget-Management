@@ -9,6 +9,7 @@
     <UserControl.Resources>
         <converters:CurrencyConverter x:Key="CurrencyConverter"/>
         <converters:DateConverter x:Key="DateConverter"/>
+        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         
         <!-- Search Section Style -->
         <Style x:Key="SearchSectionStyle" TargetType="Border">
@@ -240,10 +241,9 @@
             </Border>
 
             <!-- Search Results Section -->
-            <!-- Temporarily commented out until ViewModels are implemented -->
-            <!-- <userControls:SearchResultsControl x:Name="SearchResultsControl" 
-                                               DataContext="{Binding SearchResultsViewModel}"
-                                               Visibility="{Binding HasSearched, Converter={StaticResource BooleanToVisibilityConverter}}"/> -->
+            <userControls:SearchResultsControl x:Name="SearchResultsControl" 
+                                               DataContext="{Binding}"
+                                               Visibility="{Binding HasSearched, Converter={StaticResource BooleanToVisibilityConverter}}"/>
         </StackPanel>
     </ScrollViewer>
 </UserControl>

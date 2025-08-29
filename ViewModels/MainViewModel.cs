@@ -112,11 +112,22 @@ namespace BudgetManagement.ViewModels
         public ICommand ExportDataCommand { get; }
         public ICommand ManageCategoriesCommand { get; }
 
-        public MainViewModel(IBudgetService budgetService, IDialogService dialogService, ISettingsService settingsService)
+        // Search ViewModels
+        public BudgetManagement.Features.Income.ViewModels.IncomeSearchViewModel? IncomeSearchViewModel { get; private set; }
+        public BudgetManagement.Features.Spending.ViewModels.SpendingSearchViewModel? SpendingSearchViewModel { get; private set; }
+
+        public MainViewModel(
+            IBudgetService budgetService, 
+            IDialogService dialogService, 
+            ISettingsService settingsService,
+            BudgetManagement.Features.Income.ViewModels.IncomeSearchViewModel incomeSearchViewModel,
+            BudgetManagement.Features.Spending.ViewModels.SpendingSearchViewModel spendingSearchViewModel)
         {
             _budgetService = budgetService ?? throw new ArgumentNullException(nameof(budgetService));
             _dialogService = dialogService ?? throw new ArgumentNullException(nameof(dialogService));
             _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
+            IncomeSearchViewModel = incomeSearchViewModel ?? throw new ArgumentNullException(nameof(incomeSearchViewModel));
+            SpendingSearchViewModel = spendingSearchViewModel ?? throw new ArgumentNullException(nameof(spendingSearchViewModel));
 
             // DEBUG: Log constructor call
             System.Diagnostics.Debug.WriteLine("MainViewModel constructor called - initializing...");
