@@ -99,6 +99,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/> <!-- Search Summary -->
+            <RowDefinition Height="Auto"/> <!-- Total Spending Summary -->
             <RowDefinition Height="*"/>    <!-- Results List -->
             <RowDefinition Height="Auto"/> <!-- Pagination -->
         </Grid.RowDefinitions>
@@ -196,8 +197,51 @@
             </StackPanel>
         </Border>
 
+        <!-- Total Spending Summary Section -->
+        <Border Grid.Row="1" 
+                Background="{DynamicResource SuccessGreenBrush}"
+                BorderBrush="{DynamicResource BorderMediumBrush}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="20,16"
+                Margin="0,0,0,16"
+                Visibility="{Binding HasResults, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                
+                <!-- Total Icon -->
+                <TextBlock Grid.Column="0" 
+                           Text="&#xE8C3;" 
+                           FontFamily="Segoe Fluent Icons" 
+                           FontSize="24"
+                           Foreground="White"
+                           VerticalAlignment="Center"
+                           Margin="0,0,16,0"/>
+                
+                <!-- Total Label -->
+                <TextBlock Grid.Column="1" 
+                           Text="{DynamicResource TotalSpendingsForPeriod}" 
+                           FontWeight="SemiBold"
+                           FontSize="18"
+                           Foreground="White"
+                           VerticalAlignment="Center"/>
+                
+                <!-- Total Amount -->
+                <TextBlock Grid.Column="2" 
+                           Text="{Binding TotalAmount, StringFormat='€{0:F2}'}" 
+                           FontWeight="Bold"
+                           FontSize="24"
+                           Foreground="White"
+                           VerticalAlignment="Center"/>
+            </Grid>
+        </Border>
+
         <!-- Results List -->
-        <ScrollViewer Grid.Row="1" 
+        <ScrollViewer Grid.Row="2" 
                       VerticalScrollBarVisibility="Auto"
                       Padding="0,0,8,0">
             <Grid>
@@ -301,7 +345,7 @@
         </ScrollViewer>
 
         <!-- Pagination Controls -->
-        <Border Grid.Row="2" 
+        <Border Grid.Row="3" 
                 Background="{DynamicResource SurfaceElevatedBrush}"
                 BorderBrush="{DynamicResource BorderLightBrush}"
                 BorderThickness="0,1,0,0"

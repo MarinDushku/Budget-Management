@@ -206,8 +206,19 @@ namespace BudgetManagement.Features.Spending.ViewModels
         public decimal TotalAmount
         {
             get => _totalAmount;
-            set => SetProperty(ref _totalAmount, value);
+            set
+            {
+                if (SetProperty(ref _totalAmount, value))
+                {
+                    OnPropertyChanged(nameof(FormattedTotalAmount));
+                }
+            }
         }
+
+        /// <summary>
+        /// Formatted total amount with currency symbol for display
+        /// </summary>
+        public string FormattedTotalAmount => $"€{TotalAmount:F2}";
 
         /// <summary>
         /// Category-wise totals from search results

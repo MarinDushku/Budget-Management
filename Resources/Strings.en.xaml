@@ -103,12 +103,23 @@
     
     <!-- Search Results -->
     <sys:String x:Key="SearchResults">Search Results</sys:String>
-    <sys:String x:Key="EntriesFound">{0} entries found</sys:String>
+    <sys:String x:Key="EntriesFound">entries found</sys:String>
     <sys:String x:Key="TotalAmount">Total: {0}</sys:String>
+    <sys:String x:Key="TotalSpendingsForPeriod">Total Spendings for Selected Period</sys:String>
     <sys:String x:Key="NoResultsFound">No results found</sys:String>
     <sys:String x:Key="NoResultsMessage">Try adjusting your search criteria</sys:String>
+    <sys:String x:Key="TryDifferentFilters">Try different search criteria</sys:String>
     <sys:String x:Key="LoadMore">Load More</sys:String>
     <sys:String x:Key="ShowingResults">Showing {0} - {1} of {2} results</sys:String>
+    <sys:String x:Key="Showing">Showing</sys:String>
+    <sys:String x:Key="Of">of</sys:String>
+    <sys:String x:Key="ActiveFilters">Active filters:</sys:String>
+    <sys:String x:Key="FirstPage">First page</sys:String>
+    <sys:String x:Key="PreviousPage">Previous page</sys:String>
+    <sys:String x:Key="NextPage">Next page</sys:String>
+    <sys:String x:Key="LastPage">Last page</sys:String>
+    <sys:String x:Key="ItemsPerPage">Items per page</sys:String>
+    <sys:String x:Key="Categories">Categories</sys:String>
     
     <!-- Date Presets -->
     <sys:String x:Key="DatePresets">Quick Select</sys:String>

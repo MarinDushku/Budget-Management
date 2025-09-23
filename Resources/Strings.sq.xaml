@@ -103,8 +103,9 @@
     
     <!-- Search Results -->
     <sys:String x:Key="SearchResults">Rezultatet e Kërkimit</sys:String>
-    <sys:String x:Key="EntriesFound">{0} shënime të gjetura</sys:String>
+    <sys:String x:Key="EntriesFound">shënime të gjetura</sys:String>
     <sys:String x:Key="TotalAmount">Totali: {0}</sys:String>
+    <sys:String x:Key="TotalSpendingsForPeriod">Shpenzimet Totale për Periodën e Zgjedhur</sys:String>
     <sys:String x:Key="NoResultsFound">Nuk u gjetën rezultate</sys:String>
     <sys:String x:Key="NoResultsMessage">Provo të ndryshosh kriteret e kërkimit</sys:String>
     <sys:String x:Key="TryDifferentFilters">Provo të ndryshosh kriteret e kërkimit</sys:String>
@@ -118,6 +119,7 @@
     <sys:String x:Key="NextPage">Faqja Tjetër</sys:String>
     <sys:String x:Key="LastPage">Faqja e Fundit</sys:String>
     <sys:String x:Key="ItemsPerPage">Shënime për faqe</sys:String>
+    <sys:String x:Key="Categories">Kategoritë</sys:String>
     
     <!-- Date Presets -->
     <sys:String x:Key="DatePresets">Zgjedhje të Shpejta</sys:String>
