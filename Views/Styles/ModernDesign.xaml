@@ -8,8 +8,8 @@
     <SolidColorBrush x:Key="SecondaryNavyBrush" Color="#004578"/>
     <SolidColorBrush x:Key="AccentGreenBrush" Color="#107C10"/>
     <SolidColorBrush x:Key="WarningOrangeBrush" Color="#FF8C00"/>
-    <SolidColorBrush x:Key="DangerRedBrush" Color="#D73527"/>
-    <SolidColorBrush x:Key="SuccessGreenBrush" Color="#00BCF2"/>
+    <SolidColorBrush x:Key="DangerRedBrush" Color="#C62828"/>
+    <SolidColorBrush x:Key="SuccessGreenBrush" Color="#0F7B0F"/>
     
     <!-- Neutral Foundation -->
     <SolidColorBrush x:Key="BackgroundBrush" Color="#FAFAFA"/>
@@ -18,10 +18,10 @@
     <SolidColorBrush x:Key="BorderLightBrush" Color="#E1E1E1"/>
     <SolidColorBrush x:Key="BorderMediumBrush" Color="#C4C4C4"/>
     
-    <!-- Text Hierarchy -->
-    <SolidColorBrush x:Key="PrimaryTextBrush" Color="#1F1F1F"/>
-    <SolidColorBrush x:Key="SecondaryTextBrush" Color="#616161"/>
-    <SolidColorBrush x:Key="DisabledTextBrush" Color="#9E9E9E"/>
+    <!-- Text Hierarchy - Enhanced for Senior Readability -->
+    <SolidColorBrush x:Key="PrimaryTextBrush" Color="#121212"/>
+    <SolidColorBrush x:Key="SecondaryTextBrush" Color="#484848"/>
+    <SolidColorBrush x:Key="DisabledTextBrush" Color="#8A8A8A"/>
     
     <!-- Dark Mode Support (for future implementation) -->
     <SolidColorBrush x:Key="BackgroundDarkBrush" Color="#1E1E1E"/>
@@ -32,21 +32,21 @@
     
     <!-- ===== MODERN EFFECTS & SHADOWS ===== -->
     
-    <!-- Modern Card Shadow -->
-    <DropShadowEffect x:Key="ModernCardShadow" BlurRadius="8" Direction="270" 
+    <!-- Modern Card Shadow - Enhanced for Contemporary Feel -->
+    <DropShadowEffect x:Key="ModernCardShadow" BlurRadius="12" Direction="270" 
+                      Opacity="0.06" ShadowDepth="2" Color="#000000"/>
+    
+    <!-- Elevated Card Shadow - More Prominent -->
+    <DropShadowEffect x:Key="ElevatedCardShadow" BlurRadius="16" Direction="270" 
+                      Opacity="0.10" ShadowDepth="6" Color="#000000"/>
+    
+    <!-- Modern Focus Ring - Enhanced Visibility -->
+    <DropShadowEffect x:Key="ModernFocusRing" Color="#0078D4" BlurRadius="6" 
+                      ShadowDepth="0" Opacity="0.8"/>
+    
+    <!-- Subtle Button Shadow - Refined -->
+    <DropShadowEffect x:Key="ButtonShadow" BlurRadius="6" Direction="270" 
                       Opacity="0.08" ShadowDepth="2" Color="#000000"/>
-    
-    <!-- Elevated Card Shadow -->
-    <DropShadowEffect x:Key="ElevatedCardShadow" BlurRadius="12" Direction="270" 
-                      Opacity="0.12" ShadowDepth="4" Color="#000000"/>
-    
-    <!-- Modern Focus Ring -->
-    <DropShadowEffect x:Key="ModernFocusRing" Color="#0078D4" BlurRadius="4" 
-                      ShadowDepth="0" Opacity="0.6"/>
-    
-    <!-- Subtle Button Shadow -->
-    <DropShadowEffect x:Key="ButtonShadow" BlurRadius="4" Direction="270" 
-                      Opacity="0.1" ShadowDepth="1" Color="#000000"/>
     
     <!-- ===== MODERN GRADIENTS ===== -->
     
@@ -70,24 +70,26 @@
     
     <!-- ===== MODERN TYPOGRAPHY ===== -->
     
-    <!-- Display Text (Large Financial Figures) -->
+    <!-- Display Text (Large Financial Figures) - Enhanced for Senior Readability -->
     <Style x:Key="DisplayTextStyle" TargetType="TextBlock">
         <Setter Property="FontFamily" Value="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"/>
-        <Setter Property="FontSize" Value="32"/>
+        <Setter Property="FontSize" Value="36"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
         <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
         <Setter Property="TextOptions.TextRenderingMode" Value="ClearType"/>
         <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
+        <Setter Property="LineHeight" Value="42"/>
     </Style>
     
-    <!-- Header Text -->
+    <!-- Header Text - Enhanced Size for Prominence -->
     <Style x:Key="ModernHeaderTextStyle" TargetType="TextBlock">
         <Setter Property="FontFamily" Value="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"/>
-        <Setter Property="FontSize" Value="24"/>
+        <Setter Property="FontSize" Value="26"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
         <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
         <Setter Property="Margin" Value="0,0,0,16"/>
         <Setter Property="TextOptions.TextRenderingMode" Value="ClearType"/>
+        <Setter Property="LineHeight" Value="32"/>
     </Style>
     
     <!-- Section Header Text -->
@@ -99,37 +101,40 @@
         <Setter Property="Margin" Value="0,0,0,12"/>
     </Style>
     
-    <!-- Body Text -->
+    <!-- Body Text - Enhanced for Senior Readability -->
     <Style x:Key="BodyTextStyle" TargetType="TextBlock">
         <Setter Property="FontFamily" Value="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"/>
-        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="FontSize" Value="18"/>
         <Setter Property="FontWeight" Value="Normal"/>
         <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+        <Setter Property="LineHeight" Value="26"/>
+    </Style>
+    
+    <!-- Secondary Text - Larger for Better Readability -->
+    <Style x:Key="SecondaryTextStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"/>
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="Foreground" Value="{DynamicResource SecondaryTextBrush}"/>
         <Setter Property="LineHeight" Value="22"/>
     </Style>
     
-    <!-- Secondary Text -->
-    <Style x:Key="SecondaryTextStyle" TargetType="TextBlock">
+    <!-- Caption Text - Improved for Senior Accessibility -->
+    <Style x:Key="CaptionTextStyle" TargetType="TextBlock">
         <Setter Property="FontFamily" Value="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"/>
         <Setter Property="FontSize" Value="14"/>
         <Setter Property="Foreground" Value="{DynamicResource SecondaryTextBrush}"/>
-    </Style>
-    
-    <!-- Caption Text -->
-    <Style x:Key="CaptionTextStyle" TargetType="TextBlock">
-        <Setter Property="FontFamily" Value="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"/>
-        <Setter Property="FontSize" Value="12"/>
-        <Setter Property="Foreground" Value="{DynamicResource SecondaryTextBrush}"/>
+        <Setter Property="LineHeight" Value="20"/>
     </Style>
     
     <!-- ===== MODERN BUTTON STYLES ===== -->
     
-    <!-- Primary Button -->
+    <!-- Primary Button - Enhanced for Senior Accessibility -->
     <Style x:Key="ModernPrimaryButtonStyle" TargetType="Button">
         <Setter Property="Background" Value="{DynamicResource PrimaryBlueBrush}"/>
         <Setter Property="Foreground" Value="White"/>
         <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="Padding" Value="16,12"/>
+        <Setter Property="Padding" Value="20,14"/>
+        <Setter Property="MinHeight" Value="48"/>
         <Setter Property="FontFamily" Value="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"/>
         <Setter Property="FontSize" Value="16"/>
         <Setter Property="FontWeight" Value="Medium"/>
@@ -144,7 +149,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
                     <Border x:Name="border" Background="{TemplateBinding Background}" 
-                            CornerRadius="6" Padding="{TemplateBinding Padding}"
+                            CornerRadius="8" Padding="{TemplateBinding Padding}"
                             Effect="{StaticResource ButtonShadow}">
                         <ContentPresenter x:Name="contentPresenter" 
                                         HorizontalAlignment="Center" 
@@ -183,12 +188,13 @@
         </Setter>
     </Style>
     
-    <!-- Success Button -->
+    <!-- Success Button - Enhanced for Senior Accessibility -->
     <Style x:Key="ModernSuccessButtonStyle" TargetType="Button">
         <Setter Property="Background" Value="{DynamicResource AccentGreenBrush}"/>
         <Setter Property="Foreground" Value="White"/>
         <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="Padding" Value="16,12"/>
+        <Setter Property="Padding" Value="20,14"/>
+        <Setter Property="MinHeight" Value="48"/>
         <Setter Property="FontFamily" Value="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"/>
         <Setter Property="FontSize" Value="16"/>
         <Setter Property="FontWeight" Value="Medium"/>
@@ -203,7 +209,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
                     <Border x:Name="border" Background="{TemplateBinding Background}" 
-                            CornerRadius="6" Padding="{TemplateBinding Padding}"
+                            CornerRadius="8" Padding="{TemplateBinding Padding}"
                             Effect="{StaticResource ButtonShadow}">
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
@@ -237,13 +243,14 @@
         </Setter>
     </Style>
     
-    <!-- Secondary Button -->
+    <!-- Secondary Button - Enhanced for Senior Accessibility -->
     <Style x:Key="ModernSecondaryButtonStyle" TargetType="Button">
         <Setter Property="Background" Value="{DynamicResource SurfaceBrush}"/>
         <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
         <Setter Property="BorderBrush" Value="{DynamicResource BorderMediumBrush}"/>
         <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="Padding" Value="16,12"/>
+        <Setter Property="Padding" Value="20,14"/>
+        <Setter Property="MinHeight" Value="48"/>
         <Setter Property="FontFamily" Value="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"/>
         <Setter Property="FontSize" Value="16"/>
         <Setter Property="FontWeight" Value="Medium"/>
@@ -260,7 +267,7 @@
                     <Border x:Name="border" Background="{TemplateBinding Background}" 
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="6" Padding="{TemplateBinding Padding}">
+                            CornerRadius="8" Padding="{TemplateBinding Padding}">
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                     <ControlTemplate.Triggers>
@@ -299,12 +306,13 @@
         </Setter>
     </Style>
     
-    <!-- Danger Button -->
+    <!-- Danger Button - Enhanced for Senior Accessibility -->
     <Style x:Key="ModernDangerButtonStyle" TargetType="Button">
-        <Setter Property="Background" Value="#D73527"/>
+        <Setter Property="Background" Value="{DynamicResource DangerRedBrush}"/>
         <Setter Property="Foreground" Value="White"/>
         <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="Padding" Value="16,12"/>
+        <Setter Property="Padding" Value="20,14"/>
+        <Setter Property="MinHeight" Value="48"/>
         <Setter Property="FontFamily" Value="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"/>
         <Setter Property="FontSize" Value="16"/>
         <Setter Property="FontWeight" Value="Medium"/>
@@ -319,7 +327,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
                     <Border x:Name="border" Background="{TemplateBinding Background}" 
-                            CornerRadius="6" Padding="{TemplateBinding Padding}"
+                            CornerRadius="8" Padding="{TemplateBinding Padding}"
                             Effect="{StaticResource ButtonShadow}">
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
@@ -330,7 +338,7 @@
                                     <Storyboard>
                                         <ColorAnimation Storyboard.TargetName="border" 
                                                       Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" 
-                                                      To="#E04030" Duration="0:0:0.15"/>
+                                                      To="#D32F2F" Duration="0:0:0.15"/>
                                     </Storyboard>
                                 </BeginStoryboard>
                             </Trigger.EnterActions>
@@ -339,13 +347,13 @@
                                     <Storyboard>
                                         <ColorAnimation Storyboard.TargetName="border" 
                                                       Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" 
-                                                      To="#D73527" Duration="0:0:0.15"/>
+                                                      To="#C62828" Duration="0:0:0.15"/>
                                     </Storyboard>
                                 </BeginStoryboard>
                             </Trigger.ExitActions>
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter Property="Background" TargetName="border" Value="#C12E22"/>
+                            <Setter Property="Background" TargetName="border" Value="#B71C1C"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -355,10 +363,10 @@
     
     <!-- ===== MODERN CARD STYLES ===== -->
     
-    <!-- Standard Modern Card -->
+    <!-- Standard Modern Card - Enhanced Design -->
     <Style x:Key="ModernCardStyle" TargetType="Border">
         <Setter Property="Background" Value="{DynamicResource SurfaceBrush}"/>
-        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="CornerRadius" Value="12"/>
         <Setter Property="Padding" Value="24"/>
         <Setter Property="Margin" Value="0,0,0,16"/>
         <Setter Property="Effect" Value="{StaticResource ModernCardShadow}"/>
@@ -447,23 +455,23 @@
     
     <!-- ===== MODERN INPUT CONTROLS ===== -->
     
-    <!-- Modern TextBox -->
+    <!-- Modern TextBox - Enhanced for Senior Accessibility -->
     <Style x:Key="ModernTextBoxStyle" TargetType="TextBox">
         <Setter Property="FontFamily" Value="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"/>
         <Setter Property="FontSize" Value="16"/>
-        <Setter Property="Padding" Value="12"/>
+        <Setter Property="Padding" Value="16,12"/>
         <Setter Property="BorderBrush" Value="{DynamicResource BorderLightBrush}"/>
         <Setter Property="BorderThickness" Value="2"/>
         <Setter Property="Background" Value="{DynamicResource SurfaceBrush}"/>
         <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
-        <Setter Property="MinHeight" Value="44"/>
+        <Setter Property="MinHeight" Value="48"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TextBox">
                     <Border x:Name="border" Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="6" Padding="{TemplateBinding Padding}">
+                            CornerRadius="8" Padding="{TemplateBinding Padding}">
                         <ScrollViewer x:Name="PART_ContentHost" Focusable="false"
                                     HorizontalScrollBarVisibility="Hidden"
                                     VerticalScrollBarVisibility="Hidden"/>
@@ -515,28 +523,28 @@
         </Setter>
     </Style>
     
-    <!-- Modern ComboBox -->
+    <!-- Modern ComboBox - Enhanced for Senior Accessibility -->
     <Style x:Key="ModernComboBoxStyle" TargetType="ComboBox">
         <Setter Property="FontFamily" Value="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"/>
         <Setter Property="FontSize" Value="16"/>
-        <Setter Property="Padding" Value="12"/>
+        <Setter Property="Padding" Value="16,12"/>
         <Setter Property="BorderBrush" Value="{DynamicResource BorderLightBrush}"/>
         <Setter Property="BorderThickness" Value="2"/>
         <Setter Property="Background" Value="{DynamicResource SurfaceBrush}"/>
         <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
-        <Setter Property="MinHeight" Value="44"/>
+        <Setter Property="MinHeight" Value="48"/>
     </Style>
     
-    <!-- Modern DatePicker -->
+    <!-- Modern DatePicker - Enhanced for Senior Accessibility -->
     <Style x:Key="ModernDatePickerStyle" TargetType="DatePicker">
         <Setter Property="FontFamily" Value="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"/>
         <Setter Property="FontSize" Value="16"/>
-        <Setter Property="Padding" Value="12"/>
+        <Setter Property="Padding" Value="16,12"/>
         <Setter Property="BorderBrush" Value="{DynamicResource BorderLightBrush}"/>
         <Setter Property="BorderThickness" Value="2"/>
         <Setter Property="Background" Value="{DynamicResource SurfaceBrush}"/>
         <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
-        <Setter Property="MinHeight" Value="44"/>
+        <Setter Property="MinHeight" Value="48"/>
     </Style>
     
     <!-- ===== MODERN PANEL STYLES ===== -->

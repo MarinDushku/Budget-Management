@@ -181,5 +181,19 @@ After installation:
 taskkill /F /IM "BudgetManagement.exe" 2>$null
 dotnet clean
 dotnet publish -c Release --self-contained true -r win-x64 -o publish
- cd publish
+ cd publish/
 .\BudgetManagement.exe
+
+
+
+
+I found and fixed the 2 missing StaticResource → DynamicResource issues we missed:
+  - Line 174: TotalIncome
+  - Line 246: ComingSoon
+
+
+    What was fixed:
+  - ✅ Removed duplicate Categories keys (lines 91 & 168)
+  - ✅ Added missing Settings → Rregullimet
+  - ✅ Added missing RefreshData → Rifresko të Dhënat
+  - ✅ Added missing AllCategoriesFilter → Të gjitha Kategoritë
