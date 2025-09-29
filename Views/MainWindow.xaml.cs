@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using BudgetManagement.ViewModels;
@@ -200,13 +201,28 @@ namespace BudgetManagement.Views
                 if (settingsService != null)
                 {
                     // Set current bank statement day value
-                    BankStatementDayTextBox.Text = settingsService.BankStatementDay.ToString();
+                    var currentDay = settingsService.BankStatementDay;
+                    foreach (ComboBoxItem item in BankStatementDayComboBox.Items)
+                    {
+                        if (item.Tag?.ToString() == currentDay.ToString())
+                        {
+                            BankStatementDayComboBox.SelectedItem = item;
+                            break;
+                        }
+                    }
                 }
             }
             catch
             {
-                // Use default value if initialization fails
-                BankStatementDayTextBox.Text = "17";
+                // Use default value if initialization fails - select day 17
+                foreach (ComboBoxItem item in BankStatementDayComboBox.Items)
+                {
+                    if (item.Tag?.ToString() == "17")
+                    {
+                        BankStatementDayComboBox.SelectedItem = item;
+                        break;
+                    }
+                }
             }
         }
 
@@ -1198,38 +1214,10 @@ namespace BudgetManagement.Views
 
         #region Budget Settings Event Handlers
 
-        private void BankStatementDayTextBox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
+        private async void BankStatementDayComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // Only allow numeric input
-            if (!char.IsDigit(e.Text, 0))
-            {
-                e.Handled = true;
+            if (sender is not ComboBox comboBox || comboBox.SelectedItem is not ComboBoxItem selectedItem) 
                 return;
-            }
-
-            // Check if the resulting value would be valid (1-31)
-            if (sender is TextBox textBox)
-            {
-                var currentText = textBox.Text;
-                var resultText = currentText.Insert(textBox.SelectionStart, e.Text);
-                
-                if (int.TryParse(resultText, out int value))
-                {
-                    if (value < 1 || value > 31)
-                    {
-                        e.Handled = true;
-                    }
-                }
-                else if (resultText.Length > 2)
-                {
-                    e.Handled = true;
-                }
-            }
-        }
-
-        private async void BankStatementDayTextBox_LostFocus(object sender, RoutedEventArgs e)
-        {
-            if (sender is not TextBox textBox) return;
 
             try
             {
@@ -1238,30 +1226,33 @@ namespace BudgetManagement.Views
                 
                 if (settingsService == null) return;
 
-                // Validate and parse the input
-                if (int.TryParse(textBox.Text, out int day) && day >= 1 && day <= 31)
+                // Get the selected day value
+                if (int.TryParse(selectedItem.Tag?.ToString(), out int day) && day >= 1 && day <= 31)
                 {
-                    // Update the setting
-                    settingsService.BankStatementDay = day;
-                    await settingsService.SaveSettingsAsync();
-
-                    // Refresh the bank statement summary if MainViewModel is available
-                    if (DataContext is MainViewModel viewModel)
+                    // Get current value to check if it changed
+                    var currentValue = settingsService.BankStatementDay;
+                    
+                    // Only update if the value actually changed
+                    if (day != currentValue)
                     {
-                        viewModel.BankStatementSummary = await app.GetRequiredService<IBudgetService>()
-                            .GetBankStatementSummaryAsync(day);
+                        System.Diagnostics.Debug.WriteLine($"Bank statement day changing from {currentValue} to {day}");
+                        
+                        // Update the setting
+                        settingsService.BankStatementDay = day;
+                        await settingsService.SaveSettingsAsync();
+
+                        // Refresh the bank statement summary if MainViewModel is available
+                        if (DataContext is MainViewModel viewModel)
+                        {
+                            var budgetService = app.GetRequiredService<IBudgetService>();
+                            viewModel.BankStatementSummary = await budgetService.GetBankStatementSummaryAsync(day);
+                            System.Diagnostics.Debug.WriteLine($"Bank statement summary updated for day {day}");
+                        }
                     }
-                }
-                else
-                {
-                    // Reset to current setting if invalid input
-                    textBox.Text = settingsService.BankStatementDay.ToString();
                 }
             }
             catch (Exception ex)
             {
-                // Reset to default on error
-                textBox.Text = "17";
                 System.Diagnostics.Debug.WriteLine($"Error updating bank statement day: {ex.Message}");
             }
         }

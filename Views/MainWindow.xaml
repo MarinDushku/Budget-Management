@@ -26,6 +26,7 @@
         
         <!-- Converters -->
         <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
+        <converters:TimePeriodToStringConverter x:Key="TimePeriodToStringConverter"/>
         
         <!-- Modern styles using the design system -->
         <Style x:Key="LargeButton" TargetType="Button" BasedOn="{StaticResource ModernPrimaryButtonStyle}">
@@ -442,16 +443,85 @@
                                                    Margin="0,2,0,0"/>
                                     </StackPanel>
                                     
-                                    <!-- Numeric Input for Statement Day -->
-                                    <TextBox x:Name="BankStatementDayTextBox" Grid.Column="1" 
-                                             Width="60" Height="32"
-                                             VerticalAlignment="Center"
-                                             HorizontalContentAlignment="Center"
-                                             FontSize="14" FontWeight="Medium"
-                                             Style="{StaticResource ModernTextBoxStyle}"
-                                             MaxLength="2"
-                                             LostFocus="BankStatementDayTextBox_LostFocus"
-                                             PreviewTextInput="BankStatementDayTextBox_PreviewTextInput"/>
+                                    <!-- Bank Statement Day Dropdown -->
+                                    <ComboBox x:Name="BankStatementDayComboBox" Grid.Column="1" 
+                                              Width="80" Height="32"
+                                              VerticalAlignment="Center"
+                                              FontSize="14" FontWeight="Medium"
+                                              Style="{StaticResource ModernComboBoxStyle}"
+                                              SelectionChanged="BankStatementDayComboBox_SelectionChanged">
+                                        <!-- Days 1-31 -->
+                                        <ComboBoxItem Content="1" Tag="1"/>
+                                        <ComboBoxItem Content="2" Tag="2"/>
+                                        <ComboBoxItem Content="3" Tag="3"/>
+                                        <ComboBoxItem Content="4" Tag="4"/>
+                                        <ComboBoxItem Content="5" Tag="5"/>
+                                        <ComboBoxItem Content="6" Tag="6"/>
+                                        <ComboBoxItem Content="7" Tag="7"/>
+                                        <ComboBoxItem Content="8" Tag="8"/>
+                                        <ComboBoxItem Content="9" Tag="9"/>
+                                        <ComboBoxItem Content="10" Tag="10"/>
+                                        <ComboBoxItem Content="11" Tag="11"/>
+                                        <ComboBoxItem Content="12" Tag="12"/>
+                                        <ComboBoxItem Content="13" Tag="13"/>
+                                        <ComboBoxItem Content="14" Tag="14"/>
+                                        <ComboBoxItem Content="15" Tag="15"/>
+                                        <ComboBoxItem Content="16" Tag="16"/>
+                                        <ComboBoxItem Content="17" Tag="17" IsSelected="True"/>
+                                        <ComboBoxItem Content="18" Tag="18"/>
+                                        <ComboBoxItem Content="19" Tag="19"/>
+                                        <ComboBoxItem Content="20" Tag="20"/>
+                                        <ComboBoxItem Content="21" Tag="21"/>
+                                        <ComboBoxItem Content="22" Tag="22"/>
+                                        <ComboBoxItem Content="23" Tag="23"/>
+                                        <ComboBoxItem Content="24" Tag="24"/>
+                                        <ComboBoxItem Content="25" Tag="25"/>
+                                        <ComboBoxItem Content="26" Tag="26"/>
+                                        <ComboBoxItem Content="27" Tag="27"/>
+                                        <ComboBoxItem Content="28" Tag="28"/>
+                                        <ComboBoxItem Content="29" Tag="29"/>
+                                        <ComboBoxItem Content="30" Tag="30"/>
+                                        <ComboBoxItem Content="31" Tag="31"/>
+                                    </ComboBox>
+                                </Grid>
+                                
+                                <!-- Time Period Selection Setting -->
+                                <Grid Margin="0,0,0,16">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    
+                                    <StackPanel Grid.Column="0">
+                                        <TextBlock Text="{DynamicResource TimePeriod}" 
+                                                   FontFamily="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"
+                                                   FontSize="14" FontWeight="Medium"
+                                                   Foreground="{DynamicResource PrimaryTextBrush}"
+                                                   TextOptions.TextRenderingMode="ClearType"/>
+                                        <TextBlock Text="Default time period for budget calculations and summary display" 
+                                                   FontSize="12" 
+                                                   Foreground="{DynamicResource SecondaryTextBrush}"
+                                                   TextOptions.TextRenderingMode="ClearType"
+                                                   Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                    
+                                    <!-- Time Period ComboBox -->
+                                    <ComboBox x:Name="TimePeriodComboBox" Grid.Column="1" 
+                                              Style="{StaticResource ModernComboBoxStyle}"
+                                              SelectedValue="{Binding SelectedTimePeriod, Mode=TwoWay, Converter={StaticResource TimePeriodToStringConverter}}"
+                                              SelectedValuePath="Tag"
+                                              MinWidth="140" Height="32"
+                                              VerticalAlignment="Center"
+                                              FontSize="14">
+                                        <ComboBoxItem Content="{DynamicResource TimePeriodThisWeek}" Tag="ThisWeek"/>
+                                        <ComboBoxItem Content="{DynamicResource TimePeriodTwoWeeks}" Tag="TwoWeeks"/>
+                                        <ComboBoxItem Content="{DynamicResource TimePeriodThisMonth}" Tag="ThisMonth"/>
+                                        <ComboBoxItem Content="{DynamicResource TimePeriodThreeMonths}" Tag="ThreeMonths"/>
+                                        <ComboBoxItem Content="{DynamicResource TimePeriodSixMonths}" Tag="SixMonths"/>
+                                        <ComboBoxItem Content="{DynamicResource TimePeriodOneYear}" Tag="OneYear"/>
+                                        <ComboBoxItem Content="{DynamicResource TimePeriodFiveYears}" Tag="FiveYears"/>
+                                        <ComboBoxItem Content="{DynamicResource TimePeriodAllTime}" Tag="AllTime" IsSelected="True"/>
+                                    </ComboBox>
                                 </Grid>
                             </StackPanel>
                         </Border>

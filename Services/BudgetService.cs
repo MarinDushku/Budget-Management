@@ -690,6 +690,33 @@ namespace BudgetManagement.Services
             };
         }
 
+        /// <summary>
+        /// Gets the earliest date from either income or spending entries
+        /// </summary>
+        /// <returns>The earliest date found, or null if no entries exist</returns>
+        public async Task<DateTime?> GetEarliestEntryDateAsync()
+        {
+            const string sql = @"
+                SELECT MIN(earliest_date) as EarliestDate
+                FROM (
+                    SELECT MIN(Date) as earliest_date FROM Income
+                    UNION ALL
+                    SELECT MIN(Date) as earliest_date FROM Spending
+                ) combined";
+
+            using var connection = new SqliteConnection(_connectionString);
+            await connection.OpenAsync();
+            using var command = new SqliteCommand(sql, connection);
+            
+            var result = await command.ExecuteScalarAsync();
+            if (result != null && result != DBNull.Value)
+            {
+                return DateTime.Parse(result.ToString()!);
+            }
+            
+            return null;
+        }
+
         #endregion
 
         #region Export Operations

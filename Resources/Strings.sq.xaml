@@ -130,6 +130,17 @@
     <sys:String x:Key="ThisYear">Këtë Vit</sys:String>
     <sys:String x:Key="LastYear">Vitin e Kaluar</sys:String>
     
+    <!-- Time Period Selection -->
+    <sys:String x:Key="TimePeriod">Periudha Kohore</sys:String>
+    <sys:String x:Key="TimePeriodThisWeek">Këtë Javë</sys:String>
+    <sys:String x:Key="TimePeriodTwoWeeks">2 Javë</sys:String>
+    <sys:String x:Key="TimePeriodThisMonth">Muaj</sys:String>
+    <sys:String x:Key="TimePeriodThreeMonths">3 Muaj</sys:String>
+    <sys:String x:Key="TimePeriodSixMonths">6 Muaj</sys:String>
+    <sys:String x:Key="TimePeriodOneYear">1 Vit</sys:String>
+    <sys:String x:Key="TimePeriodFiveYears">5 Vjet</sys:String>
+    <sys:String x:Key="TimePeriodAllTime">Gjithë Kohën</sys:String>
+    
     <!-- Validation Messages -->
     <sys:String x:Key="ValidationError">Gabim Validimi</sys:String>
     <sys:String x:Key="EnterDescription">Ju lutemi shkruani një përshkrim.</sys:String>

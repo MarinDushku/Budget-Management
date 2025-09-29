@@ -130,6 +130,17 @@
     <sys:String x:Key="ThisYear">This Year</sys:String>
     <sys:String x:Key="LastYear">Last Year</sys:String>
     
+    <!-- Time Period Selection -->
+    <sys:String x:Key="TimePeriod">Time Period</sys:String>
+    <sys:String x:Key="TimePeriodThisWeek">This Week</sys:String>
+    <sys:String x:Key="TimePeriodTwoWeeks">2 Weeks</sys:String>
+    <sys:String x:Key="TimePeriodThisMonth">Month</sys:String>
+    <sys:String x:Key="TimePeriodThreeMonths">3 Months</sys:String>
+    <sys:String x:Key="TimePeriodSixMonths">6 Months</sys:String>
+    <sys:String x:Key="TimePeriodOneYear">1 Year</sys:String>
+    <sys:String x:Key="TimePeriodFiveYears">5 Years</sys:String>
+    <sys:String x:Key="TimePeriodAllTime">All Time</sys:String>
+    
     <!-- Validation Messages -->
     <sys:String x:Key="ValidationError">Validation Error</sys:String>
     <sys:String x:Key="EnterDescription">Please enter a description.</sys:String>

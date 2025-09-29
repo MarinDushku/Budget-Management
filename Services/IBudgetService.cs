@@ -42,6 +42,7 @@ namespace BudgetManagement.Services
         Task<BudgetSummary> GetBudgetSummaryAsync(DateTime startDate, DateTime endDate);
         Task<IEnumerable<MonthlySummary>> GetMonthlySummaryAsync(int year);
         Task<decimal> GetCategoryTotalAsync(int categoryId, DateTime startDate, DateTime endDate);
+        Task<DateTime?> GetEarliestEntryDateAsync();
         
         // Bank statement operations
         (DateTime StartDate, DateTime EndDate) GetLastBankStatementPeriod(int statementDay);

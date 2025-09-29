@@ -308,4 +308,28 @@ namespace BudgetManagement.Converters
             throw new NotImplementedException();
         }
     }
+
+    /// <summary>
+    /// Converts TimePeriod enum to string for ComboBox binding
+    /// </summary>
+    public class TimePeriodToStringConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is BudgetManagement.ViewModels.TimePeriod timePeriod)
+            {
+                return timePeriod.ToString();
+            }
+            return "AllTime";
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is string stringValue && Enum.TryParse<BudgetManagement.ViewModels.TimePeriod>(stringValue, out var timePeriod))
+            {
+                return timePeriod;
+            }
+            return BudgetManagement.ViewModels.TimePeriod.AllTime;
+        }
+    }
 }

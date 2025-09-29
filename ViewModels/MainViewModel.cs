@@ -15,6 +15,21 @@ using BudgetManagement.Services;
 namespace BudgetManagement.ViewModels
 {
     /// <summary>
+    /// Enumeration for different time periods
+    /// </summary>
+    public enum TimePeriod
+    {
+        ThisWeek,
+        TwoWeeks,
+        ThisMonth,
+        ThreeMonths,
+        SixMonths,
+        OneYear,
+        FiveYears,
+        AllTime
+    }
+
+    /// <summary>
     /// Main view model for the budget management application
     /// </summary>
     public class MainViewModel : BaseViewModel
@@ -26,8 +41,9 @@ namespace BudgetManagement.ViewModels
         // Private fields
         private BudgetSummary _budgetSummary = new();
         private BankStatementSummary _bankStatementSummary = new();
-        private DateTime _selectedPeriodStart = DateTime.Now.AddMonths(-1);
+        private DateTime _selectedPeriodStart = DateTime.Now.AddYears(-10); // Default to far past for "All Time"
         private DateTime _selectedPeriodEnd = DateTime.Now;
+        private TimePeriod _selectedTimePeriod = TimePeriod.AllTime;
         private bool _isLoading;
         private string _statusMessage = string.Empty;
 
@@ -73,6 +89,12 @@ namespace BudgetManagement.ViewModels
         {
             get => _selectedPeriodEnd;
             set => SetProperty(ref _selectedPeriodEnd, value, async () => await RefreshDataAsync());
+        }
+
+        public TimePeriod SelectedTimePeriod
+        {
+            get => _selectedTimePeriod;
+            set => SetProperty(ref _selectedTimePeriod, value, async () => await SetTimePeriodAsync(value));
         }
 
         public bool IsLoading
@@ -169,6 +191,9 @@ namespace BudgetManagement.ViewModels
             {
                 IsLoading = true;
                 StatusMessage = "Initializing application...";
+
+                // Initialize All Time period as default
+                await SetTimePeriodAsync(TimePeriod.AllTime);
 
                 // Load categories first
                 var categories = await _budgetService.GetCategoriesAsync();
@@ -628,6 +653,60 @@ namespace BudgetManagement.ViewModels
             SelectedPeriodStart = new DateTime(now.Year, 1, 1);
             SelectedPeriodEnd = new DateTime(now.Year, 12, 31);
             await RefreshDataAsync(); // Refresh all data including analytics
+        }
+
+        private async Task SetTimePeriodAsync(TimePeriod period)
+        {
+            var now = DateTime.Now;
+            
+            switch (period)
+            {
+                case TimePeriod.ThisWeek:
+                    var startOfWeek = now.AddDays(-(int)now.DayOfWeek + 1); // Monday
+                    _selectedPeriodStart = startOfWeek;
+                    _selectedPeriodEnd = startOfWeek.AddDays(6); // Sunday
+                    break;
+                    
+                case TimePeriod.TwoWeeks:
+                    _selectedPeriodStart = now.AddDays(-14);
+                    _selectedPeriodEnd = now;
+                    break;
+                    
+                case TimePeriod.ThisMonth:
+                    _selectedPeriodStart = new DateTime(now.Year, now.Month, 1);
+                    _selectedPeriodEnd = _selectedPeriodStart.AddMonths(1).AddDays(-1);
+                    break;
+                    
+                case TimePeriod.ThreeMonths:
+                    _selectedPeriodStart = now.AddMonths(-3);
+                    _selectedPeriodEnd = now;
+                    break;
+                    
+                case TimePeriod.SixMonths:
+                    _selectedPeriodStart = now.AddMonths(-6);
+                    _selectedPeriodEnd = now;
+                    break;
+                    
+                case TimePeriod.OneYear:
+                    _selectedPeriodStart = now.AddYears(-1);
+                    _selectedPeriodEnd = now;
+                    break;
+                    
+                case TimePeriod.FiveYears:
+                    _selectedPeriodStart = now.AddYears(-5);
+                    _selectedPeriodEnd = now;
+                    break;
+                    
+                case TimePeriod.AllTime:
+                    var earliestDate = await _budgetService.GetEarliestEntryDateAsync();
+                    _selectedPeriodStart = earliestDate ?? now.AddYears(-10);
+                    _selectedPeriodEnd = now;
+                    break;
+            }
+            
+            OnPropertyChanged(nameof(SelectedPeriodStart));
+            OnPropertyChanged(nameof(SelectedPeriodEnd));
+            await RefreshDataAsync();
         }
 
         private async Task ExportDataAsync()
