@@ -27,6 +27,7 @@ namespace BudgetManagement.Features.Income.ViewModels
         private readonly IMediator _mediator;
         private readonly IDialogService _dialogService;
         private readonly ILogger<IncomeSearchViewModel> _logger;
+        private readonly BudgetManagement.Services.IBudgetService _budgetService;
 
         // Search criteria properties
         private string? _descriptionFilter;
@@ -58,11 +59,13 @@ namespace BudgetManagement.Features.Income.ViewModels
         public IncomeSearchViewModel(
             IMediator mediator,
             IDialogService dialogService,
-            ILogger<IncomeSearchViewModel> logger)
+            ILogger<IncomeSearchViewModel> logger,
+            BudgetManagement.Services.IBudgetService budgetService)
         {
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
             _dialogService = dialogService ?? throw new ArgumentNullException(nameof(dialogService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _budgetService = budgetService ?? throw new ArgumentNullException(nameof(budgetService));
 
             // Initialize commands
             SearchCommand = new RelayCommand(async () => await ExecuteSearchAsync(), () => CanExecuteSearch());
@@ -441,14 +444,20 @@ namespace BudgetManagement.Features.Income.ViewModels
             try
             {
                 _logger.LogDebug("Editing income entry {Id}", income.Id);
-                // Delegate to dialog service - this will be handled by the main application
-                // The search results will be refreshed after the edit
-                await Task.CompletedTask; // Placeholder for future dialog integration
+
+                var updatedIncome = await _dialogService.ShowIncomeDialogAsync(income);
+                if (updatedIncome != null)
+                {
+                    await _budgetService.UpdateIncomeAsync(updatedIncome);
+                    await ExecuteSearchAsync(); // Refresh search results
+                    _logger.LogInformation("Income entry {Id} updated successfully from search", income.Id);
+                }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error editing income entry {Id}", income.Id);
                 ErrorMessage = "Failed to edit income entry";
+                await _dialogService.ShowErrorAsync("Edit Income Error", ex.Message);
             }
         }
 
@@ -456,29 +465,38 @@ namespace BudgetManagement.Features.Income.ViewModels
         {
             if (income == null) return;
 
-            try
-            {
-                _logger.LogDebug("Deleting income entry {Id}", income.Id);
-                
-                var command = new DeleteIncomeCommand(income.Id);
-                var result = await _mediator.Send(command);
+            var confirmResult = await _dialogService.ShowConfirmationAsync(
+                "Delete Income Entry",
+                $"Are you sure you want to delete the income entry '{income.Description}' for {income.Amount:C}?");
 
-                if (result.IsSuccess)
-                {
-                    // Refresh search results
-                    await ExecuteSearchAsync();
-                    _logger.LogInformation("Income entry {Id} deleted successfully", income.Id);
-                }
-                else
-                {
-                    ErrorMessage = result.Error?.Message ?? "Failed to delete income entry";
-                    _logger.LogWarning("Failed to delete income entry {Id}: {Error}", income.Id, result.Error?.Message);
-                }
-            }
-            catch (Exception ex)
+            if (confirmResult)
             {
-                _logger.LogError(ex, "Error deleting income entry {Id}", income.Id);
-                ErrorMessage = "Failed to delete income entry";
+                try
+                {
+                    _logger.LogDebug("Deleting income entry {Id}", income.Id);
+                    
+                    var command = new DeleteIncomeCommand(income.Id);
+                    var result = await _mediator.Send(command);
+
+                    if (result.IsSuccess)
+                    {
+                        // Refresh search results
+                        await ExecuteSearchAsync();
+                        _logger.LogInformation("Income entry {Id} deleted successfully from search", income.Id);
+                    }
+                    else
+                    {
+                        ErrorMessage = result.Error?.Message ?? "Failed to delete income entry";
+                        _logger.LogWarning("Failed to delete income entry {Id}: {Error}", income.Id, result.Error?.Message);
+                        await _dialogService.ShowErrorAsync("Delete Error", ErrorMessage);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error deleting income entry {Id}", income.Id);
+                    ErrorMessage = "Failed to delete income entry";
+                    await _dialogService.ShowErrorAsync("Delete Error", ex.Message);
+                }
             }
         }
 

@@ -564,14 +564,30 @@ namespace BudgetManagement.Features.Spending.ViewModels
             try
             {
                 _logger.LogDebug("Editing spending entry {Id}", spending.Id);
-                // Delegate to dialog service - this will be handled by the main application
-                // The search results will be refreshed after the edit
-                await Task.CompletedTask; // Placeholder for future dialog integration
+
+                // Convert to Spending model for editing
+                var spendingModel = new Models.Spending
+                {
+                    Id = spending.Id,
+                    Date = spending.Date,
+                    Amount = spending.Amount,
+                    Description = spending.Description,
+                    CategoryId = spending.CategoryId
+                };
+
+                var updatedSpending = await _dialogService.ShowSpendingDialogAsync(spendingModel, Categories.ToList());
+                if (updatedSpending != null)
+                {
+                    await _budgetService.UpdateSpendingAsync(updatedSpending);
+                    await ExecuteSearchAsync(); // Refresh search results
+                    _logger.LogInformation("Spending entry {Id} updated successfully from search", spending.Id);
+                }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error editing spending entry {Id}", spending.Id);
                 ErrorMessage = "Failed to edit spending entry";
+                await _dialogService.ShowErrorAsync("Edit Spending Error", ex.Message);
             }
         }
 
@@ -579,29 +595,38 @@ namespace BudgetManagement.Features.Spending.ViewModels
         {
             if (spending == null) return;
 
-            try
-            {
-                _logger.LogDebug("Deleting spending entry {Id}", spending.Id);
-                
-                var command = new DeleteSpendingCommand(spending.Id);
-                var result = await _mediator.Send(command);
+            var confirmResult = await _dialogService.ShowConfirmationAsync(
+                "Delete Spending Entry",
+                $"Are you sure you want to delete the spending entry '{spending.Description}' for {spending.Amount:C}?");
 
-                if (result.IsSuccess)
-                {
-                    // Refresh search results
-                    await ExecuteSearchAsync();
-                    _logger.LogInformation("Spending entry {Id} deleted successfully", spending.Id);
-                }
-                else
-                {
-                    ErrorMessage = result.Error?.Message ?? "Failed to delete spending entry";
-                    _logger.LogWarning("Failed to delete spending entry {Id}: {Error}", spending.Id, result.Error?.Message);
-                }
-            }
-            catch (Exception ex)
+            if (confirmResult)
             {
-                _logger.LogError(ex, "Error deleting spending entry {Id}", spending.Id);
-                ErrorMessage = "Failed to delete spending entry";
+                try
+                {
+                    _logger.LogDebug("Deleting spending entry {Id}", spending.Id);
+                    
+                    var command = new DeleteSpendingCommand(spending.Id);
+                    var result = await _mediator.Send(command);
+
+                    if (result.IsSuccess)
+                    {
+                        // Refresh search results
+                        await ExecuteSearchAsync();
+                        _logger.LogInformation("Spending entry {Id} deleted successfully from search", spending.Id);
+                    }
+                    else
+                    {
+                        ErrorMessage = result.Error?.Message ?? "Failed to delete spending entry";
+                        _logger.LogWarning("Failed to delete spending entry {Id}: {Error}", spending.Id, result.Error?.Message);
+                        await _dialogService.ShowErrorAsync("Delete Error", ErrorMessage);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error deleting spending entry {Id}", spending.Id);
+                    ErrorMessage = "Failed to delete spending entry";
+                    await _dialogService.ShowErrorAsync("Delete Error", ex.Message);
+                }
             }
         }
 
