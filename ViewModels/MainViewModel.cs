@@ -284,38 +284,53 @@ namespace BudgetManagement.ViewModels
         /// <summary>
         /// Updates the recent entries collections for the activity feed
         /// </summary>
-        private void UpdateRecentEntries()
+        private async void UpdateRecentEntries()
         {
-            // Clear existing recent entries
-            RecentIncomeEntries.Clear();
-            RecentSpendingEntries.Clear();
-
-            // Get the 5 most recent income entries
-            var recentIncome = IncomeEntries
-                .OrderByDescending(i => i.Date)
-                .ThenByDescending(i => i.CreatedAt)
-                .Take(5);
-
-            foreach (var income in recentIncome)
+            try
             {
-                RecentIncomeEntries.Add(income);
+                // Clear existing recent entries
+                RecentIncomeEntries.Clear();
+                RecentSpendingEntries.Clear();
+
+                // Get data from the last 3 months for recent activity
+                var threeMonthsAgo = DateTime.Now.AddMonths(-3);
+                var now = DateTime.Now;
+
+                // Get recent income entries (last 3 months, take 20)
+                var allRecentIncome = await _budgetService.GetIncomeAsync(threeMonthsAgo, now);
+                var recentIncome = allRecentIncome
+                    .OrderByDescending(i => i.Date)
+                    .ThenByDescending(i => i.CreatedAt)
+                    .Take(20);
+
+                foreach (var income in recentIncome)
+                {
+                    RecentIncomeEntries.Add(income);
+                }
+
+                // Get recent spending entries (last 3 months, take 30)
+                var allRecentSpending = await _budgetService.GetSpendingWithCategoryAsync(threeMonthsAgo, now);
+                var recentSpending = allRecentSpending
+                    .OrderByDescending(s => s.Date)
+                    .ThenByDescending(s => s.CreatedAt)
+                    .Take(30);
+
+                foreach (var spending in recentSpending)
+                {
+                    RecentSpendingEntries.Add(spending);
+                }
+
+                System.Diagnostics.Debug.WriteLine($"UpdateRecentEntries: Loaded {RecentIncomeEntries.Count} income and {RecentSpendingEntries.Count} spending entries from last 3 months");
+
+                // Notify property changes for computed properties
+                OnPropertyChanged(nameof(HasNoRecentEntries));
+                OnPropertyChanged(nameof(TotalEntries));
+                OnPropertyChanged(nameof(AverageDailySpending));
             }
-
-            // Get the 5 most recent spending entries
-            var recentSpending = SpendingEntries
-                .OrderByDescending(s => s.Date)
-                .ThenByDescending(s => s.CreatedAt)
-                .Take(5);
-
-            foreach (var spending in recentSpending)
+            catch (Exception ex)
             {
-                RecentSpendingEntries.Add(spending);
+                System.Diagnostics.Debug.WriteLine($"UpdateRecentEntries: Error - {ex.Message}");
             }
-
-            // Notify property changes for computed properties
-            OnPropertyChanged(nameof(HasNoRecentEntries));
-            OnPropertyChanged(nameof(TotalEntries));
-            OnPropertyChanged(nameof(AverageDailySpending));
         }
 
         /// <summary>

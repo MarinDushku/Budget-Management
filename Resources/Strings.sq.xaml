@@ -42,6 +42,17 @@
     <sys:String x:Key="RecentSpending">Shpenzimet e Fundit</sys:String>
     <sys:String x:Key="NoRecentEntries">Nuk ka të dhëna të fundit për të shfaqur</sys:String>
     
+    <!-- Timeline Date Labels -->
+    <sys:String x:Key="Today">Sot</sys:String>
+    <sys:String x:Key="Yesterday">Dje</sys:String>
+    <sys:String x:Key="DaysAgo">{0} ditë më parë</sys:String>
+    <sys:String x:Key="OneWeekAgo">1 javë më parë</sys:String>
+    <sys:String x:Key="WeeksAgo">{0} javë më parë</sys:String>
+    <sys:String x:Key="Income">Të ardhura</sys:String>
+    <sys:String x:Key="Spending">Shpenzim</sys:String>
+    <sys:String x:Key="Entry">regjistrim</sys:String>
+    <sys:String x:Key="Entries">regjistrime</sys:String>
+    
     <!-- Navigation Buttons -->
     <sys:String x:Key="Settings">Rregullimet</sys:String>
     <sys:String x:Key="RefreshData">Rifresko të Dhënat</sys:String>

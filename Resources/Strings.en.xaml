@@ -42,6 +42,17 @@
     <sys:String x:Key="RecentSpending">Recent Spending</sys:String>
     <sys:String x:Key="NoRecentEntries">No recent entries to display</sys:String>
     
+    <!-- Timeline Date Labels -->
+    <sys:String x:Key="Today">Today</sys:String>
+    <sys:String x:Key="Yesterday">Yesterday</sys:String>
+    <sys:String x:Key="DaysAgo">{0} days ago</sys:String>
+    <sys:String x:Key="OneWeekAgo">1 week ago</sys:String>
+    <sys:String x:Key="WeeksAgo">{0} weeks ago</sys:String>
+    <sys:String x:Key="Income">Income</sys:String>
+    <sys:String x:Key="Spending">Spending</sys:String>
+    <sys:String x:Key="Entry">entry</sys:String>
+    <sys:String x:Key="Entries">entries</sys:String>
+    
     <!-- Navigation Buttons -->
     <sys:String x:Key="Settings">Settings</sys:String>
     <sys:String x:Key="RefreshData">Refresh Data</sys:String>

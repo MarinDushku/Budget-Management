@@ -156,10 +156,10 @@ namespace BudgetManagement.Features.Dashboard.Handlers
         {
             try
             {
-                var thirtyDaysAgo = DateTime.Now.AddDays(-30);
+                var threeMonthsAgo = DateTime.Now.AddMonths(-3);
                 var now = DateTime.Now;
-                var incomeEntries = await _budgetService.GetIncomeAsync(thirtyDaysAgo, now);
-                var recentEntries = incomeEntries.OrderByDescending(i => i.Date).Take(5).ToList();
+                var incomeEntries = await _budgetService.GetIncomeAsync(threeMonthsAgo, now);
+                var recentEntries = incomeEntries.OrderByDescending(i => i.Date).Take(20).ToList();
                 return Result<IEnumerable<Models.Income>>.Success(recentEntries);
             }
             catch (Exception ex)
@@ -174,10 +174,10 @@ namespace BudgetManagement.Features.Dashboard.Handlers
         {
             try
             {
-                var thirtyDaysAgo = DateTime.Now.AddDays(-30);
+                var threeMonthsAgo = DateTime.Now.AddMonths(-3);
                 var now = DateTime.Now;
-                var spendingEntries = await _budgetService.GetSpendingWithCategoryAsync(thirtyDaysAgo, now);
-                var recentEntries = spendingEntries.OrderByDescending(s => s.Date).Take(5).ToList();
+                var spendingEntries = await _budgetService.GetSpendingWithCategoryAsync(threeMonthsAgo, now);
+                var recentEntries = spendingEntries.OrderByDescending(s => s.Date).Take(30).ToList();
                 return Result<IEnumerable<Models.SpendingWithCategory>>.Success(recentEntries);
             }
             catch (Exception ex)
