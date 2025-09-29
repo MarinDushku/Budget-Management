@@ -575,7 +575,7 @@ namespace BudgetManagement.Features.Spending.ViewModels
                     CategoryId = spending.CategoryId
                 };
 
-                var updatedSpending = await _dialogService.ShowSpendingDialogAsync(spendingModel, Categories.ToList());
+                var updatedSpending = await _dialogService.ShowSpendingDialogAsync(spendingModel, AvailableCategories.ToList());
                 if (updatedSpending != null)
                 {
                     await _budgetService.UpdateSpendingAsync(updatedSpending);
