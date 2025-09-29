@@ -605,21 +605,11 @@ namespace BudgetManagement.Features.Spending.ViewModels
                 {
                     _logger.LogDebug("Deleting spending entry {Id}", spending.Id);
                     
-                    var command = new DeleteSpendingCommand(spending.Id);
-                    var result = await _mediator.Send(command);
-
-                    if (result.IsSuccess)
-                    {
-                        // Refresh search results
-                        await ExecuteSearchAsync();
-                        _logger.LogInformation("Spending entry {Id} deleted successfully from search", spending.Id);
-                    }
-                    else
-                    {
-                        ErrorMessage = result.Error?.Message ?? "Failed to delete spending entry";
-                        _logger.LogWarning("Failed to delete spending entry {Id}: {Error}", spending.Id, result.Error?.Message);
-                        await _dialogService.ShowErrorAsync("Delete Error", ErrorMessage);
-                    }
+                    await _budgetService.DeleteSpendingAsync(spending.Id);
+                    
+                    // Refresh search results
+                    await ExecuteSearchAsync();
+                    _logger.LogInformation("Spending entry {Id} deleted successfully from search", spending.Id);
                 }
                 catch (Exception ex)
                 {

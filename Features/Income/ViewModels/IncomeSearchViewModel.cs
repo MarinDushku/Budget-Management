@@ -475,21 +475,11 @@ namespace BudgetManagement.Features.Income.ViewModels
                 {
                     _logger.LogDebug("Deleting income entry {Id}", income.Id);
                     
-                    var command = new DeleteIncomeCommand(income.Id);
-                    var result = await _mediator.Send(command);
-
-                    if (result.IsSuccess)
-                    {
-                        // Refresh search results
-                        await ExecuteSearchAsync();
-                        _logger.LogInformation("Income entry {Id} deleted successfully from search", income.Id);
-                    }
-                    else
-                    {
-                        ErrorMessage = result.Error?.Message ?? "Failed to delete income entry";
-                        _logger.LogWarning("Failed to delete income entry {Id}: {Error}", income.Id, result.Error?.Message);
-                        await _dialogService.ShowErrorAsync("Delete Error", ErrorMessage);
-                    }
+                    await _budgetService.DeleteIncomeAsync(income.Id);
+                    
+                    // Refresh search results
+                    await ExecuteSearchAsync();
+                    _logger.LogInformation("Income entry {Id} deleted successfully from search", income.Id);
                 }
                 catch (Exception ex)
                 {
