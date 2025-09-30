@@ -63,9 +63,19 @@ namespace BudgetManagement.ViewModels
         // Daily budget balance data for tracking budget changes over time (legacy - keeping for compatibility)
         public ObservableCollection<DailyBudgetBalance> BudgetBalanceData { get; } = new();
         
-        // Simplified analytics data
+        // Simplified analytics data (legacy - keeping for compatibility)
         public ObservableCollection<WeeklySpendingPattern> WeeklyPatterns { get; } = new();
         public ObservableCollection<BudgetInsight> BudgetInsights { get; } = new();
+
+        // New actionable analytics data
+        public ObservableCollection<MonthlyComparison> MonthlyComparisons { get; } = new();
+        public ObservableCollection<CategoryTrend> CategoryTrends { get; } = new();
+        public ObservableCollection<CategoryInsight> CategoryInsights { get; } = new();
+
+        // Quick stats and other new analytics
+        private QuickStats _quickStats = new();
+        private SpendingVelocity _spendingVelocity = new();
+        private BudgetPerformanceScore _budgetPerformanceScore = new();
 
         // Collection views for filtering and sorting
         public ICollectionView IncomeView { get; }
@@ -88,6 +98,24 @@ namespace BudgetManagement.ViewModels
         {
             get => _heroMetrics;
             set => SetProperty(ref _heroMetrics, value);
+        }
+
+        public QuickStats QuickStats
+        {
+            get => _quickStats;
+            set => SetProperty(ref _quickStats, value);
+        }
+
+        public SpendingVelocity SpendingVelocity
+        {
+            get => _spendingVelocity;
+            set => SetProperty(ref _spendingVelocity, value);
+        }
+
+        public BudgetPerformanceScore BudgetPerformanceScore
+        {
+            get => _budgetPerformanceScore;
+            set => SetProperty(ref _budgetPerformanceScore, value);
         }
 
         public DateTime SelectedPeriodStart
@@ -271,7 +299,7 @@ namespace BudgetManagement.ViewModels
                 // Update recent entries (last 5 of each type)
                 UpdateRecentEntries();
 
-                // Update simplified analytics data
+                // Update simplified analytics data (legacy - keeping for compatibility)
                 System.Diagnostics.Debug.WriteLine("RefreshDataAsync: Loading hero metrics...");
                 await UpdateHeroMetricsAsync();
                 
@@ -280,6 +308,25 @@ namespace BudgetManagement.ViewModels
                 
                 System.Diagnostics.Debug.WriteLine("RefreshDataAsync: Loading budget insights...");
                 await UpdateBudgetInsightsAsync();
+
+                // Update new actionable analytics data
+                System.Diagnostics.Debug.WriteLine("RefreshDataAsync: Loading quick stats...");
+                await UpdateQuickStatsAsync();
+                
+                System.Diagnostics.Debug.WriteLine("RefreshDataAsync: Loading monthly comparisons...");
+                await UpdateMonthlyComparisonsAsync();
+                
+                System.Diagnostics.Debug.WriteLine("RefreshDataAsync: Loading category trends...");
+                await UpdateCategoryTrendsAsync();
+                
+                System.Diagnostics.Debug.WriteLine("RefreshDataAsync: Loading category insights...");
+                await UpdateCategoryInsightsAsync();
+                
+                System.Diagnostics.Debug.WriteLine("RefreshDataAsync: Loading spending velocity...");
+                await UpdateSpendingVelocityAsync();
+                
+                System.Diagnostics.Debug.WriteLine("RefreshDataAsync: Loading budget performance score...");
+                await UpdateBudgetPerformanceScoreAsync();
 
                 // Update legacy analytics (keeping for compatibility)
                 System.Diagnostics.Debug.WriteLine("RefreshDataAsync: Calling UpdateBudgetTrendDataAsync...");
@@ -867,6 +914,123 @@ namespace BudgetManagement.ViewModels
             {
                 System.Diagnostics.Debug.WriteLine($"UpdateBudgetInsightsAsync error: {ex}");
                 BudgetInsights.Clear();
+            }
+        }
+
+        /// <summary>
+        /// Updates the quick stats for the analytics dashboard
+        /// </summary>
+        private async Task UpdateQuickStatsAsync()
+        {
+            try
+            {
+                QuickStats = await _budgetService.GetQuickStatsAsync(SelectedPeriodStart, SelectedPeriodEnd);
+                System.Diagnostics.Debug.WriteLine($"UpdateQuickStatsAsync: Loaded quick stats - Days left: {QuickStats.DaysLeft}, Daily budget: ${QuickStats.DailyBudgetRemaining}");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"UpdateQuickStatsAsync error: {ex}");
+                QuickStats = new QuickStats();
+            }
+        }
+
+        /// <summary>
+        /// Updates the monthly comparisons for the analytics dashboard
+        /// </summary>
+        private async Task UpdateMonthlyComparisonsAsync()
+        {
+            try
+            {
+                MonthlyComparisons.Clear();
+                var comparisons = await _budgetService.GetMonthlyComparisonAsync(6); // Last 6 months
+                foreach (var comparison in comparisons)
+                {
+                    MonthlyComparisons.Add(comparison);
+                }
+                System.Diagnostics.Debug.WriteLine($"UpdateMonthlyComparisonsAsync: Loaded {MonthlyComparisons.Count} monthly comparisons");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"UpdateMonthlyComparisonsAsync error: {ex}");
+                MonthlyComparisons.Clear();
+            }
+        }
+
+        /// <summary>
+        /// Updates the category trends for the analytics dashboard
+        /// </summary>
+        private async Task UpdateCategoryTrendsAsync()
+        {
+            try
+            {
+                CategoryTrends.Clear();
+                var trends = await _budgetService.GetCategoryTrendsAsync(3); // Last 3 months
+                foreach (var trend in trends)
+                {
+                    CategoryTrends.Add(trend);
+                }
+                System.Diagnostics.Debug.WriteLine($"UpdateCategoryTrendsAsync: Loaded {CategoryTrends.Count} category trends");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"UpdateCategoryTrendsAsync error: {ex}");
+                CategoryTrends.Clear();
+            }
+        }
+
+        /// <summary>
+        /// Updates the category insights for the analytics dashboard
+        /// </summary>
+        private async Task UpdateCategoryInsightsAsync()
+        {
+            try
+            {
+                CategoryInsights.Clear();
+                var insights = await _budgetService.GetCategoryInsightsAsync(SelectedPeriodStart, SelectedPeriodEnd);
+                foreach (var insight in insights)
+                {
+                    CategoryInsights.Add(insight);
+                }
+                System.Diagnostics.Debug.WriteLine($"UpdateCategoryInsightsAsync: Loaded {CategoryInsights.Count} category insights");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"UpdateCategoryInsightsAsync error: {ex}");
+                CategoryInsights.Clear();
+            }
+        }
+
+        /// <summary>
+        /// Updates the spending velocity for the analytics dashboard
+        /// </summary>
+        private async Task UpdateSpendingVelocityAsync()
+        {
+            try
+            {
+                SpendingVelocity = await _budgetService.GetSpendingVelocityAsync(SelectedPeriodStart, SelectedPeriodEnd);
+                System.Diagnostics.Debug.WriteLine($"UpdateSpendingVelocityAsync: Loaded spending velocity - Daily average: ${SpendingVelocity.DailySpendingAverage}");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"UpdateSpendingVelocityAsync error: {ex}");
+                SpendingVelocity = new SpendingVelocity();
+            }
+        }
+
+        /// <summary>
+        /// Updates the budget performance score for the analytics dashboard
+        /// </summary>
+        private async Task UpdateBudgetPerformanceScoreAsync()
+        {
+            try
+            {
+                BudgetPerformanceScore = await _budgetService.GetBudgetPerformanceScoreAsync(SelectedPeriodStart, SelectedPeriodEnd);
+                System.Diagnostics.Debug.WriteLine($"UpdateBudgetPerformanceScoreAsync: Loaded performance score - Score: {BudgetPerformanceScore.OverallScore}");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"UpdateBudgetPerformanceScoreAsync error: {ex}");
+                BudgetPerformanceScore = new BudgetPerformanceScore();
             }
         }
     }

@@ -90,6 +90,15 @@ namespace BudgetManagement.Services
         Task<BudgetHealthMetrics> GetBudgetHealthMetricsAsync(DateTime startDate, DateTime endDate);
         Task<IEnumerable<WeeklySpendingPattern>> GetWeeklySpendingPatternsAsync(DateTime startDate, DateTime endDate);
         Task<IEnumerable<BudgetInsight>> GenerateBudgetInsightsAsync(DateTime startDate, DateTime endDate);
+
+        // New actionable analytics methods
+        Task<QuickStats> GetQuickStatsAsync(DateTime startDate, DateTime endDate);
+        Task<IEnumerable<MonthlyComparison>> GetMonthlyComparisonAsync(int monthsBack = 6);
+        Task<SpendingVelocity> GetSpendingVelocityAsync(DateTime startDate, DateTime endDate);
+        Task<IEnumerable<CategoryTrend>> GetCategoryTrendsAsync(int monthsBack = 3);
+        Task<IEnumerable<CalendarHeatmapDay>> GetCalendarHeatmapAsync(DateTime startDate, DateTime endDate);
+        Task<BudgetPerformanceScore> GetBudgetPerformanceScoreAsync(DateTime startDate, DateTime endDate);
+        Task<IEnumerable<CategoryInsight>> GetCategoryInsightsAsync(DateTime startDate, DateTime endDate);
     }
 
     /// <summary>

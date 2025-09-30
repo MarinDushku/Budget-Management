@@ -1601,6 +1601,457 @@ namespace BudgetManagement.Services
             }
         }
 
+        #region New Actionable Analytics Operations
+
+        /// <summary>
+        /// Gets quick stats for the top analytics bar
+        /// </summary>
+        public async Task<QuickStats> GetQuickStatsAsync(DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                var summary = await GetBudgetSummaryAsync(startDate, endDate);
+                var categories = await GetCategoriesAsync();
+                var spending = await GetSpendingAsync(startDate, endDate);
+                
+                // Calculate days left in period
+                var daysLeft = Math.Max(0, (endDate - DateTime.Today).Days);
+                
+                // Calculate daily budget remaining
+                var dailyBudgetRemaining = daysLeft > 0 ? summary.RemainingBudget / daysLeft : 0;
+                
+                // Calculate projected end balance
+                var daysInPeriod = (endDate - startDate).Days + 1;
+                var dailySpendingAverage = daysInPeriod > 0 ? summary.TotalSpending / daysInPeriod : 0;
+                var projectedEndBalance = summary.RemainingBudget - (dailySpendingAverage * daysLeft);
+                
+                // Find best performing category
+                var categoryPerformance = spending
+                    .GroupBy(s => s.CategoryId)
+                    .Select(g => new
+                    {
+                        CategoryId = g.Key,
+                        CategoryName = categories.FirstOrDefault(c => c.Id == g.Key)?.Name ?? "Unknown",
+                        TotalSpent = g.Sum(s => s.Amount),
+                        // Assume budget of $500 per category for calculation - this should come from actual budget data
+                        CategoryBudget = 500m
+                    })
+                    .Where(c => c.CategoryBudget > 0)
+                    .Select(c => new
+                    {
+                        c.CategoryName,
+                        UnderBudgetBy = c.CategoryBudget - c.TotalSpent,
+                        Percentage = ((c.CategoryBudget - c.TotalSpent) / c.CategoryBudget) * 100
+                    })
+                    .Where(c => c.UnderBudgetBy > 0)
+                    .OrderByDescending(c => c.Percentage)
+                    .FirstOrDefault();
+                
+                return new QuickStats
+                {
+                    DaysLeft = daysLeft,
+                    DailyBudgetRemaining = dailyBudgetRemaining,
+                    ProjectedEndBalance = projectedEndBalance,
+                    BestCategoryName = categoryPerformance?.CategoryName ?? "None",
+                    BestCategoryPercentage = categoryPerformance?.Percentage ?? 0,
+                    BestCategoryStatus = categoryPerformance != null 
+                        ? $"under budget by {categoryPerformance.Percentage:F0}%" 
+                        : "no categories under budget"
+                };
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"GetQuickStatsAsync error: {ex.Message}");
+                return new QuickStats();
+            }
+        }
+
+        /// <summary>
+        /// Gets monthly comparison data for the last specified months
+        /// </summary>
+        public async Task<IEnumerable<MonthlyComparison>> GetMonthlyComparisonAsync(int monthsBack = 6)
+        {
+            try
+            {
+                var comparisons = new List<MonthlyComparison>();
+                
+                for (int i = monthsBack - 1; i >= 0; i--)
+                {
+                    var monthStart = DateTime.Today.AddMonths(-i).Date.AddDays(1 - DateTime.Today.Day);
+                    var monthEnd = monthStart.AddMonths(1).AddDays(-1);
+                    
+                    var spending = await GetSpendingAsync(monthStart, monthEnd);
+                    var totalSpending = spending.Sum(s => s.Amount);
+                    
+                    // Assume monthly budget of $2000 - this should come from actual budget settings
+                    var budgetAmount = 2000m;
+                    
+                    comparisons.Add(new MonthlyComparison
+                    {
+                        MonthName = monthStart.ToString("MMM yyyy"),
+                        TotalSpending = totalSpending,
+                        BudgetAmount = budgetAmount,
+                        Month = monthStart
+                    });
+                }
+                
+                return comparisons.OrderBy(c => c.Month);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"GetMonthlyComparisonAsync error: {ex.Message}");
+                return new List<MonthlyComparison>();
+            }
+        }
+
+        /// <summary>
+        /// Gets spending velocity analysis
+        /// </summary>
+        public async Task<SpendingVelocity> GetSpendingVelocityAsync(DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                var spending = await GetSpendingAsync(startDate, endDate);
+                var daysInPeriod = (endDate - startDate).Days + 1;
+                var dailySpendingAverage = daysInPeriod > 0 ? spending.Sum(s => s.Amount) / daysInPeriod : 0;
+                
+                // Assume daily budget target of $65 - this should come from actual budget settings
+                var dailyBudgetTarget = 65m;
+                
+                var difference = dailySpendingAverage - dailyBudgetTarget;
+                var isOverPace = dailySpendingAverage > dailyBudgetTarget;
+                
+                DateTime? projectedOverBudgetDate = null;
+                if (isOverPace && difference > 0)
+                {
+                    var daysUntilOverBudget = (2000m / difference); // Assuming $2000 total budget
+                    projectedOverBudgetDate = DateTime.Today.AddDays((double)daysUntilOverBudget);
+                }
+                
+                var velocityMessage = $"You're spending ${dailySpendingAverage:F0}/day but budgeted for ${dailyBudgetTarget:F0}/day";
+                var projectionMessage = projectedOverBudgetDate.HasValue 
+                    ? $"At this rate, you'll exceed budget by {projectedOverBudgetDate:MMM dd}"
+                    : "You're on track to stay within budget";
+                
+                return new SpendingVelocity
+                {
+                    DailySpendingAverage = dailySpendingAverage,
+                    DailyBudgetTarget = dailyBudgetTarget,
+                    ProjectedOverBudgetDate = projectedOverBudgetDate,
+                    VelocityMessage = velocityMessage,
+                    ProjectionMessage = projectionMessage
+                };
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"GetSpendingVelocityAsync error: {ex.Message}");
+                return new SpendingVelocity();
+            }
+        }
+
+        /// <summary>
+        /// Gets category trend analysis for the specified months
+        /// </summary>
+        public async Task<IEnumerable<CategoryTrend>> GetCategoryTrendsAsync(int monthsBack = 3)
+        {
+            try
+            {
+                var trends = new List<CategoryTrend>();
+                var categories = await GetCategoriesAsync();
+                
+                foreach (var category in categories.Where(c => c.IsActive))
+                {
+                    var monthlyAmounts = new List<decimal>();
+                    
+                    for (int i = monthsBack - 1; i >= 0; i--)
+                    {
+                        var monthStart = DateTime.Today.AddMonths(-i).Date.AddDays(1 - DateTime.Today.Day);
+                        var monthEnd = monthStart.AddMonths(1).AddDays(-1);
+                        
+                        var spending = await GetSpendingAsync(monthStart, monthEnd);
+                        var categoryAmount = spending.Where(s => s.CategoryId == category.Id).Sum(s => s.Amount);
+                        monthlyAmounts.Add(categoryAmount);
+                    }
+                    
+                    // Calculate month-over-month trend percentage (this month vs last month)
+                    var trendPercentage = 0m;
+                    if (monthlyAmounts.Count >= 2)
+                    {
+                        // Get the last two months for month-over-month comparison
+                        var lastMonth = monthlyAmounts[monthlyAmounts.Count - 1];     // Current/most recent month
+                        var previousMonth = monthlyAmounts[monthlyAmounts.Count - 2]; // Previous month
+                        
+                        if (previousMonth > 0)
+                        {
+                            // Normal month-over-month calculation: (this month - last month) / last month * 100
+                            trendPercentage = ((lastMonth - previousMonth) / previousMonth) * 100;
+                        }
+                        else if (previousMonth == 0 && lastMonth > 0)
+                        {
+                            // Started spending in this category (no previous spending)
+                            trendPercentage = 100; // New spending indicator
+                        }
+                        else if (previousMonth > 0 && lastMonth == 0)
+                        {
+                            // Stopped spending in this category
+                            trendPercentage = -100; // No more spending
+                        }
+                        // If both months are 0, trend stays 0
+                        
+                        // Cap extreme values for realistic display
+                        trendPercentage = Math.Max(-100, Math.Min(300, trendPercentage));
+                    }
+                    
+                    // Generate sparkline pattern
+                    var maxAmount = monthlyAmounts.Max();
+                    var sparkline = string.Join("", monthlyAmounts.Select(amount =>
+                        maxAmount > 0 ? (amount / maxAmount) switch
+                        {
+                            <= 0.33m => "▂",
+                            <= 0.66m => "▄",
+                            _ => "█"
+                        } : "▂"
+                    ));
+                    
+                    var direction = trendPercentage switch
+                    {
+                        > 5 => "↑",
+                        < -5 => "↓",
+                        _ => "→"
+                    };
+                    
+                    trends.Add(new CategoryTrend
+                    {
+                        CategoryName = category.Name,
+                        Last3MonthsAmounts = monthlyAmounts,
+                        TrendPercentage = trendPercentage,
+                        TrendDirection = direction,
+                        SparklinePattern = sparkline
+                    });
+                }
+                
+                return trends.OrderByDescending(t => Math.Abs(t.TrendPercentage));
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"GetCategoryTrendsAsync error: {ex.Message}");
+                return new List<CategoryTrend>();
+            }
+        }
+
+        /// <summary>
+        /// Gets calendar heatmap data for the specified period
+        /// </summary>
+        public async Task<IEnumerable<CalendarHeatmapDay>> GetCalendarHeatmapAsync(DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                var heatmapDays = new List<CalendarHeatmapDay>();
+                var spending = await GetSpendingAsync(startDate, endDate);
+                
+                // Assume daily budget target of $65
+                var dailyBudgetTarget = 65m;
+                
+                for (var date = startDate.Date; date <= endDate.Date; date = date.AddDays(1))
+                {
+                    var daySpending = spending.Where(s => s.Date.Date == date).Sum(s => s.Amount);
+                    
+                    heatmapDays.Add(new CalendarHeatmapDay
+                    {
+                        Date = date,
+                        SpentAmount = daySpending,
+                        DailyBudgetTarget = dailyBudgetTarget
+                    });
+                }
+                
+                return heatmapDays;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"GetCalendarHeatmapAsync error: {ex.Message}");
+                return new List<CalendarHeatmapDay>();
+            }
+        }
+
+        /// <summary>
+        /// Gets budget performance score analysis
+        /// </summary>
+        public async Task<BudgetPerformanceScore> GetBudgetPerformanceScoreAsync(DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                var summary = await GetBudgetSummaryAsync(startDate, endDate);
+                var spending = await GetSpendingAsync(startDate, endDate);
+                var categories = await GetCategoriesAsync();
+                
+                var factors = new List<PerformanceFactor>();
+                var score = 50; // Base score
+                
+                // Factor 1: Staying under budget
+                if (summary.RemainingBudget >= 0)
+                {
+                    var budgetFactor = Math.Min(30, (int)(summary.RemainingBudget / 100));
+                    factors.Add(new PerformanceFactor
+                    {
+                        FactorName = "Staying under budget",
+                        Impact = budgetFactor,
+                        Description = $"Remaining budget: ${summary.RemainingBudget:F0}"
+                    });
+                    score += budgetFactor;
+                }
+                else
+                {
+                    var overBudgetPenalty = Math.Max(-30, (int)(summary.RemainingBudget / 100));
+                    factors.Add(new PerformanceFactor
+                    {
+                        FactorName = "Over budget",
+                        Impact = overBudgetPenalty,
+                        Description = $"Over budget by: ${Math.Abs(summary.RemainingBudget):F0}"
+                    });
+                    score += overBudgetPenalty;
+                }
+                
+                // Factor 2: Category distribution
+                var categorySpending = spending.GroupBy(s => s.CategoryId).Count();
+                if (categorySpending <= 2)
+                {
+                    factors.Add(new PerformanceFactor
+                    {
+                        FactorName = "Limited category use",
+                        Impact = -10,
+                        Description = "Consider using more categories for better tracking"
+                    });
+                    score -= 10;
+                }
+                
+                // Factor 3: "Others" category usage
+                var othersCategory = categories.FirstOrDefault(c => c.Name.ToLower().Contains("other"));
+                if (othersCategory != null)
+                {
+                    var othersSpending = spending.Where(s => s.CategoryId == othersCategory.Id).Sum(s => s.Amount);
+                    var othersPercentage = summary.TotalSpending > 0 ? (othersSpending / summary.TotalSpending) * 100 : 0;
+                    
+                    if (othersPercentage > 30)
+                    {
+                        factors.Add(new PerformanceFactor
+                        {
+                            FactorName = "High 'others' spending",
+                            Impact = -15,
+                            Description = $"{othersPercentage:F0}% in 'others' category"
+                        });
+                        score -= 15;
+                    }
+                }
+                
+                // Ensure score is within bounds
+                score = Math.Max(0, Math.Min(100, score));
+                
+                return new BudgetPerformanceScore
+                {
+                    OverallScore = score,
+                    Factors = factors
+                };
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"GetBudgetPerformanceScoreAsync error: {ex.Message}");
+                return new BudgetPerformanceScore { OverallScore = 50 };
+            }
+        }
+
+        /// <summary>
+        /// Gets actionable category insights
+        /// </summary>
+        public async Task<IEnumerable<CategoryInsight>> GetCategoryInsightsAsync(DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                var insights = new List<CategoryInsight>();
+                var spending = await GetSpendingAsync(startDate, endDate);
+                var categories = await GetCategoriesAsync();
+                
+                // Get previous period for comparison
+                var periodLength = (endDate - startDate).Days + 1;
+                var previousStart = startDate.AddDays(-periodLength);
+                var previousEnd = startDate.AddDays(-1);
+                var previousSpending = await GetSpendingAsync(previousStart, previousEnd);
+                
+                // Analyze each category
+                foreach (var category in categories.Where(c => c.IsActive))
+                {
+                    var currentAmount = spending.Where(s => s.CategoryId == category.Id).Sum(s => s.Amount);
+                    var previousAmount = previousSpending.Where(s => s.CategoryId == category.Id).Sum(s => s.Amount);
+                    
+                    // Skip if no spending in either period
+                    if (currentAmount == 0 && previousAmount == 0) continue;
+                    
+                    // Check for significant increases
+                    if (previousAmount > 0)
+                    {
+                        var changePercentage = ((currentAmount / previousAmount) - 1) * 100;
+                        
+                        if (changePercentage > 45) // Significant increase
+                        {
+                            insights.Add(new CategoryInsight
+                            {
+                                InsightType = "increase",
+                                Title = "Spending Increase Alert",
+                                Description = $"{category.Name} spending up {changePercentage:F0}% vs last period",
+                                ActionRecommendation = $"Review {category.Name} expenses and consider setting a lower limit",
+                                RelevantAmount = currentAmount - previousAmount,
+                                PercentageChange = changePercentage,
+                                CategoryName = category.Name,
+                                Priority = 1
+                            });
+                        }
+                    }
+                    else if (currentAmount > 100) // New category with significant spending
+                    {
+                        insights.Add(new CategoryInsight
+                        {
+                            InsightType = "new_category",
+                            Title = "New Spending Detected",
+                            Description = $"{category.Name} spending detected - is this a new category?",
+                            ActionRecommendation = "Consider if this should be tracked separately or merged with existing categories",
+                            RelevantAmount = currentAmount,
+                            CategoryName = category.Name,
+                            Priority = 2
+                        });
+                    }
+                }
+                
+                // Check for savings opportunities
+                var totalSpending = spending.Sum(s => s.Amount);
+                var othersSpending = spending.Where(s => 
+                    categories.Any(c => c.Id == s.CategoryId && c.Name.ToLower().Contains("other")))
+                    .Sum(s => s.Amount);
+                
+                if (othersSpending > totalSpending * 0.1m) // More than 10% in "others"
+                {
+                    var savingsAmount = othersSpending * 0.1m;
+                    insights.Add(new CategoryInsight
+                    {
+                        InsightType = "savings",
+                        Title = "Savings Opportunity",
+                        Description = $"Reduce 'others' spending by 10% to save ${savingsAmount:F0}/month",
+                        ActionRecommendation = "Review 'others' transactions and categorize them properly",
+                        RelevantAmount = savingsAmount,
+                        CategoryName = "Others",
+                        Priority = 3
+                    });
+                }
+                
+                return insights.OrderBy(i => i.Priority).Take(3); // Return top 3 insights
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"GetCategoryInsightsAsync error: {ex.Message}");
+                return new List<CategoryInsight>();
+            }
+        }
+
+        #endregion
+
         /// <summary>
         /// Helper method to get the start of the week (Monday) for a given date
         /// </summary>

@@ -279,4 +279,197 @@ namespace BudgetManagement.Models
         /// </summary>
         public int Priority { get; set; } = 3;
     }
+
+    // ===== NEW ACTIONABLE ANALYTICS MODELS =====
+
+    /// <summary>
+    /// Quick stats displayed in horizontal bar at top of analytics
+    /// </summary>
+    public class QuickStats
+    {
+        public int DaysLeft { get; set; }
+        public decimal DailyBudgetRemaining { get; set; }
+        public decimal ProjectedEndBalance { get; set; }
+        public string BestCategoryName { get; set; } = string.Empty;
+        public decimal BestCategoryPercentage { get; set; }
+        public string BestCategoryStatus { get; set; } = string.Empty; // "under budget by 65%"
+        
+        /// <summary>
+        /// Color coding for projected balance
+        /// </summary>
+        public string ProjectedBalanceColor => ProjectedEndBalance switch
+        {
+            >= 0 => "#10B981",   // Green - positive
+            >= -100 => "#F59E0B", // Orange - small deficit
+            _ => "#EF4444"        // Red - large deficit
+        };
+    }
+
+    /// <summary>
+    /// Monthly comparison data for line chart
+    /// </summary>
+    public class MonthlyComparison
+    {
+        public string MonthName { get; set; } = string.Empty;
+        public decimal TotalSpending { get; set; }
+        public decimal BudgetAmount { get; set; }
+        public bool IsOverBudget => TotalSpending > BudgetAmount;
+        public decimal VarianceAmount => TotalSpending - BudgetAmount;
+        public decimal VariancePercentage => BudgetAmount > 0 ? (TotalSpending / BudgetAmount - 1) * 100 : 0;
+        public DateTime Month { get; set; }
+        
+        /// <summary>
+        /// Color for chart display based on budget performance
+        /// </summary>
+        public string ChartColor => IsOverBudget ? "#EF4444" : "#10B981";
+    }
+
+    /// <summary>
+    /// Spending velocity indicator showing daily pace vs budget
+    /// </summary>
+    public class SpendingVelocity
+    {
+        public decimal DailySpendingAverage { get; set; }
+        public decimal DailyBudgetTarget { get; set; }
+        public decimal DifferenceAmount => DailySpendingAverage - DailyBudgetTarget;
+        public bool IsOverPace => DailySpendingAverage > DailyBudgetTarget;
+        public DateTime? ProjectedOverBudgetDate { get; set; }
+        public string VelocityMessage { get; set; } = string.Empty;
+        public string ProjectionMessage { get; set; } = string.Empty;
+        
+        /// <summary>
+        /// Color coding for velocity indicator
+        /// </summary>
+        public string VelocityColor => IsOverPace ? "#EF4444" : "#10B981";
+    }
+
+    /// <summary>
+    /// Category trend data with mini sparkline chart info
+    /// </summary>
+    public class CategoryTrend
+    {
+        public string CategoryName { get; set; } = string.Empty;
+        public List<decimal> Last3MonthsAmounts { get; set; } = new();
+        public decimal TrendPercentage { get; set; }
+        public string TrendDirection { get; set; } = string.Empty; // ↑, ↓, →
+        public string SparklinePattern { get; set; } = string.Empty; // ▂▄█ representation
+        public bool IsIncreasing => TrendPercentage > 5;
+        public bool IsDecreasing => TrendPercentage < -5;
+        
+        /// <summary>
+        /// Color for trend percentage display
+        /// </summary>
+        public string TrendColor => TrendPercentage switch
+        {
+            > 10 => "#EF4444",   // Red - significant increase
+            > 0 => "#F59E0B",    // Orange - slight increase
+            < -10 => "#10B981",  // Green - significant decrease (savings)
+            < 0 => "#34D399",    // Light green - slight decrease
+            _ => "#6B7280"       // Gray - stable
+        };
+    }
+
+    /// <summary>
+    /// Calendar heatmap data for daily spending intensity
+    /// </summary>
+    public class CalendarHeatmapDay
+    {
+        public DateTime Date { get; set; }
+        public decimal SpentAmount { get; set; }
+        public decimal DailyBudgetTarget { get; set; }
+        public decimal IntensityLevel => DailyBudgetTarget > 0 ? SpentAmount / DailyBudgetTarget : 0;
+        public string IntensityColor => IntensityLevel switch
+        {
+            <= 0.5m => "#D1FAE5", // Very light green - well under budget
+            <= 0.8m => "#A7F3D0", // Light green - under budget  
+            <= 1.0m => "#FEF3C7", // Light yellow - near budget
+            <= 1.5m => "#FED7AA", // Light orange - over budget
+            _ => "#FECACA"         // Light red - significantly over
+        };
+        public bool IsToday => Date.Date == DateTime.Today;
+        public bool HasSpending => SpentAmount > 0;
+    }
+
+    /// <summary>
+    /// Budget performance scoring system
+    /// </summary>
+    public class BudgetPerformanceScore
+    {
+        public int OverallScore { get; set; } // 0-100
+        public List<PerformanceFactor> Factors { get; set; } = new();
+        public string ScoreCategory => OverallScore switch
+        {
+            >= 90 => "Excellent",
+            >= 80 => "Good", 
+            >= 70 => "Fair",
+            >= 60 => "Needs Improvement",
+            _ => "Poor"
+        };
+        public string ScoreColor => OverallScore switch
+        {
+            >= 80 => "#10B981", // Green
+            >= 60 => "#F59E0B", // Orange  
+            _ => "#EF4444"      // Red
+        };
+    }
+
+    /// <summary>
+    /// Individual factor affecting budget performance score
+    /// </summary>
+    public class PerformanceFactor
+    {
+        public string FactorName { get; set; } = string.Empty;
+        public int Impact { get; set; } // Positive or negative points
+        public string Description { get; set; } = string.Empty;
+        public bool IsPositive => Impact > 0;
+        
+        /// <summary>
+        /// Color for factor display
+        /// </summary>
+        public string ImpactColor => IsPositive ? "#10B981" : "#EF4444";
+        
+        /// <summary>
+        /// Sign indicator for display
+        /// </summary>
+        public string ImpactSign => IsPositive ? "+" : "";
+    }
+
+    /// <summary>
+    /// Actionable category insight replacing generic smart insights
+    /// </summary>
+    public class CategoryInsight
+    {
+        public string InsightType { get; set; } = string.Empty; // "increase", "unusual", "savings"
+        public string Title { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public string ActionRecommendation { get; set; } = string.Empty;
+        public decimal? RelevantAmount { get; set; }
+        public decimal? PercentageChange { get; set; }
+        public string CategoryName { get; set; } = string.Empty;
+        public int Priority { get; set; } = 3; // 1-5, 1 being highest
+        
+        /// <summary>
+        /// Icon based on insight type
+        /// </summary>
+        public string Icon => InsightType switch
+        {
+            "increase" => "📈",
+            "unusual" => "⚠️",
+            "savings" => "💡",
+            "new_category" => "🔍",
+            _ => "📊"
+        };
+        
+        /// <summary>
+        /// Color coding based on insight type
+        /// </summary>
+        public string InsightColor => InsightType switch
+        {
+            "increase" => "#EF4444",    // Red - concerning
+            "unusual" => "#F59E0B",     // Orange - attention needed
+            "savings" => "#10B981",     // Green - opportunity
+            "new_category" => "#3B82F6", // Blue - informational
+            _ => "#6B7280"              // Gray - neutral
+        };
+    }
 }
