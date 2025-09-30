@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 
@@ -330,6 +331,78 @@ namespace BudgetManagement.Converters
                 return timePeriod;
             }
             return BudgetManagement.ViewModels.TimePeriod.AllTime;
+        }
+    }
+
+    /// <summary>
+    /// Converts collection count to visibility (0 = Collapsed, >0 = Visible)
+    /// </summary>
+    public class CountToVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            bool invert = parameter?.ToString()?.ToLower() == "invert";
+            bool hasItems = false;
+
+            if (value is int count)
+            {
+                hasItems = count > 0;
+            }
+            else if (value is System.Collections.ICollection collection)
+            {
+                hasItems = collection.Count > 0;
+            }
+            else if (value is System.Collections.IEnumerable enumerable)
+            {
+                hasItems = enumerable.Cast<object>().Any();
+            }
+
+            return (hasItems ^ invert) ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    /// <summary>
+    /// Converts boolean IsActive status to readable text for category management
+    /// </summary>
+    public class BooleanToStatusConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is bool isActive)
+            {
+                return isActive ? "Active" : "Inactive";
+            }
+            return "Unknown";
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    /// <summary>
+    /// Converts boolean error status to color (true = red, false = green)
+    /// </summary>
+    public class BooleanToStatusColorConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is bool hasError)
+            {
+                return hasError ? "#EF4444" : "#10B981"; // Red for error, Green for success
+            }
+            return "#6B7280"; // Gray for neutral
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
         }
     }
 }

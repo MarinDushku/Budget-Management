@@ -125,7 +125,47 @@
                 <TextBlock Text="{DynamicResource CategoriesOrderDescription}" 
                            FontSize="12" Foreground="{DynamicResource SecondaryTextBrush}" Margin="0,0,0,15"/>
                 
-                <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="300">
+                <!-- Loading Indicator -->
+                <Border Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}" 
+                        Background="{DynamicResource SurfaceElevatedBrush}" 
+                        Padding="20" Margin="0,0,0,10" CornerRadius="4">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBlock Text="⟳" FontSize="16" Margin="0,0,10,0"
+                                   RenderTransformOrigin="0.5,0.5">
+                            <TextBlock.RenderTransform>
+                                <RotateTransform/>
+                            </TextBlock.RenderTransform>
+                            <TextBlock.Triggers>
+                                <EventTrigger RoutedEvent="Loaded">
+                                    <BeginStoryboard>
+                                        <Storyboard RepeatBehavior="Forever">
+                                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)"
+                                                           From="0" To="360" Duration="0:0:1"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                            </TextBlock.Triggers>
+                        </TextBlock>
+                        <TextBlock Text="Loading categories..." FontSize="14" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+                
+                <!-- No Categories Message -->
+                <Border Visibility="{Binding Categories.Count, Converter={StaticResource CountToVisibilityConverter}, ConverterParameter=invert}"
+                        Background="{DynamicResource SurfaceElevatedBrush}" 
+                        Padding="20" Margin="0,0,0,10" CornerRadius="4">
+                    <StackPanel HorizontalAlignment="Center">
+                        <TextBlock Text="📂" FontSize="24" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                        <TextBlock Text="No categories found" FontSize="16" FontWeight="Medium" 
+                                   HorizontalAlignment="Center" Margin="0,0,0,5"/>
+                        <TextBlock Text="Add your first category using the form above" FontSize="12" 
+                                   Foreground="{DynamicResource SecondaryTextBrush}" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+                
+                <!-- Categories Display -->
+                <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="300"
+                              Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}">
                     <ListBox x:Name="CategoriesListBox" BorderThickness="0" Background="Transparent"
                              ItemsSource="{Binding Categories}"
                              ScrollViewer.HorizontalScrollBarVisibility="Disabled">
@@ -152,7 +192,7 @@
                                         <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                             <TextBlock Text="{Binding Name}" FontSize="16" FontWeight="Medium"
                                                        Foreground="{DynamicResource PrimaryTextBrush}"/>
-                                            <TextBlock Text="{Binding IsActive, Converter={x:Static local:BooleanToStatusConverter.Instance}}" 
+                                            <TextBlock Text="{Binding IsActive, Converter={StaticResource BooleanToStatusConverter}}" 
                                                        FontSize="12" Foreground="{DynamicResource SecondaryTextBrush}"/>
                                         </StackPanel>
                                         
@@ -180,18 +220,34 @@
             </StackPanel>
         </Border>
 
-        <!-- Dialog Action Buttons -->
+        <!-- Status Bar -->
         <Border Grid.Row="3" Background="{DynamicResource SurfaceElevatedBrush}" BorderBrush="{DynamicResource BorderLightBrush}" BorderThickness="1" 
                 CornerRadius="6" Padding="20" Margin="0,20,0,0">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Content="🔄 Reset to Default" Style="{StaticResource SecondaryButtonStyle}" 
-                        Click="ResetToDefaultButton_Click" MinWidth="150" Margin="0,0,15,0"
-                        ToolTip="Restore default categories (Family, Personal, Marini)"/>
-                <Button Content="❌ Cancel" Style="{StaticResource SecondaryButtonStyle}" 
-                        Click="CancelButton_Click" MinWidth="100" Margin="0,0,15,0"/>
-                <Button Content="✅ Save Changes" Style="{StaticResource PrimaryButtonStyle}" 
-                        Click="SaveButton_Click" MinWidth="130"/>
-            </StackPanel>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                
+                <!-- Status Message -->
+                <Border Grid.Row="0" Margin="0,0,0,10" Padding="10" CornerRadius="4"
+                        Background="{Binding HasError, Converter={StaticResource BooleanToStatusColorConverter}}"
+                        Visibility="{Binding StatusMessage, Converter={StaticResource NullToVisibilityConverter}}">
+                    <TextBlock Text="{Binding StatusMessage}" 
+                               Foreground="White" FontSize="12" TextWrapping="Wrap"/>
+                </Border>
+                
+                <!-- Action Buttons -->
+                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="🔄 Reset to Default" Style="{StaticResource SecondaryButtonStyle}" 
+                            Click="ResetToDefaultButton_Click" MinWidth="150" Margin="0,0,15,0"
+                            ToolTip="Restore default categories (Family, Personal, Marini)"/>
+                    <Button Content="❌ Cancel" Style="{StaticResource SecondaryButtonStyle}" 
+                            Click="CancelButton_Click" MinWidth="100" Margin="0,0,15,0"/>
+                    <Button Content="✅ Save Changes" Style="{StaticResource PrimaryButtonStyle}" 
+                            Click="SaveButton_Click" MinWidth="130"/>
+                </StackPanel>
+            </Grid>
         </Border>
     </Grid>
 </Window>

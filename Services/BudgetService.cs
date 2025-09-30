@@ -1418,5 +1418,198 @@ namespace BudgetManagement.Services
         }
 
         #endregion
+
+        #region Simplified Analytics Operations
+
+        /// <summary>
+        /// Calculates hero metrics for the simplified analytics dashboard
+        /// </summary>
+        public async Task<BudgetHealthMetrics> GetBudgetHealthMetricsAsync(DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                // Get summary data
+                var summary = await GetBudgetSummaryAsync(startDate, endDate);
+                
+                // Get previous period for comparison (same duration before startDate)
+                var periodDays = (endDate - startDate).Days;
+                var previousStart = startDate.AddDays(-periodDays);
+                var previousEnd = startDate.AddDays(-1);
+                var previousSummary = await GetBudgetSummaryAsync(previousStart, previousEnd);
+                
+                // Calculate spending trend
+                var spendingTrend = "Stable";
+                if (summary.TotalSpending > previousSummary.TotalSpending * 1.1m)
+                    spendingTrend = "Increasing";
+                else if (summary.TotalSpending < previousSummary.TotalSpending * 0.9m)
+                    spendingTrend = "Decreasing";
+
+                // Get top category
+                var spendingData = await GetSpendingWithCategoryAsync(startDate, endDate);
+                var topCategory = spendingData
+                    .GroupBy(s => s.CategoryName)
+                    .OrderByDescending(g => g.Sum(s => s.Amount))
+                    .FirstOrDefault();
+
+                // Calculate health metrics
+                var healthPercentage = summary.TotalIncome > 0 
+                    ? Math.Max(0, (summary.RemainingBudget / summary.TotalIncome) * 100)
+                    : 0;
+
+                var healthStatus = healthPercentage switch
+                {
+                    >= 20 => "Excellent",
+                    >= 10 => "Good", 
+                    >= 0 => "Warning",
+                    _ => "Critical"
+                };
+
+                // Calculate days left in period
+                var daysLeft = Math.Max(0, (endDate - DateTime.Now).Days);
+
+                return new BudgetHealthMetrics
+                {
+                    MonthlySpending = summary.TotalSpending,
+                    BudgetRemaining = summary.RemainingBudget,
+                    TopCategoryName = topCategory?.Key ?? "No data",
+                    TopCategoryAmount = topCategory?.Sum(s => s.Amount) ?? 0,
+                    BudgetHealthPercentage = healthPercentage,
+                    HealthStatus = healthStatus,
+                    SpendingTrend = spendingTrend,
+                    DaysLeft = daysLeft
+                };
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"GetBudgetHealthMetricsAsync error: {ex.Message}");
+                return new BudgetHealthMetrics { HealthStatus = "Critical" };
+            }
+        }
+
+        /// <summary>
+        /// Gets weekly spending patterns for simple bar chart display
+        /// </summary>
+        public async Task<IEnumerable<WeeklySpendingPattern>> GetWeeklySpendingPatternsAsync(DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                var spending = await GetSpendingAsync(startDate, endDate);
+                
+                // Group by week and calculate totals
+                var weeklyData = spending
+                    .GroupBy(s => GetWeekStart(s.Date))
+                    .OrderByDescending(g => g.Key)
+                    .Take(6)
+                    .Select((g, index) => new WeeklySpendingPattern
+                    {
+                        WeekLabel = g.Key.ToString("MMM dd"),
+                        Amount = g.Sum(s => s.Amount),
+                        WeekNumber = index
+                    })
+                    .ToList();
+
+                // Calculate normalized heights for bar chart (20-80 range)
+                if (weeklyData.Any())
+                {
+                    var maxAmount = weeklyData.Max(w => w.Amount);
+                    var avgAmount = weeklyData.Average(w => w.Amount);
+                    
+                    foreach (var week in weeklyData)
+                    {
+                        week.NormalizedHeight = maxAmount > 0 
+                            ? Math.Max(20, Math.Min(80, (double)(week.Amount / maxAmount) * 60 + 20))
+                            : 20;
+                        week.IsHighSpendingWeek = week.Amount > avgAmount;
+                    }
+                }
+
+                return weeklyData.OrderBy(w => w.WeekNumber);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"GetWeeklySpendingPatternsAsync error: {ex.Message}");
+                return new List<WeeklySpendingPattern>();
+            }
+        }
+
+        /// <summary>
+        /// Generates plain English insights for user-friendly analytics
+        /// </summary>
+        public async Task<IEnumerable<BudgetInsight>> GenerateBudgetInsightsAsync(DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                var insights = new List<BudgetInsight>();
+                var summary = await GetBudgetSummaryAsync(startDate, endDate);
+                
+                // Budget health insight
+                if (summary.RemainingBudget < 0)
+                {
+                    insights.Add(new BudgetInsight
+                    {
+                        InsightType = "overspending",
+                        Title = "Budget Alert",
+                        Description = $"You've spent ${Math.Abs(summary.RemainingBudget):F0} more than your income this period.",
+                        ActionRecommendation = "Consider reducing spending in your top categories.",
+                        Priority = 1
+                    });
+                }
+                else if (summary.RemainingBudget > summary.TotalIncome * 0.2m)
+                {
+                    insights.Add(new BudgetInsight
+                    {
+                        InsightType = "good_savings",
+                        Title = "Great Job!",
+                        Description = $"You have ${summary.RemainingBudget:F0} remaining in your budget.",
+                        ActionRecommendation = "Consider saving or investing this amount.",
+                        Priority = 2
+                    });
+                }
+
+                // Top category insight
+                var spendingData = await GetSpendingWithCategoryAsync(startDate, endDate);
+                var topCategory = spendingData
+                    .GroupBy(s => s.CategoryName)
+                    .OrderByDescending(g => g.Sum(s => s.Amount))
+                    .FirstOrDefault();
+
+                if (topCategory != null)
+                {
+                    var categoryTotal = topCategory.Sum(s => s.Amount);
+                    var categoryPercentage = summary.TotalSpending > 0 
+                        ? (categoryTotal / summary.TotalSpending) * 100 
+                        : 0;
+
+                    insights.Add(new BudgetInsight
+                    {
+                        InsightType = "top_category",
+                        Title = "Top Spending Category",
+                        Description = $"{topCategory.Key} accounts for {categoryPercentage:F0}% of your spending (${categoryTotal:F0}).",
+                        ActionRecommendation = categoryPercentage > 40 
+                            ? "Consider ways to reduce spending in this category."
+                            : "Your spending is well distributed across categories.",
+                        Priority = 3
+                    });
+                }
+
+                return insights.OrderBy(i => i.Priority).Take(3);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"GenerateBudgetInsightsAsync error: {ex.Message}");
+                return new List<BudgetInsight>();
+            }
+        }
+
+        /// <summary>
+        /// Helper method to get the start of the week (Monday) for a given date
+        /// </summary>
+        private static DateTime GetWeekStart(DateTime date)
+        {
+            var diff = (7 + (date.DayOfWeek - DayOfWeek.Monday)) % 7;
+            return date.AddDays(-diff).Date;
+        }
+
+        #endregion
     }
 }

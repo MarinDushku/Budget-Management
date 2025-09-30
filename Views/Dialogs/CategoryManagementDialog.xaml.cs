@@ -9,57 +9,167 @@ using System.Windows.Data;
 using System.Windows.Input;
 using BudgetManagement.Models;
 using BudgetManagement.Services;
+using BudgetManagement.ViewModels;
 
 namespace BudgetManagement.Views.Dialogs
 {
+    /// <summary>
+    /// ViewModel for Category Management Dialog
+    /// </summary>
+    public class CategoryManagementViewModel : BaseViewModel
+    {
+        private ObservableCollection<Category> _categories = new();
+        private bool _hasUnsavedChanges = false;
+        private bool _isLoading = false;
+        private string _statusMessage = "Ready";
+        private bool _hasError = false;
+
+        public ObservableCollection<Category> Categories
+        {
+            get => _categories;
+            set => SetProperty(ref _categories, value);
+        }
+
+        public bool HasUnsavedChanges
+        {
+            get => _hasUnsavedChanges;
+            set => SetProperty(ref _hasUnsavedChanges, value);
+        }
+
+        public bool IsLoading
+        {
+            get => _isLoading;
+            set => SetProperty(ref _isLoading, value);
+        }
+
+        public string StatusMessage
+        {
+            get => _statusMessage;
+            set => SetProperty(ref _statusMessage, value);
+        }
+
+        public bool HasError
+        {
+            get => _hasError;
+            set => SetProperty(ref _hasError, value);
+        }
+
+        /// <summary>
+        /// Public method to trigger property change notifications
+        /// </summary>
+        public void NotifyPropertyChanged(string propertyName)
+        {
+            OnPropertyChanged(propertyName);
+        }
+
+        /// <summary>
+        /// Sets a success status message
+        /// </summary>
+        public void SetSuccessMessage(string message)
+        {
+            StatusMessage = message;
+            HasError = false;
+        }
+
+        /// <summary>
+        /// Sets an error status message
+        /// </summary>
+        public void SetErrorMessage(string message)
+        {
+            StatusMessage = message;
+            HasError = true;
+        }
+    }
+
     public partial class CategoryManagementDialog : Window
     {
         private readonly IBudgetService _budgetService;
         private readonly IDialogService _dialogService;
-        public ObservableCollection<Category> Categories { get; set; } = new();
-        private bool _hasUnsavedChanges = false;
+        private readonly CategoryManagementViewModel _viewModel;
+
+        public ObservableCollection<Category> Categories => _viewModel.Categories;
+        public bool HasUnsavedChanges => _viewModel.HasUnsavedChanges;
 
         public CategoryManagementDialog(IBudgetService budgetService, IDialogService dialogService)
         {
             InitializeComponent();
             _budgetService = budgetService ?? throw new ArgumentNullException(nameof(budgetService));
             _dialogService = dialogService ?? throw new ArgumentNullException(nameof(dialogService));
+            _viewModel = new CategoryManagementViewModel();
             
-            DataContext = this;
-            LoadCategoriesAsync();
+            DataContext = _viewModel;
+            
+            // Load categories after the window is fully loaded
+            Loaded += CategoryManagementDialog_Loaded;
         }
 
-        private async void LoadCategoriesAsync()
+        private async void CategoryManagementDialog_Loaded(object sender, RoutedEventArgs e)
+        {
+            await LoadCategoriesAsync();
+        }
+
+        private async Task LoadCategoriesAsync()
         {
             try
             {
+                _viewModel.IsLoading = true;
+                _viewModel.SetSuccessMessage("Loading categories...");
                 System.Diagnostics.Debug.WriteLine("CategoryManagementDialog: Starting to load categories...");
                 
-                var categories = await _budgetService.GetAllCategoriesAsync(); // Get ALL categories including inactive
-                
-                System.Diagnostics.Debug.WriteLine($"CategoryManagementDialog: Retrieved {categories?.Count() ?? 0} categories from database");
-                
-                Categories.Clear();
-                
-                foreach (var category in categories.OrderBy(c => c.DisplayOrder))
+                // Use Dispatcher.Invoke to ensure UI operations happen on the UI thread
+                await Application.Current.Dispatcher.InvokeAsync(async () =>
                 {
-                    Categories.Add(category);
-                    System.Diagnostics.Debug.WriteLine($"CategoryManagementDialog: Added category - Id: {category.Id}, Name: {category.Name}, Active: {category.IsActive}");
-                }
-                
-                System.Diagnostics.Debug.WriteLine($"CategoryManagementDialog: Categories collection now has {Categories.Count} items");
-                
-                // Force UI update
-                System.Windows.Application.Current.Dispatcher.BeginInvoke(() => 
-                {
-                    System.Diagnostics.Debug.WriteLine("CategoryManagementDialog: UI thread update triggered");
+                    var categories = await _budgetService.GetAllCategoriesAsync(); // Get ALL categories including inactive
+                    
+                    System.Diagnostics.Debug.WriteLine($"CategoryManagementDialog: Retrieved {categories?.Count() ?? 0} categories from database");
+                    
+                    // Clear and reload categories using proper property notification
+                    _viewModel.Categories.Clear();
+                    
+                    foreach (var category in categories.OrderBy(c => c.DisplayOrder))
+                    {
+                        _viewModel.Categories.Add(category);
+                        System.Diagnostics.Debug.WriteLine($"CategoryManagementDialog: Added category - Id: {category.Id}, Name: {category.Name}, Active: {category.IsActive}");
+                    }
+                    
+                    System.Diagnostics.Debug.WriteLine($"CategoryManagementDialog: Categories collection now has {_viewModel.Categories.Count} items");
+                    
+                    // Explicit check of ListBox binding
+                    System.Diagnostics.Debug.WriteLine($"CategoryManagementDialog: ListBox DataContext: {CategoriesListBox.DataContext?.GetType().Name}");
+                    System.Diagnostics.Debug.WriteLine($"CategoryManagementDialog: ListBox ItemsSource: {CategoriesListBox.ItemsSource?.GetType().Name}");
+                    System.Diagnostics.Debug.WriteLine($"CategoryManagementDialog: ListBox Items.Count: {CategoriesListBox.Items.Count}");
+                    
+                    // Force binding refresh
+                    var binding = BindingOperations.GetBinding(CategoriesListBox, ListBox.ItemsSourceProperty);
+                    if (binding != null)
+                    {
+                        BindingOperations.ClearBinding(CategoriesListBox, ListBox.ItemsSourceProperty);
+                        BindingOperations.SetBinding(CategoriesListBox, ListBox.ItemsSourceProperty, binding);
+                        System.Diagnostics.Debug.WriteLine("CategoryManagementDialog: Refreshed ListBox binding");
+                    }
+                    
+                    // Set success message
+                    var count = _viewModel.Categories.Count;
+                    if (count == 0)
+                    {
+                        _viewModel.SetSuccessMessage("No categories found. Add your first category above.");
+                    }
+                    else
+                    {
+                        _viewModel.SetSuccessMessage($"Successfully loaded {count} categories.");
+                    }
                 });
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"CategoryManagementDialog: Exception loading categories: {ex}");
+                _viewModel.SetErrorMessage($"Failed to load categories: {ex.Message}");
                 await _dialogService.ShowErrorAsync("Load Error", 
                     $"Failed to load categories: {ex.Message}\n\nStack Trace: {ex.StackTrace}");
+            }
+            finally
+            {
+                _viewModel.IsLoading = false;
             }
         }
 
@@ -84,7 +194,7 @@ namespace BudgetManagement.Views.Dialogs
             }
 
             // Check for duplicate names
-            if (Categories.Any(c => string.Equals(c.Name, categoryName, StringComparison.OrdinalIgnoreCase)))
+            if (_viewModel.Categories.Any(c => string.Equals(c.Name, categoryName, StringComparison.OrdinalIgnoreCase)))
             {
                 await _dialogService.ShowWarningAsync("Duplicate Category", 
                     "A category with this name already exists.");
@@ -97,15 +207,17 @@ namespace BudgetManagement.Views.Dialogs
                 var newCategory = new Category
                 {
                     Name = categoryName,
-                    DisplayOrder = Categories.Count + 1,
+                    DisplayOrder = _viewModel.Categories.Count + 1,
                     IsActive = true
                 };
 
                 var addedCategory = await _budgetService.AddCategoryAsync(newCategory);
-                Categories.Add(addedCategory);
+                _viewModel.Categories.Add(addedCategory);
                 
                 NewCategoryNameTextBox.Clear();
-                _hasUnsavedChanges = true;
+                _viewModel.HasUnsavedChanges = true;
+                
+                _viewModel.SetSuccessMessage($"Category '{categoryName}' added successfully.");
                 
                 await _dialogService.ShowInformationAsync("Success", 
                     $"Category '{categoryName}' has been added successfully.");
@@ -144,7 +256,7 @@ namespace BudgetManagement.Views.Dialogs
             }
 
             // Check for duplicates (excluding current category)
-            if (Categories.Any(c => c.Id != category.Id && 
+            if (_viewModel.Categories.Any(c => c.Id != category.Id && 
                              string.Equals(c.Name, result, StringComparison.OrdinalIgnoreCase)))
             {
                 await _dialogService.ShowWarningAsync("Duplicate Category", 
@@ -156,12 +268,12 @@ namespace BudgetManagement.Views.Dialogs
             {
                 category.Name = result;
                 await _budgetService.UpdateCategoryAsync(category);
-                _hasUnsavedChanges = true;
+                _viewModel.HasUnsavedChanges = true;
                 
                 // Refresh the display
-                var index = Categories.IndexOf(category);
-                Categories.RemoveAt(index);
-                Categories.Insert(index, category);
+                var index = _viewModel.Categories.IndexOf(category);
+                _viewModel.Categories.RemoveAt(index);
+                _viewModel.Categories.Insert(index, category);
             }
             catch (Exception ex)
             {
@@ -195,8 +307,8 @@ namespace BudgetManagement.Views.Dialogs
             try
             {
                 await _budgetService.DeleteCategoryAsync(category.Id);
-                Categories.Remove(category);
-                _hasUnsavedChanges = true;
+                _viewModel.Categories.Remove(category);
+                _viewModel.HasUnsavedChanges = true;
                 
                 // Reorder remaining categories
                 await ReorderCategoriesAsync();
@@ -212,22 +324,22 @@ namespace BudgetManagement.Views.Dialogs
         {
             if (((Button)sender).CommandParameter is not Category category) return;
             
-            var currentIndex = Categories.IndexOf(category);
+            var currentIndex = _viewModel.Categories.IndexOf(category);
             if (currentIndex <= 0) return;
 
             // Swap with previous item
-            var previousCategory = Categories[currentIndex - 1];
+            var previousCategory = _viewModel.Categories[currentIndex - 1];
             
             (category.DisplayOrder, previousCategory.DisplayOrder) = 
                 (previousCategory.DisplayOrder, category.DisplayOrder);
 
-            Categories.Move(currentIndex, currentIndex - 1);
+            _viewModel.Categories.Move(currentIndex, currentIndex - 1);
             
             try
             {
                 await _budgetService.UpdateCategoryAsync(category);
                 await _budgetService.UpdateCategoryAsync(previousCategory);
-                _hasUnsavedChanges = true;
+                _viewModel.HasUnsavedChanges = true;
             }
             catch (Exception ex)
             {
@@ -242,22 +354,22 @@ namespace BudgetManagement.Views.Dialogs
         {
             if (((Button)sender).CommandParameter is not Category category) return;
             
-            var currentIndex = Categories.IndexOf(category);
-            if (currentIndex >= Categories.Count - 1) return;
+            var currentIndex = _viewModel.Categories.IndexOf(category);
+            if (currentIndex >= _viewModel.Categories.Count - 1) return;
 
             // Swap with next item
-            var nextCategory = Categories[currentIndex + 1];
+            var nextCategory = _viewModel.Categories[currentIndex + 1];
             
             (category.DisplayOrder, nextCategory.DisplayOrder) = 
                 (nextCategory.DisplayOrder, category.DisplayOrder);
 
-            Categories.Move(currentIndex, currentIndex + 1);
+            _viewModel.Categories.Move(currentIndex, currentIndex + 1);
             
             try
             {
                 await _budgetService.UpdateCategoryAsync(category);
                 await _budgetService.UpdateCategoryAsync(nextCategory);
-                _hasUnsavedChanges = true;
+                _viewModel.HasUnsavedChanges = true;
             }
             catch (Exception ex)
             {
@@ -282,7 +394,7 @@ namespace BudgetManagement.Views.Dialogs
                 // This is a complex operation - you might want to implement this in the service
                 await ResetToDefaultCategoriesAsync();
                 LoadCategoriesAsync();
-                _hasUnsavedChanges = true;
+                _viewModel.HasUnsavedChanges = true;
             }
             catch (Exception ex)
             {
@@ -299,7 +411,7 @@ namespace BudgetManagement.Views.Dialogs
 
         private async void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            if (_hasUnsavedChanges)
+            if (_viewModel.HasUnsavedChanges)
             {
                 var saveChanges = await _dialogService.ShowConfirmationAsync("Unsaved Changes", 
                     "You have unsaved changes. Do you want to save them before closing?");
@@ -332,10 +444,10 @@ namespace BudgetManagement.Views.Dialogs
 
         private async Task ReorderCategoriesAsync()
         {
-            for (int i = 0; i < Categories.Count; i++)
+            for (int i = 0; i < _viewModel.Categories.Count; i++)
             {
-                Categories[i].DisplayOrder = i + 1;
-                await _budgetService.UpdateCategoryAsync(Categories[i]);
+                _viewModel.Categories[i].DisplayOrder = i + 1;
+                await _budgetService.UpdateCategoryAsync(_viewModel.Categories[i]);
             }
         }
 
@@ -386,26 +498,6 @@ namespace BudgetManagement.Views.Dialogs
                 category.DisplayOrder = 999; // Move to end
                 await _budgetService.UpdateCategoryAsync(category);
             }
-        }
-    }
-
-    // Converter for displaying category status
-    public class BooleanToStatusConverter : IValueConverter
-    {
-        public static readonly BooleanToStatusConverter Instance = new();
-
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is bool isActive)
-            {
-                return isActive ? "Active" : "Inactive";
-            }
-            return "Unknown";
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
         }
     }
 }

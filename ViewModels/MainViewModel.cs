@@ -41,6 +41,7 @@ namespace BudgetManagement.ViewModels
         // Private fields
         private BudgetSummary _budgetSummary = new();
         private BankStatementSummary _bankStatementSummary = new();
+        private BudgetHealthMetrics _heroMetrics = new();
         private DateTime _selectedPeriodStart = DateTime.Now.AddYears(-10); // Default to far past for "All Time"
         private DateTime _selectedPeriodEnd = DateTime.Now;
         private TimePeriod _selectedTimePeriod = TimePeriod.AllTime;
@@ -56,11 +57,15 @@ namespace BudgetManagement.ViewModels
         public ObservableCollection<Income> RecentIncomeEntries { get; } = new();
         public ObservableCollection<SpendingWithCategory> RecentSpendingEntries { get; } = new();
 
-        // Budget trend data for analytics
+        // Budget trend data for analytics (legacy - keeping for compatibility)
         public ObservableCollection<WeeklyBudgetData> BudgetTrendData { get; } = new();
         
-        // Daily budget balance data for tracking budget changes over time
+        // Daily budget balance data for tracking budget changes over time (legacy - keeping for compatibility)
         public ObservableCollection<DailyBudgetBalance> BudgetBalanceData { get; } = new();
+        
+        // Simplified analytics data
+        public ObservableCollection<WeeklySpendingPattern> WeeklyPatterns { get; } = new();
+        public ObservableCollection<BudgetInsight> BudgetInsights { get; } = new();
 
         // Collection views for filtering and sorting
         public ICollectionView IncomeView { get; }
@@ -77,6 +82,12 @@ namespace BudgetManagement.ViewModels
         {
             get => _bankStatementSummary;
             set => SetProperty(ref _bankStatementSummary, value);
+        }
+
+        public BudgetHealthMetrics HeroMetrics
+        {
+            get => _heroMetrics;
+            set => SetProperty(ref _heroMetrics, value);
         }
 
         public DateTime SelectedPeriodStart
@@ -260,7 +271,17 @@ namespace BudgetManagement.ViewModels
                 // Update recent entries (last 5 of each type)
                 UpdateRecentEntries();
 
-                // Update budget trend data (last 10 weeks)
+                // Update simplified analytics data
+                System.Diagnostics.Debug.WriteLine("RefreshDataAsync: Loading hero metrics...");
+                await UpdateHeroMetricsAsync();
+                
+                System.Diagnostics.Debug.WriteLine("RefreshDataAsync: Loading weekly patterns...");
+                await UpdateWeeklyPatternsAsync();
+                
+                System.Diagnostics.Debug.WriteLine("RefreshDataAsync: Loading budget insights...");
+                await UpdateBudgetInsightsAsync();
+
+                // Update legacy analytics (keeping for compatibility)
                 System.Diagnostics.Debug.WriteLine("RefreshDataAsync: Calling UpdateBudgetTrendDataAsync...");
                 await UpdateBudgetTrendDataAsync();
                 
@@ -785,6 +806,67 @@ namespace BudgetManagement.ViewModels
             {
                 StatusMessage = $"❌ Error managing categories: {ex.Message}";
                 await _dialogService.ShowErrorAsync("Category Management Error", ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Updates the hero metrics for the simplified analytics dashboard
+        /// </summary>
+        private async Task UpdateHeroMetricsAsync()
+        {
+            try
+            {
+                HeroMetrics = await _budgetService.GetBudgetHealthMetricsAsync(SelectedPeriodStart, SelectedPeriodEnd);
+                System.Diagnostics.Debug.WriteLine($"UpdateHeroMetricsAsync: Loaded hero metrics - Health: {HeroMetrics.HealthStatus}, Spending: ${HeroMetrics.MonthlySpending}, Remaining: ${HeroMetrics.BudgetRemaining}");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"UpdateHeroMetricsAsync error: {ex}");
+                HeroMetrics = new BudgetHealthMetrics { HealthStatus = "Critical" };
+            }
+        }
+
+        /// <summary>
+        /// Updates the weekly spending patterns for the simplified bar chart
+        /// </summary>
+        private async Task UpdateWeeklyPatternsAsync()
+        {
+            try
+            {
+                WeeklyPatterns.Clear();
+                var patterns = await _budgetService.GetWeeklySpendingPatternsAsync(SelectedPeriodStart, SelectedPeriodEnd);
+                foreach (var pattern in patterns)
+                {
+                    WeeklyPatterns.Add(pattern);
+                }
+                System.Diagnostics.Debug.WriteLine($"UpdateWeeklyPatternsAsync: Loaded {WeeklyPatterns.Count} weekly patterns");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"UpdateWeeklyPatternsAsync error: {ex}");
+                WeeklyPatterns.Clear();
+            }
+        }
+
+        /// <summary>
+        /// Updates the budget insights for plain English analytics
+        /// </summary>
+        private async Task UpdateBudgetInsightsAsync()
+        {
+            try
+            {
+                BudgetInsights.Clear();
+                var insights = await _budgetService.GenerateBudgetInsightsAsync(SelectedPeriodStart, SelectedPeriodEnd);
+                foreach (var insight in insights)
+                {
+                    BudgetInsights.Add(insight);
+                }
+                System.Diagnostics.Debug.WriteLine($"UpdateBudgetInsightsAsync: Loaded {BudgetInsights.Count} insights");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"UpdateBudgetInsightsAsync error: {ex}");
+                BudgetInsights.Clear();
             }
         }
     }

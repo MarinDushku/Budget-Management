@@ -187,4 +187,96 @@ namespace BudgetManagement.Models
         /// </summary>
         public bool IsPositiveDay => DailyBalance >= 0;
     }
+
+    /// <summary>
+    /// Hero metrics for simplified analytics dashboard
+    /// </summary>
+    public class BudgetHealthMetrics
+    {
+        public decimal MonthlySpending { get; set; }
+        public decimal BudgetRemaining { get; set; }
+        public string TopCategoryName { get; set; } = string.Empty;
+        public decimal TopCategoryAmount { get; set; }
+        
+        /// <summary>
+        /// Budget health percentage (0-100)
+        /// </summary>
+        public decimal BudgetHealthPercentage { get; set; }
+        
+        /// <summary>
+        /// Health status: Excellent, Good, Warning, Critical
+        /// </summary>
+        public string HealthStatus { get; set; } = string.Empty;
+        
+        /// <summary>
+        /// Simple spending trend: Increasing, Stable, Decreasing
+        /// </summary>
+        public string SpendingTrend { get; set; } = string.Empty;
+        
+        /// <summary>
+        /// Days remaining in current period
+        /// </summary>
+        public int DaysLeft { get; set; }
+        
+        /// <summary>
+        /// Color for health status display
+        /// </summary>
+        public string HealthColor => HealthStatus switch
+        {
+            "Excellent" => "#16A34A", // Green
+            "Good" => "#3B82F6",      // Blue  
+            "Warning" => "#F59E0B",   // Orange
+            "Critical" => "#EF4444",  // Red
+            _ => "#6B7280"            // Gray
+        };
+        
+        /// <summary>
+        /// Color for spending trend display
+        /// </summary>
+        public string SpendingTrendColor => SpendingTrend switch
+        {
+            "Decreasing" => "#16A34A", // Green (good)
+            "Stable" => "#6B7280",     // Gray (neutral)
+            "Increasing" => "#EF4444", // Red (warning)
+            _ => "#6B7280"             // Gray
+        };
+    }
+
+    /// <summary>
+    /// Simple weekly spending pattern for bar chart
+    /// </summary>
+    public class WeeklySpendingPattern
+    {
+        public string WeekLabel { get; set; } = string.Empty;
+        public decimal Amount { get; set; }
+        public int WeekNumber { get; set; }
+        
+        /// <summary>
+        /// Normalized height for bar chart (20-80 range)
+        /// </summary>
+        public double NormalizedHeight { get; set; } = 20;
+        
+        /// <summary>
+        /// Whether this week had higher than average spending
+        /// </summary>
+        public bool IsHighSpendingWeek { get; set; }
+    }
+
+    /// <summary>
+    /// Plain English insights for user-friendly analytics
+    /// </summary>
+    public class BudgetInsight
+    {
+        public string InsightType { get; set; } = string.Empty;
+        public string Title { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public string ActionRecommendation { get; set; } = string.Empty;
+        public DateTime RelevantDate { get; set; }
+        public decimal? RelevantAmount { get; set; }
+        
+        /// <summary>
+        /// Priority level for displaying insights (1-5, 1 being highest)
+        /// </summary>
+        public int Priority { get; set; } = 3;
+    }
 }

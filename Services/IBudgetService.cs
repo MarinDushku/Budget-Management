@@ -85,6 +85,11 @@ namespace BudgetManagement.Services
             int take = 50,
             SpendingSortBy sortBy = SpendingSortBy.Date,
             BudgetManagement.Features.Spending.Queries.SortDirection sortDirection = BudgetManagement.Features.Spending.Queries.SortDirection.Descending);
+
+        // Simplified analytics operations
+        Task<BudgetHealthMetrics> GetBudgetHealthMetricsAsync(DateTime startDate, DateTime endDate);
+        Task<IEnumerable<WeeklySpendingPattern>> GetWeeklySpendingPatternsAsync(DateTime startDate, DateTime endDate);
+        Task<IEnumerable<BudgetInsight>> GenerateBudgetInsightsAsync(DateTime startDate, DateTime endDate);
     }
 
     /// <summary>

@@ -211,35 +211,226 @@
 
                     <!-- Analytics Content (Hidden by default) -->
                     <StackPanel x:Name="AnalyticsContent" Visibility="Collapsed">
-                    <!-- Analytics Charts -->
+                    
+                    <!-- Hero Metrics Section - Your Money at a Glance -->
+                    <TextBlock Text="Your Money at a Glance" 
+                               Style="{StaticResource SectionHeaderTextStyle}" 
+                               FontSize="24" 
+                               Margin="0,0,0,16"/>
+                    
+                    <UniformGrid Columns="3" Margin="0,0,0,32">
+                        <!-- Spent This Period -->
+                        <Border Style="{StaticResource ModernCardStyle}" Margin="0,0,8,0">
+                            <StackPanel HorizontalAlignment="Center" Margin="16">
+                                <TextBlock Text="Spent This Period" 
+                                           FontSize="14" 
+                                           Foreground="{DynamicResource SecondaryTextBrush}"
+                                           HorizontalAlignment="Center"/>
+                                <TextBlock Text="{Binding HeroMetrics.MonthlySpending, StringFormat=C}" 
+                                           FontSize="32" 
+                                           FontWeight="Bold" 
+                                           Margin="0,8,0,0"
+                                           HorizontalAlignment="Center"/>
+                                <TextBlock Text="{Binding HeroMetrics.SpendingTrend}" 
+                                           FontSize="12"
+                                           Foreground="{Binding HeroMetrics.SpendingTrendColor}" 
+                                           Margin="0,4,0,0"
+                                           HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                        
+                        <!-- Budget Remaining -->
+                        <Border Style="{StaticResource ModernCardStyle}" Margin="8,0">
+                            <StackPanel HorizontalAlignment="Center" Margin="16">
+                                <TextBlock Text="Budget Remaining" 
+                                           FontSize="14"
+                                           Foreground="{DynamicResource SecondaryTextBrush}"
+                                           HorizontalAlignment="Center"/>
+                                <TextBlock Text="{Binding HeroMetrics.BudgetRemaining, StringFormat=C}" 
+                                           FontSize="32" 
+                                           FontWeight="Bold" 
+                                           Margin="0,8,0,0"
+                                           Foreground="{Binding HeroMetrics.HealthColor}"
+                                           HorizontalAlignment="Center"/>
+                                <TextBlock Text="{Binding HeroMetrics.DaysLeft, StringFormat={}{0} days left}" 
+                                           FontSize="12"
+                                           Foreground="{DynamicResource SecondaryTextBrush}" 
+                                           Margin="0,4,0,0"
+                                           HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                        
+                        <!-- Top Category -->
+                        <Border Style="{StaticResource ModernCardStyle}" Margin="8,0,0,0">
+                            <StackPanel HorizontalAlignment="Center" Margin="16">
+                                <TextBlock Text="Top Category" 
+                                           FontSize="14"
+                                           Foreground="{DynamicResource SecondaryTextBrush}"
+                                           HorizontalAlignment="Center"/>
+                                <TextBlock Text="{Binding HeroMetrics.TopCategoryName}" 
+                                           FontSize="20" 
+                                           FontWeight="SemiBold" 
+                                           Margin="0,8,0,0"
+                                           HorizontalAlignment="Center"
+                                           TextTrimming="CharacterEllipsis"/>
+                                <TextBlock Text="{Binding HeroMetrics.TopCategoryAmount, StringFormat=C}" 
+                                           FontSize="16" 
+                                           Margin="0,4,0,0"
+                                           HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                    </UniformGrid>
+                    
+                    <!-- Simplified Charts Section -->
                     <UniformGrid Columns="2" Margin="0,0,0,24">
-                        <!-- Spending Category Chart Card -->
+                        <!-- Keep the beloved Spending Category Chart -->
                         <Border Style="{StaticResource ModernCardStyle}" Margin="0,0,12,0">
                             <StackPanel>
-                                <TextBlock Text="Spending by Category" Style="{StaticResource SectionHeaderTextStyle}"/>
+                                <TextBlock Text="Spending Breakdown" Style="{StaticResource SectionHeaderTextStyle}"/>
                                 <userControls:SpendingCategoryChartUserControl 
                                     SpendingEntries="{Binding SpendingEntries}"/>
                             </StackPanel>
                         </Border>
 
-                        <!-- Budget Trend Chart Card -->
+                        <!-- Simplified Weekly Pattern (replacing complex Budget Trend Chart) -->
                         <Border Style="{StaticResource ModernCardStyle}" Margin="12,0,0,0">
                             <StackPanel>
-                                <TextBlock Text="Budget Trends" Style="{StaticResource SectionHeaderTextStyle}"/>
-                                <userControls:BudgetTrendChartUserControl 
-                                    BudgetTrendData="{Binding BudgetTrendData}"/>
+                                <TextBlock Text="Weekly Spending Pattern" Style="{StaticResource SectionHeaderTextStyle}"/>
+                                
+                                <!-- Simple bar chart showing last 6 weeks -->
+                                <ItemsControl ItemsSource="{Binding WeeklyPatterns}" Margin="0,16,0,0">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <UniformGrid Columns="6"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Margin="4" HorizontalAlignment="Center">
+                                                <!-- Bar representation -->
+                                                <Border Background="{DynamicResource PrimaryBlueBrush}" 
+                                                        Height="{Binding NormalizedHeight}"
+                                                        Width="20"
+                                                        MinHeight="20" MaxHeight="80"
+                                                        CornerRadius="2" 
+                                                        Margin="0,0,0,8"
+                                                        VerticalAlignment="Bottom"/>
+                                                <TextBlock Text="{Binding WeekLabel}" 
+                                                           FontSize="11" 
+                                                           HorizontalAlignment="Center"
+                                                           Foreground="{DynamicResource SecondaryTextBrush}"/>
+                                                <TextBlock Text="{Binding Amount, StringFormat=C0}" 
+                                                           FontSize="12" 
+                                                           FontWeight="SemiBold"
+                                                           HorizontalAlignment="Center" 
+                                                           Margin="0,2,0,0"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                                
+                                <!-- Simple insight instead of complex statistics -->
+                                <Border Background="{DynamicResource SurfaceElevatedBrush}" 
+                                        Padding="16,12" 
+                                        CornerRadius="6" 
+                                        Margin="0,16,0,0"
+                                        BorderBrush="{DynamicResource BorderLightBrush}"
+                                        BorderThickness="1">
+                                    <TextBlock Text="Your weekly spending pattern over the last 6 weeks" 
+                                               FontSize="14" 
+                                               TextWrapping="Wrap"
+                                               Foreground="{DynamicResource SecondaryTextBrush}"/>
+                                </Border>
                             </StackPanel>
                         </Border>
                     </UniformGrid>
                     
-                    <!-- Budget Balance Chart Card (Full Width) -->
-                    <Border Style="{StaticResource ModernCardStyle}" Margin="0,0,0,24">
-                        <StackPanel>
-                            <TextBlock Text="Budget Balance Tracking (Last 30 Days)" Style="{StaticResource SectionHeaderTextStyle}"/>
-                            <userControls:BudgetBalanceChartUserControl 
-                                BudgetBalanceData="{Binding BudgetBalanceData}"/>
-                        </StackPanel>
-                    </Border>
+                    <!-- Bottom Section: Budget Health and Smart Insights -->
+                    <UniformGrid Columns="2" Margin="0,0,0,24">
+                        <!-- Budget Health Indicator (replacing complex Balance Chart) -->
+                        <Border Style="{StaticResource ModernCardStyle}" Margin="0,0,12,0">
+                            <StackPanel>
+                                <TextBlock Text="Budget Health" Style="{StaticResource SectionHeaderTextStyle}"/>
+                                
+                                <!-- Large circular progress indicator -->
+                                <Grid Height="120" Margin="0,16,0,0">
+                                    <Ellipse Stroke="{DynamicResource BorderLightBrush}" 
+                                             StrokeThickness="8" 
+                                             Width="100" Height="100"/>
+                                    <!-- Progress circle - this would need custom control for proper arc -->
+                                    <Ellipse Stroke="{Binding HeroMetrics.HealthColor}" 
+                                             StrokeThickness="8" 
+                                             Width="100" Height="100"
+                                             Opacity="0.8"/>
+                                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding HeroMetrics.HealthStatus}" 
+                                                   FontSize="18" 
+                                                   FontWeight="Bold"
+                                                   Foreground="{Binding HeroMetrics.HealthColor}"
+                                                   HorizontalAlignment="Center"/>
+                                        <TextBlock Text="budget health" 
+                                                   FontSize="12" 
+                                                   Foreground="{DynamicResource SecondaryTextBrush}"
+                                                   HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </Grid>
+                                
+                                <!-- Simple status message -->
+                                <TextBlock Text="{Binding HeroMetrics.HealthStatus, StringFormat=Your budget health is {0}}" 
+                                           FontSize="14" 
+                                           TextAlignment="Center" 
+                                           Margin="0,16,0,0" 
+                                           TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Smart Insights (replacing complex statistics) -->
+                        <Border Style="{StaticResource ModernCardStyle}" Margin="12,0,0,0">
+                            <StackPanel>
+                                <TextBlock Text="Smart Insights" Style="{StaticResource SectionHeaderTextStyle}"/>
+                                
+                                <!-- Insights list -->
+                                <ItemsControl ItemsSource="{Binding BudgetInsights}" Margin="0,16,0,0">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Background="{DynamicResource SurfaceElevatedBrush}" 
+                                                    Padding="16,12" 
+                                                    CornerRadius="6" 
+                                                    Margin="0,0,0,12"
+                                                    BorderBrush="{DynamicResource BorderLightBrush}"
+                                                    BorderThickness="1">
+                                                <StackPanel>
+                                                    <TextBlock Text="{Binding Title}" 
+                                                               FontSize="14" 
+                                                               FontWeight="SemiBold"
+                                                               Margin="0,0,0,4"/>
+                                                    <TextBlock Text="{Binding Description}" 
+                                                               FontSize="13" 
+                                                               TextWrapping="Wrap"
+                                                               Foreground="{DynamicResource SecondaryTextBrush}"
+                                                               Margin="0,0,0,8"/>
+                                                    <TextBlock Text="{Binding ActionRecommendation}" 
+                                                               FontSize="12" 
+                                                               FontStyle="Italic"
+                                                               TextWrapping="Wrap"
+                                                               Foreground="{DynamicResource AccentBrush}"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                                
+                                <!-- Fallback message when no insights -->
+                                <TextBlock Text="No insights available for this period" 
+                                           FontSize="14" 
+                                           FontStyle="Italic"
+                                           Foreground="{DynamicResource SecondaryTextBrush}"
+                                           TextAlignment="Center"
+                                           Margin="0,32,0,0"
+                                           Visibility="{Binding BudgetInsights.Count, Converter={StaticResource CountToVisibilityConverter}}"/>
+                            </StackPanel>
+                        </Border>
+                    </UniformGrid>
                     </StackPanel>
 
                     <!-- Export & Tools Content (Hidden by default) -->
