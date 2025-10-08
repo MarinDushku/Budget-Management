@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:converters="clr-namespace:BudgetManagement.Converters"
              xmlns:userControls="clr-namespace:BudgetManagement.Views.UserControls"
+             xmlns:income="clr-namespace:BudgetManagement.Features.Income.Queries"
              FontFamily="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"
              FontSize="16">
 
@@ -213,18 +214,20 @@
                                        VerticalAlignment="Center" Margin="0,0,12,8"/>
                             <ComboBox x:Name="SortByComboBox" 
                                       SelectedValue="{Binding SortBy}"
+                                      SelectedValuePath="Tag"
                                       Style="{StaticResource ModernComboBoxStyle}"
                                       MinWidth="120" Margin="0,0,12,0">
-                                <ComboBoxItem Content="{DynamicResource SortByDate}" Tag="Date"/>
-                                <ComboBoxItem Content="{DynamicResource SortByAmount}" Tag="Amount"/>
-                                <ComboBoxItem Content="{DynamicResource SortByDescription}" Tag="Description"/>
+                                <ComboBoxItem Content="{DynamicResource SortByDate}" Tag="{x:Static income:IncomeSortBy.Date}" IsSelected="True"/>
+                                <ComboBoxItem Content="{DynamicResource SortByAmount}" Tag="{x:Static income:IncomeSortBy.Amount}"/>
+                                <ComboBoxItem Content="{DynamicResource SortByDescription}" Tag="{x:Static income:IncomeSortBy.Description}"/>
                             </ComboBox>
                             <ComboBox x:Name="SortDirectionComboBox" 
                                       SelectedValue="{Binding SortDirection}"
+                                      SelectedValuePath="Tag"
                                       Style="{StaticResource ModernComboBoxStyle}"
                                       MinWidth="100">
-                                <ComboBoxItem Content="{DynamicResource SortDescending}" Tag="Descending"/>
-                                <ComboBoxItem Content="{DynamicResource SortAscending}" Tag="Ascending"/>
+                                <ComboBoxItem Content="{DynamicResource SortDescending}" Tag="{x:Static income:SortDirection.Descending}" IsSelected="True"/>
+                                <ComboBoxItem Content="{DynamicResource SortAscending}" Tag="{x:Static income:SortDirection.Ascending}"/>
                             </ComboBox>
                         </StackPanel>
 

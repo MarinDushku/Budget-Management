@@ -35,8 +35,8 @@ namespace BudgetManagement.Features.Spending.ViewModels
         private DateTime? _endDate;
         private decimal? _minAmount;
         private decimal? _maxAmount;
-        private ObservableCollection<Category> _availableCategories = new();
-        private ObservableCollection<Category> _selectedCategories = new();
+        private ObservableCollection<SelectableCategory> _availableCategories = new();
+        private int _selectedCategoriesCount = 0;
         private SpendingSortBy _sortBy = SpendingSortBy.Date;
         private SortDirection _sortDirection = SortDirection.Descending;
 
@@ -81,9 +81,9 @@ namespace BudgetManagement.Features.Spending.ViewModels
             GoToPreviousPageCommand = new RelayCommand(async () => await GoToPageAsync(CurrentPage - 1));
             GoToNextPageCommand = new RelayCommand(async () => await GoToPageAsync(CurrentPage + 1));
             GoToLastPageCommand = new RelayCommand(async () => await GoToPageAsync(TotalPages));
-            ToggleCategorySelectionCommand = new RelayCommand<Category>(ToggleCategorySelection);
+            ToggleCategorySelectionCommand = new RelayCommand<SelectableCategory>(ToggleCategorySelection);
             SelectAllCategoriesCommand = new RelayCommand(SelectAllCategories);
-            ClearCategorySelectionCommand = new RelayCommand(ClearCategorySelection);
+            ClearCategoriesCommand = new RelayCommand(ClearCategorySelection);
 
             // Set default date range to last month
             StartDate = DateTime.Today.AddDays(-30);
@@ -143,22 +143,48 @@ namespace BudgetManagement.Features.Spending.ViewModels
         }
 
         /// <summary>
-        /// Available categories for filtering
+        /// Available categories for filtering with selection state
         /// </summary>
-        public ObservableCollection<Category> AvailableCategories
+        public ObservableCollection<SelectableCategory> AvailableCategories
         {
             get => _availableCategories;
             set => SetProperty(ref _availableCategories, value);
         }
 
         /// <summary>
-        /// Selected categories for filtering
+        /// Number of selected categories
         /// </summary>
-        public ObservableCollection<Category> SelectedCategories
+        public int SelectedCategoriesCount
         {
-            get => _selectedCategories;
-            set => SetProperty(ref _selectedCategories, value);
+            get => _selectedCategoriesCount;
+            set
+            {
+                if (SetProperty(ref _selectedCategoriesCount, value))
+                {
+                    OnPropertyChanged(nameof(CategorySelectionSummary));
+                    OnPropertyChanged(nameof(AllCategoriesSelected));
+                }
+            }
         }
+
+        /// <summary>
+        /// Summary text for category selection
+        /// </summary>
+        public string CategorySelectionSummary
+        {
+            get
+            {
+                if (AvailableCategories.Count == 0) return "No categories";
+                if (SelectedCategoriesCount == 0) return "All categories";
+                if (SelectedCategoriesCount == AvailableCategories.Count) return "All categories";
+                return $"{SelectedCategoriesCount} of {AvailableCategories.Count} categories";
+            }
+        }
+
+        /// <summary>
+        /// Indicates if all categories are selected (or none, which means all)
+        /// </summary>
+        public bool AllCategoriesSelected => SelectedCategoriesCount == 0 || SelectedCategoriesCount == AvailableCategories.Count;
 
         /// <summary>
         /// Sort field selection
@@ -373,7 +399,7 @@ namespace BudgetManagement.Features.Spending.ViewModels
         /// <summary>
         /// Command to clear category selection
         /// </summary>
-        public WpfICommand ClearCategorySelectionCommand { get; }
+        public WpfICommand ClearCategoriesCommand { get; }
 
         #endregion
 
@@ -387,7 +413,7 @@ namespace BudgetManagement.Features.Spending.ViewModels
                 EndDate.HasValue ||
                 MinAmount.HasValue ||
                 MaxAmount.HasValue ||
-                SelectedCategories.Any()
+                AvailableCategories.Any(c => c.IsSelected)
             );
         }
 
@@ -400,7 +426,8 @@ namespace BudgetManagement.Features.Spending.ViewModels
 
                 _logger.LogDebug("Executing spending search with criteria");
 
-                var categoryIds = SelectedCategories.Any() ? SelectedCategories.Select(c => c.Id).ToList() : null;
+                var selectedCategories = AvailableCategories.Where(c => c.IsSelected).ToList();
+                var categoryIds = selectedCategories.Any() ? selectedCategories.Select(c => c.Id).ToList() : null;
 
                 var query = new AdvancedSpendingSearchQuery(
                     DescriptionPattern: string.IsNullOrWhiteSpace(DescriptionFilter) ? null : DescriptionFilter,
@@ -462,7 +489,11 @@ namespace BudgetManagement.Features.Spending.ViewModels
             EndDate = DateTime.Today;
             MinAmount = null;
             MaxAmount = null;
-            SelectedCategories.Clear();
+            foreach (var category in AvailableCategories)
+            {
+                category.IsSelected = false;
+            }
+            UpdateSelectedCategoriesCount();
             SortBy = SpendingSortBy.Date;
             SortDirection = SortDirection.Descending;
             CurrentPage = 1;
@@ -518,9 +549,12 @@ namespace BudgetManagement.Features.Spending.ViewModels
                 AvailableCategories.Clear();
                 foreach (var category in categories)
                 {
-                    AvailableCategories.Add(category);
+                    var selectableCategory = new SelectableCategory(category, false);
+                    selectableCategory.PropertyChanged += OnCategorySelectionChanged;
+                    AvailableCategories.Add(selectableCategory);
                 }
                 
+                UpdateSelectedCategoriesCount();
                 _logger.LogDebug("Loaded {Count} real categories for spending search", AvailableCategories.Count);
             }
             catch (Exception ex)
@@ -529,32 +563,41 @@ namespace BudgetManagement.Features.Spending.ViewModels
             }
         }
 
-        private void ToggleCategorySelection(Category? category)
+        private void ToggleCategorySelection(SelectableCategory? category)
         {
             if (category == null) return;
-
-            if (SelectedCategories.Contains(category))
-            {
-                SelectedCategories.Remove(category);
-            }
-            else
-            {
-                SelectedCategories.Add(category);
-            }
+            category.IsSelected = !category.IsSelected;
         }
 
         private void SelectAllCategories()
         {
-            SelectedCategories.Clear();
             foreach (var category in AvailableCategories)
             {
-                SelectedCategories.Add(category);
+                category.IsSelected = true;
             }
         }
 
         private void ClearCategorySelection()
         {
-            SelectedCategories.Clear();
+            foreach (var category in AvailableCategories)
+            {
+                category.IsSelected = false;
+            }
+        }
+
+        private void OnCategorySelectionChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(SelectableCategory.IsSelected))
+            {
+                UpdateSelectedCategoriesCount();
+                // Refresh the SearchCommand's CanExecute
+                (SearchCommand as RelayCommand)?.RaiseCanExecuteChanged();
+            }
+        }
+
+        private void UpdateSelectedCategoriesCount()
+        {
+            SelectedCategoriesCount = AvailableCategories.Count(c => c.IsSelected);
         }
 
         private async Task EditSpendingAsync(SpendingWithCategory? spending)
@@ -575,7 +618,7 @@ namespace BudgetManagement.Features.Spending.ViewModels
                     CategoryId = spending.CategoryId
                 };
 
-                var updatedSpending = await _dialogService.ShowSpendingDialogAsync(spendingModel, AvailableCategories.ToList());
+                var updatedSpending = await _dialogService.ShowSpendingDialogAsync(spendingModel, AvailableCategories.Select(sc => sc.Category).ToList());
                 if (updatedSpending != null)
                 {
                     await _budgetService.UpdateSpendingAsync(updatedSpending);

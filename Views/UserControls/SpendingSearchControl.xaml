@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:converters="clr-namespace:BudgetManagement.Converters"
              xmlns:userControls="clr-namespace:BudgetManagement.Views.UserControls"
+             xmlns:spending="clr-namespace:BudgetManagement.Features.Spending.Queries"
              FontFamily="Segoe UI Variable, Segoe UI, Verdana, Tahoma, sans-serif"
              FontSize="16">
 
@@ -90,9 +91,47 @@
 
         <!-- Category Checkbox Style -->
         <Style x:Key="CategoryCheckboxStyle" TargetType="CheckBox">
-            <Setter Property="Margin" Value="0,2"/>
+            <Setter Property="Margin" Value="0,3"/>
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+            <Setter Property="Padding" Value="8,4"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CheckBox">
+                        <Border x:Name="border" 
+                                Background="Transparent" 
+                                BorderBrush="Transparent" 
+                                BorderThickness="1" 
+                                CornerRadius="4" 
+                                Padding="{TemplateBinding Padding}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <CheckBox x:Name="checkbox" 
+                                         Grid.Column="0" 
+                                         IsChecked="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=IsChecked}" 
+                                         VerticalAlignment="Center" 
+                                         Margin="0,0,8,0"/>
+                                <ContentPresenter Grid.Column="1" 
+                                                 VerticalAlignment="Center" 
+                                                 Content="{TemplateBinding Content}"/>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{DynamicResource SurfaceBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{StaticResource PrimaryBlueBrush}"/>
+                                <Setter TargetName="border" Property="Opacity" Value="0.1"/>
+                                <Setter Property="FontWeight" Value="Medium"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
     </UserControl.Resources>
 
@@ -220,42 +259,50 @@
                                        Style="{StaticResource FilterLabelStyle}" 
                                        VerticalAlignment="Top" Margin="0,0,16,8"/>
                             
-                            <Border Grid.Column="1" 
-                                    BorderBrush="{DynamicResource BorderLightBrush}" 
-                                    BorderThickness="1" 
-                                    CornerRadius="6" 
-                                    MaxHeight="120" 
-                                    Background="{StaticResource SurfaceElevatedBrush}">
-                                <ScrollViewer VerticalScrollBarVisibility="Auto">
-                                    <StackPanel Margin="12">
-                                        <!-- Select All / None -->
-                                        <Grid Margin="0,0,0,8">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="Auto"/>
-                                            </Grid.ColumnDefinitions>
-                                            <Button Grid.Column="0" Content="{DynamicResource AllCategories}" 
-                                                    Style="{StaticResource PresetButtonStyle}"
-                                                    Command="{Binding SelectAllCategoriesCommand}"
-                                                    HorizontalAlignment="Left"/>
-                                            <Button Grid.Column="1" Content="{DynamicResource ClearAll}" 
-                                                    Style="{StaticResource PresetButtonStyle}"
-                                                    Command="{Binding ClearCategoriesCommand}"/>
-                                        </Grid>
-                                        
-                                        <!-- Category Checkboxes -->
-                                        <ItemsControl ItemsSource="{Binding AvailableCategories}">
+                            <StackPanel Grid.Column="1">
+                                <!-- Category Selection Summary -->
+                                <Grid Margin="0,0,0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    
+                                    <TextBlock Grid.Column="0" Text="{Binding CategorySelectionSummary}" 
+                                               FontSize="12" 
+                                               Foreground="{DynamicResource SecondaryTextBrush}" 
+                                               VerticalAlignment="Center"/>
+                                    
+                                    <Button Grid.Column="1" Content="{DynamicResource AllCategories}" 
+                                            Style="{StaticResource PresetButtonStyle}"
+                                            Command="{Binding SelectAllCategoriesCommand}"
+                                            Margin="0,0,8,0"/>
+                                    <Button Grid.Column="2" Content="{DynamicResource ClearAll}" 
+                                            Style="{StaticResource PresetButtonStyle}"
+                                            Command="{Binding ClearCategoriesCommand}"/>
+                                </Grid>
+                                
+                                <!-- Category Selection Container -->
+                                <Border BorderBrush="{DynamicResource BorderLightBrush}" 
+                                        BorderThickness="1" 
+                                        CornerRadius="6" 
+                                        MaxHeight="200" 
+                                        Background="{StaticResource SurfaceElevatedBrush}">
+                                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                        <ItemsControl ItemsSource="{Binding AvailableCategories}" Margin="12">
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <CheckBox Content="{Binding Name}" 
                                                               IsChecked="{Binding IsSelected}"
-                                                              Style="{StaticResource CategoryCheckboxStyle}"/>
+                                                              Style="{StaticResource CategoryCheckboxStyle}"
+                                                              Command="{Binding DataContext.ToggleCategorySelectionCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                              CommandParameter="{Binding}"/>
                                                 </DataTemplate>
                                             </ItemsControl.ItemTemplate>
                                         </ItemsControl>
-                                    </StackPanel>
-                                </ScrollViewer>
-                            </Border>
+                                    </ScrollViewer>
+                                </Border>
+                            </StackPanel>
                         </Grid>
                     </StackPanel>
 
@@ -272,19 +319,21 @@
                                        VerticalAlignment="Center" Margin="0,0,12,8"/>
                             <ComboBox x:Name="SortByComboBox" 
                                       SelectedValue="{Binding SortBy}"
+                                      SelectedValuePath="Tag"
                                       Style="{StaticResource ModernComboBoxStyle}"
                                       MinWidth="120" Margin="0,0,12,0">
-                                <ComboBoxItem Content="{DynamicResource SortByDate}" Tag="Date"/>
-                                <ComboBoxItem Content="{DynamicResource SortByAmount}" Tag="Amount"/>
-                                <ComboBoxItem Content="{DynamicResource SortByDescription}" Tag="Description"/>
-                                <ComboBoxItem Content="{DynamicResource SortByCategory}" Tag="Category"/>
+                                <ComboBoxItem Content="{DynamicResource SortByDate}" Tag="{x:Static spending:SpendingSortBy.Date}" IsSelected="True"/>
+                                <ComboBoxItem Content="{DynamicResource SortByAmount}" Tag="{x:Static spending:SpendingSortBy.Amount}"/>
+                                <ComboBoxItem Content="{DynamicResource SortByDescription}" Tag="{x:Static spending:SpendingSortBy.Description}"/>
+                                <ComboBoxItem Content="{DynamicResource SortByCategory}" Tag="{x:Static spending:SpendingSortBy.Category}"/>
                             </ComboBox>
                             <ComboBox x:Name="SortDirectionComboBox" 
                                       SelectedValue="{Binding SortDirection}"
+                                      SelectedValuePath="Tag"
                                       Style="{StaticResource ModernComboBoxStyle}"
                                       MinWidth="100">
-                                <ComboBoxItem Content="{DynamicResource SortDescending}" Tag="Descending"/>
-                                <ComboBoxItem Content="{DynamicResource SortAscending}" Tag="Ascending"/>
+                                <ComboBoxItem Content="{DynamicResource SortDescending}" Tag="{x:Static spending:SortDirection.Descending}" IsSelected="True"/>
+                                <ComboBoxItem Content="{DynamicResource SortAscending}" Tag="{x:Static spending:SortDirection.Ascending}"/>
                             </ComboBox>
                         </StackPanel>
 
